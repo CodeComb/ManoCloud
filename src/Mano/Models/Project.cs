@@ -23,10 +23,10 @@ namespace Mano.Models
 
         public DateTime End { get; set; }
 
-        [ForeignKey("Resume")]
-        public long ResumeId { get; set; }
+        [ForeignKey("User")]
+        public long UserId { get; set; }
 
-        public Resume Resume { get; set; }
+        public User User { get; set; }
 
         public double Size { get; set; }   // MiB
 
