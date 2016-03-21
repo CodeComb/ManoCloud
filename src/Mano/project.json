@@ -1,19 +1,21 @@
-﻿{
+{
   "version": "1.0.0-*",
   "compilationOptions": {
     "emitEntryPoint": true
   },
 
   "dependencies": {
-    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
     "Microsoft.AspNet.Mvc.TagHelpers": "6.0.0-rc1-final",
     "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
+    "Microsoft.AspNet.SignalR.Server": "3.0.0-rc1-final", 
     "CodeComb.AspNet.Extensions": "2.0.0-rc1-final-3",
     "CodeComb.AspNet.Localization": "2.0.0-rc1-final",
     "CodeComb.AspNet.Upload": "2.0.0-rc1-final",
-    "EntityFramework7.Npgsql": "3.1.0-rc1-3"
+    "EntityFramework7.Npgsql": "3.1.0-rc1-3",
+    "Mano.Parser": "1.0.0-*"
   },
 
   "commands": {

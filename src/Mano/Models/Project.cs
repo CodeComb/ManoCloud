@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,6 +8,7 @@ namespace Mano.Models
     {
         public Guid Id { get; set; }
 
+        [MaxLength(128)]
         public string Tilte { get; set; }
 
         public CommunityType Type { get; set; }
@@ -23,6 +23,20 @@ namespace Mano.Models
 
         public DateTime End { get; set; }
 
-        public virtual ICollection<Collaborator> Collaborators { get; set; } = new List<Collaborator>();
+        [ForeignKey("Resume")]
+        public long ResumeId { get; set; }
+
+        public Resume Resume { get; set; }
+
+        public double Size { get; set; }   // MiB
+
+        [ForeignKey("Node")]
+        public Guid? NodeId { get; set; }
+
+        public Node Node { get; set; }
+
+        public DateTime LastPullTime { get; set; }
+
+        public DateTime LastEditTime { get; set; }
     }
 }

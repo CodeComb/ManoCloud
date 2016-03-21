@@ -1,20 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Mano.Parser.Models
 {
     public class Commit
     {
+        [MaxLength(40)]
+        public string Id { get; set; }
+
+        [MaxLength(64)]
         public string Author { get; set; }
 
+        [MaxLength(64)]
         public string Email { get; set; }
 
         public DateTime Time { get; set; }
 
-        public string Hash { get; set; }
-
-        public List<Change> Changes { get; set; } = new List<Change>();
+        public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
     }
 }

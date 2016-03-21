@@ -10,6 +10,7 @@ namespace Mano.Models
         None,
         GitHub,
         GitOSC,
-        GitCSDN
+        GitCSDN,
+        Git
     }
 }

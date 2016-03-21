@@ -22,7 +22,7 @@ namespace Mano.Parser
                 if (splited.Count() == 1)
                 {
                     var commit = new Commit();
-                    commit.Hash = tmp[i];
+                    commit.Id = tmp[i];
                     commit.Author = tmp[i + 1];
                     commit.Email = tmp[i + 2];
                     var dt = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(Convert.ToInt64(tmp[i + 3]));
