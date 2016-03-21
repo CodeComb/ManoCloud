@@ -9,6 +9,7 @@ namespace Mano.Node
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddConfiguration();
         }
 
         public void Configure(IApplicationBuilder app)

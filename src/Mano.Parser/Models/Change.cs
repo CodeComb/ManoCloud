@@ -1,5 +1,7 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Newtonsoft.Json;
 
 namespace Mano.Parser.Models
 {
@@ -13,9 +15,11 @@ namespace Mano.Parser.Models
 
         public long Deletions { get; set; }
 
+        [MaxLength(40)]
         [ForeignKey("Commit")]
-        public Guid CommitId { get; set; }
+        public string CommitId { get; set; }
 
-        public Commit Commit { get; set; }
+        [JsonIgnore]
+        public virtual Commit Commit { get; set; }
     }
 }

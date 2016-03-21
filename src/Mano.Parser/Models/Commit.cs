@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Mano.Parser.Models
 {
@@ -16,7 +17,7 @@ namespace Mano.Parser.Models
         public string Email { get; set; }
 
         public DateTime Time { get; set; }
-
+        
         public virtual ICollection<Change> Changes { get; set; } = new List<Change>();
     }
 }

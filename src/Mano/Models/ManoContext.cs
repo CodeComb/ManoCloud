@@ -23,6 +23,10 @@ namespace Mano.Models
 
         public DbSet<Change> Changes { get; set; }
 
+        public DbSet<Node> Nodes { get; set; }
+
+        public DbSet<Extension> Extensions { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

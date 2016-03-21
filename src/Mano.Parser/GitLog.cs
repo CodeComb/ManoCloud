@@ -36,7 +36,8 @@ namespace Mano.Parser
                     {
                         Additions = Convert.ToInt64(splited[0] == "-" ? "0" : splited[0]),
                         Deletions = Convert.ToInt64(splited[1] == "-" ? "0" : splited[1]),
-                        Path = splited[2]
+                        Path = splited[2],
+                        CommitId = ret.Last().Id
                     });
                 }
             }
@@ -63,8 +64,23 @@ namespace Mano.Parser
 
         public static List<Commit> CloneAndGetLogs(string gitsrc, string cloneto)
         {
-            GitClone.Clone(gitsrc, cloneto);
             var di = new System.IO.DirectoryInfo(cloneto);
+            if (di.GetDirectories().Count() == 0)
+            {
+                GitClone.Clone(gitsrc, cloneto);
+            }
+            else
+            {
+                var proc = new Process();
+                proc.StartInfo.CreateNoWindow = true;
+                proc.StartInfo.WorkingDirectory = di.GetDirectories().First().FullName;
+                proc.StartInfo.FileName = "git";
+                proc.StartInfo.Arguments = "pull";
+                proc.StartInfo.UseShellExecute = false;
+                proc.Start();
+                proc.WaitForExit();
+            }
+            di = new System.IO.DirectoryInfo(cloneto);
             cloneto = di.GetDirectories().First().FullName;
             var ret = GetLogs(cloneto);
             return ret;
