@@ -68,7 +68,7 @@
                 <div id="splash" class="tab_content">
                     <!-- Main page -->
                     <div class="author_info">
-                        <div class="user_desc">@Html.Sanitize(Model.Introduction)</div>
+                        <div class="user_desc">@Html.Sanitize(Html.Marked(Model.Introduction).ToString())</div>
                         <div class="phone_num">
                             <span class="icon"></span>
                             <span class="phone">@Model.PhoneNumber</span>
@@ -94,135 +94,71 @@
                         <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
                         <h2 class="section-title icon2">
                             <span class="icon category1"></span>
-                            Employment
+                            工作经历
                         </h2>
                     </div>
                     <div class="section-content">
-                        <!-- Resume Post -->
-                        <article class="post resume_post resume_post_1 first odd">
-                            <div class="resume_period category1">
-                                <span class="period_from">2005</span>
-                                <div class="period_to">2007</div>
-                            </div>
-                            <div class="extra_wrap">
-                                <div class="resume_header">
-                                    <h4 class="post_title">
-                                        <span class="post_title_icon category1 icon2"></span>
-                                        commodo consequat
-                                    </h4>
-                                    <h5 class="resume_position category1">
-                                        <span class="icon icon2"></span>
-                                        Web Designer
-                                    </h5>
+                        @for (var i = 0; i < Model.Experiences.Count; i++)
+                        {
+                            <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
+                                <div class="resume_period category1">
+                                    <span class="period_from">@Model.Experiences.ElementAt(i).Begin.ToString("YYYY/MM")</span>
+                                    <div class="period_to">@(Model.Experiences.ElementAt(i).End.HasValue ? Model.Experiences.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
                                 </div>
-                                <div class="resume_content">
-                                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+                                <div class="extra_wrap">
+                                    <div class="resume_header">
+                                        <h4 class="post_title">
+                                            <span class="post_title_icon category1 icon2"></span>
+                                            @Model.Experiences.ElementAt(i).Company
+                                        </h4>
+                                        <h5 class="resume_position category1">
+                                            <span class="icon icon2"></span>
+                                            @Model.Experiences.ElementAt(i).Position
+                                        </h5>
+                                    </div>
+                                    <div class="resume_content">
+                                        @Html.Sanitize(Html.Marked(Model.Experiences.ElementAt(i).Hint).ToString())
+                                    </div>
                                 </div>
-                            </div>
-                        </article>
-                        <!-- /Resume Post -->
-                        <!-- Resume Post -->
-                        <article class="post resume_post resume_post_2 even">
-                            <div class="resume_period category1">
-                                <span class="period_from">2009</span>
-                                <div class="period_to">2012</div>
-                            </div>
-                            <div class="extra_wrap">
-                                <div class="resume_header">
-                                    <h4 class="post_title">
-                                        <span class="post_title_icon category1 icon2"></span>
-                                        sed do eiusmod
-                                    </h4>
-                                    <h5 class="resume_position category1">
-                                        <span class="icon icon2"></span>
-                                        senior designer
-                                    </h5>
-                                </div>
-                                <div class="resume_content">
-                                    <p>Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-                                </div>
-                            </div>
-                        </article>
-                        <!-- /Resume Post -->
-                        <!-- Resume Post -->
-                        <article class="post resume_post resume_post_2 odd">
-                            <div class="resume_period category1">
-                                <span class="period_from">2012</span>
-                                <div class="period_to period_present">present</div>
-                            </div>
-                            <div class="extra_wrap">
-                                <div class="resume_header">
-                                    <h4 class="post_title">
-                                        <span class="post_title_icon category1 icon2"></span>
-                                        commodo consequat
-                                    </h4>
-                                    <h5 class="resume_position category1">
-                                        <span class="icon icon2"></span>
-                                        art director
-                                    </h5>
-                                </div>
-                                <div class="resume_content">
-                                    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
-                                </div>
-                            </div>
-                        </article>
-                        <!-- /Resume Post -->
+                            </article>
+                        }
                     </div>
                     <div class="section-header opened">
                         <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
                         <h2 class="section-title icon2">
                             <span class="icon category2"></span>
-                            Education
+                            教育经历
                         </h2>
                     </div>
                     <div class="section-content">
                         <!-- Resume Post -->
-                        <article class="post resume_post resume_post_2 odd">
-                            <div class="resume_period category2">
-                                <span class="period_from">2002</span>
-                                <div class="period_to">2005</div>
-                            </div>
-                            <div class="extra_wrap">
-                                <div class="resume_header">
-                                    <h4 class="post_title">
-                                        <span class="post_title_icon category2 icon3"></span>
-                                        consectetur adipisicing elit
-                                    </h4>
-                                    <h5 class="resume_position category2">
-                                        <span class="icon icon2"></span>
-                                        Web design
-                                    </h5>
+                        @for (var i = 0; i < Model.Educations.Count; i++)
+                        {
+                            <article class="post resume_post @(i%2 == 0 ? "odd":"even")">
+                                <div class="resume_period category2">
+                                    <span class="period_from">@Model.Educations.ElementAt(i).Begin.ToString("YYYY/MM")</span>
+                                    <div class="period_to">@(Model.Educations.ElementAt(i).End.HasValue? Model.Educations.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
                                 </div>
-                                <div class="resume_content">
-                                    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit.</p>
+                                <div class="extra_wrap">
+                                    <div class="resume_header">
+                                        <h4 class="post_title">
+                                            <span class="post_title_icon category2 icon3"></span>
+                                            @Model.Educations.ElementAt(i).School
+                                        </h4>
+                                        <h5 class="resume_position category2">
+                                            <span class="icon icon2"></span>
+                                            @Model.Educations.ElementAt(i).Profession
+                                        </h5>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(Model.Educations.ElementAt(i).Hint))
+                                    {
+                                        <div class="resume_content">
+                                            @Html.Sanitize(Html.Marked(Model.Educations.ElementAt(i).Hint).ToString())
+                                        </div>
+                                    }
                                 </div>
-                            </div>
-                        </article>
-                        <!-- /Resume Post -->
-                        <!-- Resume Post -->
-                        <article class="post resume_post resume_post_2 even">
-                            <div class="resume_period category2">
-                                <span class="period_from">2007</span>
-                                <div class="period_to">2009</div>
-                            </div>
-                            <div class="extra_wrap">
-                                <div class="resume_header">
-                                    <h4 class="post_title">
-                                        <span class="post_title_icon category2 icon3"></span>
-                                        sed do eiusmod
-                                    </h4>
-                                    <h5 class="resume_position category2">
-                                        <span class="icon icon2"></span>
-                                        Graphic design
-                                    </h5>
-                                </div>
-                                <div class="resume_content">
-                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                                </div>
-                            </div>
-                        </article>
-                        <!-- /Resume Post -->
-                        <!-- Resume Post -->
+                            </article>
+                        }
                     </div>
                     <div class="section-header widgets_section opened">
                         <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
@@ -269,56 +205,6 @@
                                         </span>
                                     </div>
                                 }
-                                <div class="skills_row odd first">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: ;">
-                                            <span class="caption_wrap">
-                                                <span class="caption">Adobe Photoshop/</span>
-                                                <span class="value">99%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: ">
-                                            <span class="caption_wrap">
-                                                <span class="caption">Adobe Illustrator/</span>
-                                                <span class="value">80%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: ;">
-                                            <span class="caption_wrap">
-                                                <span class="caption">Adobe Indesign/</span>
-                                                <span class="value">70%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: ;">
-                                            <span class="caption_wrap">
-                                                <span class="caption">Corel Draw/</span>
-                                                <span class="value">60%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: ;">
-                                            <span class="caption_wrap">
-                                                <span class="caption">3D Max/</span>
-                                                <span class="value">50%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
                             </div>
                         </aside>
                         <!-- /Skills widget -->

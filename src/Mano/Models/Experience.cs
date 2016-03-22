@@ -10,7 +10,7 @@ namespace Mano.Models
         public Guid Id { get; set; }
 
         [MaxLength(128)]
-        public string Title { get; set; }
+        public string Company { get; set; }
 
         [MaxLength(64)]
         public string Position { get; set; }

@@ -15,6 +15,9 @@ namespace Mano.Models
         [MaxLength(128)]
         public string School { get; set; }
 
+        [MaxLength(128)]
+        public string Profession { get; set; }
+
         public DateTime Begin { get; set; }
 
         public DateTime? End { get; set; }
@@ -30,5 +33,7 @@ namespace Mano.Models
         public File Certificate { get; set; }
 
         public bool Verified { get; set; }
+
+        public string Hint { get; set; }
     }
 }
