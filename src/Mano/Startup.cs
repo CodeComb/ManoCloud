@@ -8,6 +8,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Mano.Models;
 
 namespace Mano
@@ -40,10 +41,14 @@ namespace Mano
             services.AddSmartCookies();
             services.AddSignalR();
             services.AddAntiXss();
+            services.AddConfiguration();
         }
 
-        public async void Configure(IApplicationBuilder app)
+        public async void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
+            logger.AddConsole();
+            logger.MinimumLevel = LogLevel.Information;
+
             app.UseAutoAjax();
             app.UseIdentity();
             app.UseStaticFiles();

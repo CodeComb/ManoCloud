@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="ShareX is an open source program that lets you take screenshots or screencasts of any selected area with a single key, save them in your clipboard, hard disk or instantly upload them to over 30 different file hosting services.">
     <link rel="shortcut icon" href="/favicon.ico">
-    <title>ShareX - Take screenshots or screencasts, annotate, upload and share URL in clipboard</title>
+    <title>@ViewBag.Title - Mano Cloud</title>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel="stylesheet" type="text/css">
     <link href="~/assets/default/styles/octicons.css" rel="stylesheet">
     <link href="~/assets/default/styles/bootstrap.min.css" rel="stylesheet">
@@ -41,13 +41,13 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.IsSignedIn())
                     {
-                        <li><a asp-action="Login" asp-controller="Account">登录</a></li>
-                        <li><a asp-action="Register" asp-controller="Account">注册</a></li>
+                        <li><a asp-action="Login" asp-controller="Account">@User.Current.Name</a></li>
+                        <li><a href="javascript:;">注销</a></li>
                     }
                     else
                     {
-                        <li><a asp-action="Login" asp-controller="Account">@User.Current.Name</a></li>
-                        <li><a href="javascript:;">注销</a></li>
+                        <li><a asp-action="Login" asp-controller="Account">登录</a></li>
+                        <li><a asp-action="Register" asp-controller="Account">注册</a></li>
                     }
                 </ul>
             </div>
