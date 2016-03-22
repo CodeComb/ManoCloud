@@ -1,0 +1,127 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ShareX is an open source program that lets you take screenshots or screencasts of any selected area with a single key, save them in your clipboard, hard disk or instantly upload them to over 30 different file hosting services.">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title>ShareX - Take screenshots or screencasts, annotate, upload and share URL in clipboard</title>
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel="stylesheet" type="text/css">
+    <link href="~/assets/default/styles/octicons.css" rel="stylesheet">
+    <link href="~/assets/default/styles/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/default/styles/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="screen">
+    <link href="~/assets/default/styles/site.css" rel="stylesheet">
+    <link href="https://plus.google.com/110225361399361277394" rel="publisher">
+
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+</head>
+<body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a asp-action="Index" asp-controller="Home">首页</a></li>
+                    <li><a asp-action="Index" asp-controller="Enterprise">企业</a></li>
+                    <li><a asp-action="Index" asp-controller="Coder">码农</a></li>
+                    <li><a asp-action="Index" asp-controller="FAQ">FAQ</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    @if (User.IsSignedIn())
+                    {
+                        <li><a asp-action="Login" asp-controller="Account">登录</a></li>
+                        <li><a asp-action="Register" asp-controller="Account">注册</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-action="Login" asp-controller="Account">@User.Current.Name</a></li>
+                        <li><a href="javascript:;">注销</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="jumbotronf">
+        <div class="container">
+            <h1 class="sharex-header">Mano Cloud</h1>
+            <p>专为码农们设计的云端简历平台。</p>
+            <p>
+                <a asp-action="Index" asp-controller="Account" class="sharex-download btnd btnd-1 btnd-1d">Getting Started</a>
+                <a href="https://github.com/CodeComb/ManoCloud" title="GitHub" class="btnd btnd-1 btnd-1d">Source</a>
+                <a href="#" class="btnd btnd-1 btnd-1d">Donate</a>
+            </p>
+            <p class="release-info"></p>
+        </div>
+    </div>
+    <div class="after-header">
+        <p>根据您的第三方Git源，获取您的项目经历，自动生成您所掌握的技术以及代码量，自选模板，生成精美在线云简历！</p>
+    </div>
+    <div id="sharex-screenshot" class="visible-md visible-lg"><img src="img/ShareX_Screenshot.png" alt="ShareX screenshot" /></div>
+    <div class="feature">
+        <div class="container">
+            <div class="row row-margin-bottom">
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-heart icon-margin-bottom"></span></p>
+                    <p>免费、开源、可绑定域名、无广告</p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-device-desktop icon-margin-bottom"></span></p>
+                    <p>兼容IE、Chrome、手机版等</p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-device-camera icon-margin-bottom"></span></p>
+                    <p>拖拽上传图片、丰富您的简历内容</p>
+                </div>
+            </div>
+            <div class="row row-margin-bottom">
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-zap icon-margin-bottom"></span></p>
+                    <p>快捷高效、分布式引擎</p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-cloud-upload icon-margin-bottom"></span></p>
+                    <p>云端存储，保障您的简历高可用度</p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-globe icon-margin-bottom"></span></p>
+                    <p>企业、码农信息平台</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-tools icon-margin-bottom"></span></p>
+                    <p>多套模板风格供您选择</p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-keyboard icon-margin-bottom"></span></p>
+                    <p>支持Markdown语法</p>
+                </div>
+                <div class="col-md-4 col-sm-4">
+                    <p><span class="mega-octicon octicon-star icon-margin-bottom"></span></p>
+                    <p>智能分析，可为您统计全球绝大多数编程语言与技术</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="container">
+            <p>Copyright &copy; 2016 Mano Cloud - Harbin Code Comb Technology Co., Ltd.</p>
+        </div>
+    </footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.fancybox.pack.js?v=2.1.5"></script>
+</body>
+</html>
