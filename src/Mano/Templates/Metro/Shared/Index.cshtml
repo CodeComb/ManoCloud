@@ -1,8 +1,25 @@
-﻿
+﻿@model User
+@{
+    ViewBag.Title = Model.Name;
+    var Colors = new string[]
+    {
+        "rgb(124, 175, 0)",
+        "rgb(168, 211, 36)",
+        "rgb(22, 165, 215)",
+        "rgb(22, 165, 215)",
+        "rgb(73, 124, 240)",
+        "rgb(152, 118, 252)",
+        "rgb(240, 73, 73)",
+        "rgb(255, 143, 69)",
+        "rgb(249, 196, 54)"
+    };
+    var ProgrammingSkills = Model.Skills.Where(x => x.Type == TechnologyType.编程语言).ToList();
+    var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言).ToList();
+}
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Flat CV</title>
+    <title>@ViewBag.Title - 个人简历</title>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
     <link rel="stylesheet" href="~/assets/metro/styles/style.css">
@@ -27,14 +44,15 @@
                 <li class="splash">
                     <a href="#splash">
                         <div id="profile_photo">
-                            <img src="images/user_photo.jpg" height="150" width="150" alt="Title Example">
+                            <img src="/file/download/@Model.AvatarId" height="150" width="150" alt="Title Example">
                         </div>
                         <div id="profile_name">
                             <div id="author_name">
                                 <div class="profile_inner">
                                     <!-- You can edit name and lastname -->
-                                    <div class="name">John Johnson</div>
-                                    <div class="pos">Graphic &amp; Web Designer</div>
+                                    <div class="name">@Model.Name</div>
+                                    <div class="pos">@Model.Position</div>
+                                    <div class="pos">@Model.Province @Model.City</div>
                                 </div>
                             </div>
                         </div>
@@ -50,10 +68,10 @@
                 <div id="splash" class="tab_content">
                     <!-- Main page -->
                     <div class="author_info">
-                        <div class="user_desc">Stylish, flat, easy customizable and awesome looking wordpress theme with original icons!</div>
+                        <div class="user_desc">@Html.Sanitize(Model.Introduction)</div>
                         <div class="phone_num">
                             <span class="icon"></span>
-                            <span class="phone">+123 456 789 111</span>
+                            <span class="phone">@Model.PhoneNumber</span>
                         </div>
                         <div class="addition">
                             <span class="email"><a class="__cf_email__" href="/cdn-cgi/l/email-protection" data-cfemail="9fd5b1f5f0f7f1ecf0f1dff8f2fef6f3b1fcf0f2">[email&#160;protected]</a>
@@ -216,78 +234,44 @@
                     <div class="skills_sidebar_section">
                         <!-- Skills widget -->
                         <aside class="widget-even widget widget_skills">
-                            <h3 class="widget_title">Programming Skills</h3>
+                            <h3 class="widget_title">编程语言技能</h3>
                             <div class="widget_inner">
-                                <div class="skills_row odd first">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(124, 175, 0);">
-                                            <span class="caption_wrap">
-                                                <span class="caption">Wordpress/</span>
-                                                <span class="value">90%</span>
+                                @for (var i = 0; i < ProgrammingSkills.Count; i++)
+                                {
+                                    <div class="skills_row @(i == 0 ? "odd first" : "even")">
+                                        <span class="progressbar">
+                                            <span class="progress" style="background-color: @Colors[i % Colors.Length]">
+                                                <span class="caption_wrap">
+                                                    <span class="caption">@Model.Skills.ElementAt(i).Title / @Model.Skills.ElementAt(i).Display / @Model.Skills.ElementAt(i).Count 行</span>
+                                                    <span class="value hidden">@Html.PercentP(Model.Skills.ElementAt(i).TotalDays)</span>
+                                                </span>
                                             </span>
                                         </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(168, 211, 36);">
-                                            <span class="caption_wrap">
-                                                <span class="caption">PHP/</span>
-                                                <span class="value">80%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(80, 192, 233);">
-                                            <span class="caption_wrap">
-                                                <span class="caption">HTML/</span>
-                                                <span class="value">99%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(22, 165, 215);">
-                                            <span class="caption_wrap">
-                                                <span class="caption">CSS/</span>
-                                                <span class="value">90%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(73, 124, 240);">
-                                            <span class="caption_wrap">
-                                                <span class="caption">MySQL/</span>
-                                                <span class="value">70%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
-                                <div class="skills_row even">
-                                    <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(152, 118, 252);">
-                                            <span class="caption_wrap">
-                                                <span class="caption">JavaScript/</span>
-                                                <span class="value">60%</span>
-                                            </span>
-                                        </span>
-                                    </span>
-                                </div>
+                                    </div>
+                                }
                             </div>
                         </aside>
                         <!-- /Skills widget -->
                         <!-- Skills widget -->
                         <aside class="widget-odd widget widget_skills">
-                            <h3 class="widget_title">Graphic Skills</h3>
+                            <h3 class="widget_title">其他技能</h3>
                             <div class="widget_inner">
+                                @for (var i = 0; i < ProgrammingSkills.Count; i++)
+                                {
+                                    <div class="skills_row @(i == 0 ? "odd first" : "even")">
+                                        <span class="progressbar">
+                                            <span class="progress" style="background-color: @Colors[i % Colors.Length]">
+                                                <span class="caption_wrap">
+                                                    <span class="caption">@Model.Skills.ElementAt(i).Title / @Model.Skills.ElementAt(i).Display</span>
+                                                    <span class="value hidden">@Html.PercentF(Model.Skills.ElementAt(i).TotalDays)</span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                }
                                 <div class="skills_row odd first">
                                     <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(152, 118, 252);">
+                                        <span class="progress" style="background-color: ;">
                                             <span class="caption_wrap">
                                                 <span class="caption">Adobe Photoshop/</span>
                                                 <span class="value">99%</span>
@@ -297,7 +281,7 @@
                                 </div>
                                 <div class="skills_row even">
                                     <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(196, 118, 245);">
+                                        <span class="progress" style="background-color: ">
                                             <span class="caption_wrap">
                                                 <span class="caption">Adobe Illustrator/</span>
                                                 <span class="value">80%</span>
@@ -307,7 +291,7 @@
                                 </div>
                                 <div class="skills_row even">
                                     <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(240, 73, 73);">
+                                        <span class="progress" style="background-color: ;">
                                             <span class="caption_wrap">
                                                 <span class="caption">Adobe Indesign/</span>
                                                 <span class="value">70%</span>
@@ -317,7 +301,7 @@
                                 </div>
                                 <div class="skills_row even">
                                     <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(255, 143, 69);">
+                                        <span class="progress" style="background-color: ;">
                                             <span class="caption_wrap">
                                                 <span class="caption">Corel Draw/</span>
                                                 <span class="value">60%</span>
@@ -327,7 +311,7 @@
                                 </div>
                                 <div class="skills_row even">
                                     <span class="progressbar">
-                                        <span class="progress" style="background-color: rgb(249, 196, 54);">
+                                        <span class="progress" style="background-color: ;">
                                             <span class="caption_wrap">
                                                 <span class="caption">3D Max/</span>
                                                 <span class="value">50%</span>

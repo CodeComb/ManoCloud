@@ -1,17 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNet.Identity.EntityFramework;
+using CodeComb.AspNet.Upload.Models;
 
 namespace Mano.Models
 {
     public class User : IdentityUser<long>
     {
         public Sex Sex { get; set; }
-
-        public string Phone { get; set; }
 
         public string City { get; set; }
 
@@ -41,8 +39,24 @@ namespace Mano.Models
         [MaxLength(64)]
         public string Diploma { get; set; }
 
+        [MaxLength(64)]
+        public string Position { get; set; }
+
+        [ForeignKey("Avatar")]
+        public Guid? AvatarId { get; set; }
+
+        public File Avatar { get; set; }
+
         public virtual ICollection<Domain> Domains { get; set; } = new List<Domain>();
 
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();
+
+        public virtual ICollection<Skill> Skills { get; set; } = new List<Skill>();
+
+        public virtual ICollection<Education> Educations { get; set; } = new List<Education>();
+
+        public virtual ICollection<Experience> Experiences { get; set; } = new List<Experience>();
+
+        public virtual ICollection<Certification> Certifications { get; set; } = new List<Certification>();
     }
 }

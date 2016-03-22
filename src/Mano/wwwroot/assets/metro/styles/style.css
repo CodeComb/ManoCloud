@@ -23,11 +23,11 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 }
  @font-face {
     font-family: 'FlatCV'; 
-    src: url('../assets/FlatCV.eot');
-    src: url('../assets/FlatCV.eot?#iefix') format('embedded-opentype'),
-         url('../assets/FlatCV.woff') format('woff'),
-         url('../assets/FlatCV.ttf') format('truetype'),
-         url('../assets/FlatCV.svg#flatcvregular') format('svg');
+    src: url('../fonts/FlatCV.eot');
+    src: url('../fonts/FlatCV.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/FlatCV.woff') format('woff'),
+         url('../fonts/FlatCV.ttf') format('truetype'),
+         url('../fonts/FlatCV.svg#flatcvregular') format('svg');
     font-weight: normal;
     font-style: normal;
 }		

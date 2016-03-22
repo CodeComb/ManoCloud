@@ -129,6 +129,9 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".opa", Technology = "OPA", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".chpl", Technology = "Chapel", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".tex", Technology = "Tex", Type = TechnologyType.编程语言 });
+                DB.Extensions.Add(new Extension { Id = ".psd", Technology = "Photoshop", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".swf", Technology = "Adobe Flash", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".ai", Technology = "Adobe Illustrator", Type = TechnologyType.工具或框架 });
             }
         }
     }

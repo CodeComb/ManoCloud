@@ -10,11 +10,12 @@ namespace Mano.Models
 
         [MaxLength(64)]
         public string DomainName { get; set; }
+        
+        [ForeignKey("User")]
+        public long UserId { get; set; }
 
-        [MaxLength(64)]
-        [ForeignKey("Resume")]
-        public string ResumeId { get; set; }
+        public User User { get; set; }
 
-        public Resume Resume { get; set; }
+        public bool Default { get; set; }
     }
 }

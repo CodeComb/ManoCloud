@@ -12,7 +12,7 @@ namespace Mano.Models
         public string Title { get; set; }
 
         [MaxLength(64)]
-        public string Type { get; set; }
+        public TechnologyType Type { get; set; }
 
         public bool UpdateFromGit { get; set; }
 
@@ -25,6 +25,32 @@ namespace Mano.Models
 
         [ForeignKey("User")]
         public long UserId { get; set; }
+
+        public DateTime Begin { get; set; }
+
+        [NotMapped]
+        public long TotalDays
+        {
+            get
+            {
+                return (long)(DateTime.Now - Begin).TotalDays;
+            }
+        }
+
+        [NotMapped]
+        public string Display
+        {
+            get
+            {
+                if (TotalDays < 1)
+                    return "1天";
+                if (TotalDays < 30)
+                    return TotalDays + "天";
+                if (TotalDays < 365)
+                    return (TotalDays / 30).ToString("0.0") + "个月";
+                return (TotalDays / 365).ToString("0.0") + "年";
+            }
+        }
 
         public virtual User User { get; set; }
     }

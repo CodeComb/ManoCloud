@@ -39,6 +39,7 @@ namespace Mano
             services.AddSmartUser<User, long>();
             services.AddSmartCookies();
             services.AddSignalR();
+            services.AddAntiXss();
         }
 
         public void Configure(IApplicationBuilder app)
