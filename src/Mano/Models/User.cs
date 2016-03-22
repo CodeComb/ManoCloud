@@ -61,5 +61,7 @@ namespace Mano.Models
         public virtual ICollection<Experience> Experiences { get; set; } = new List<Experience>();
 
         public virtual ICollection<Certification> Certifications { get; set; } = new List<Certification>();
+
+        public virtual ICollection<Email> Emails { get; set; } = new List<Email>();
     }
 }

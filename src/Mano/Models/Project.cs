@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Mano.Parser.Models;
 
 namespace Mano.Models
 {
@@ -38,5 +40,7 @@ namespace Mano.Models
         public DateTime LastPullTime { get; set; }
 
         public DateTime LastEditTime { get; set; }
+
+        public virtual ICollection<Commit> Commits { get; set; } = new List<Commit>();
     }
 }

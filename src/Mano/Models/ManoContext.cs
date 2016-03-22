@@ -33,6 +33,8 @@ namespace Mano.Models
 
         public DbSet<Extension> Extensions { get; set; }
 
+        public DbSet<Email> Emails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -60,6 +62,12 @@ namespace Mano.Models
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.Email);
                 e.HasIndex(x => x.Author);
+            });
+
+            builder.Entity<Email>(e =>
+            {
+                e.HasIndex(x => x.Verified);
+                e.HasIndex(x => x.EmailAddress);
             });
         }
     }
