@@ -27,15 +27,17 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
     <link rel="stylesheet" href="~/assets/metro/styles/style.css">
     <link rel="stylesheet" href="~/assets/metro/styles/responsive.css">
-    <link rel="stylesheet" href="~/assets/metro/styles/prettyphoto/css/prettyPhoto.css">
-    <link rel="stylesheet" href="~/assets/metro/styles/colorpicker/colorpicker.css">
+    <link rel="stylesheet" href="~/assets/metro/styles/prettyPhoto.css">
+    <link rel="stylesheet" href="~/assets/metro/styles/colorpicker.css">
     <script src="~/assets/metro/scripts/jquery-1.10.2.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.tools.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.easing.js"></script>
     <script src="~/assets/metro/scripts/jquery.isotope.min.js"></script>
     <script src="~/assets/metro/scripts/main.js"></script>
-    <script src="~/assets/metro/scripts/prettyphoto/jquery.prettyPhoto.js"></script>
-    <script src="~/assets/metro/scripts/colorpicker/colorpicker.js"></script>
+    <script src="~/assets/metro/scripts/jquery.prettyPhoto.js"></script>
+    <script src="~/assets/metro/scripts/colorpicker.js"></script>
+    <script src="~/assets/metro/scripts/modernizr.min.js"></script>
+    <script src="~/assets/metro/scripts/chart.js"></script>
     <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=g6DcirKK7FlGGGoiLwslU9kL"></script>
     <!--[if lt IE 9]>
         <script src="/assets/metro/scripts/html5shiv.js"></script>
@@ -248,8 +250,11 @@
                                     </div>
                                     <div class="resume_content">
                                         @if (Projects.ElementAt(i).Verified)
-                                        { 
-
+                                        {
+                                            <canvas id="radar-@Projects.ElementAt(i).Id" width="450" height="300"></canvas>
+                                            <script>
+                                                new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.Radar(Projects.ElementAt(i)), { animation: Modernizr.canvas });
+                                            </script>
                                         }
                                         @Html.Sanitize(Html.Marked(Projects.ElementAt(i).Hint).ToString())
                                     </div>

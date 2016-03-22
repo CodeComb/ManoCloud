@@ -27,6 +27,7 @@ namespace Mano.Controllers
             if (!domain.Default)
                 return Redirect("//" + domain.User.Domains.First(x => x.Default).DomainName);
             var user = DB.Users
+                .Include(x => x.Emails)
                 .Include(x => x.Skills)
                 .Include(x => x.Experiences)
                 .Include(x => x.Certifications)

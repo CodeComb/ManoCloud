@@ -19,5 +19,10 @@ namespace Mano.Helpers
             var days = self.ViewBag.TotalF;
             return (Days * 100 / days).ToString("0.00") + '%';
         }
+
+        public static string Percent<TModel>(this IHtmlHelper<TModel> self, long Max, long Actual)
+        {
+            return (Actual * 100 / Max).ToString("0.00") + '%';
+        }
     }
 }
