@@ -47,6 +47,9 @@ namespace Mano.Models
 
         public File Avatar { get; set; }
 
+        [MaxLength(32)]
+        public string Template { get; set; }
+
         public virtual ICollection<Domain> Domains { get; set; } = new List<Domain>();
 
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();

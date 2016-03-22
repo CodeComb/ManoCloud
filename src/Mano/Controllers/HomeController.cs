@@ -14,7 +14,10 @@ namespace Mano.Controllers
         {
             var host = Request.Host.ToString();
             if (host == Config["Host"])
+            {
+                Cookies["ASPNET_TEMPLATE"] = "Default";
                 return View();
+            }
             var domain = DB.Domains
                 .Include(x => x.User)
                 .ThenInclude(x => x.Domains)
@@ -30,12 +33,17 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Single(x => x.Id == domain.UserId);
+
+            Cookies["ASPNET_TEMPLATE"] = user.Template ?? "Metro";
+
             ViewBag.TotalP = user.Skills
                 .Where(x => x.Type == Models.TechnologyType.编程语言)
                 .Max(x => x.TotalDays);
             ViewBag.TotalF = user.Skills
                 .Where(x => x.Type != Models.TechnologyType.编程语言)
                 .Max(x => x.TotalDays);
+
+            return View(user);
         }
     }
 }
