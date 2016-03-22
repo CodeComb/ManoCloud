@@ -29,7 +29,7 @@ namespace Mano
                 x.Password.RequireUppercase = false;
                 x.User.AllowedUserNameCharacters = null;
             })
-                      .AddEntityFrameworkStores<ManoContext>()
+                      .AddEntityFrameworkStores<ManoContext, long>()
                       .AddDefaultTokenProviders();
 
             services.AddMvc()
@@ -42,13 +42,15 @@ namespace Mano
             services.AddAntiXss();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public async void Configure(IApplicationBuilder app)
         {
             app.UseAutoAjax();
             app.UseIdentity();
             app.UseStaticFiles();
             app.UseSignalR();
             app.UseMvcWithDefaultRoute();
+
+            await SampleData.InitDB(app.ApplicationServices);
         }
 
         public static void Main(string[] args) => WebApplication.Run<Startup>(args);

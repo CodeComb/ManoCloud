@@ -75,7 +75,6 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".flv", Technology = "视频", Type = TechnologyType.其他 });
                 DB.Extensions.Add(new Extension { Id = ".mp4", Technology = "视频", Type = TechnologyType.其他 });
                 DB.Extensions.Add(new Extension { Id = ".mov", Technology = "视频", Type = TechnologyType.其他 });
-                DB.Extensions.Add(new Extension { Id = ".wmv", Technology = "视频", Type = TechnologyType.其他 });
                 DB.Extensions.Add(new Extension { Id = ".m4v", Technology = "视频", Type = TechnologyType.其他 });
                 DB.Extensions.Add(new Extension { Id = ".rm", Technology = "视频", Type = TechnologyType.其他 });
                 DB.Extensions.Add(new Extension { Id = ".rmvb", Technology = "视频", Type = TechnologyType.其他 });
@@ -107,6 +106,8 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".xcodeproj", Technology = "X Code", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".sln", Technology = "Visual Studio", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".vbp", Technology = "Visual Basic 6.0", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".vbproj", Technology = "Visual Studio", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".csproj", Technology = "Visual Studio", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".xproj", Technology = "ASP.Net Core 1.0", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".xaml", Technology = "Windows Presentation Foundation", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".axml", Technology = "Android Layout", Type = TechnologyType.工具或框架 });
@@ -132,6 +133,8 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".psd", Technology = "Photoshop", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".swf", Technology = "Adobe Flash", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".ai", Technology = "Adobe Illustrator", Type = TechnologyType.工具或框架 });
+
+                DB.SaveChanges();
             }
         }
     }
