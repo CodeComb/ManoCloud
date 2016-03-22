@@ -253,7 +253,7 @@
                                         {
                                             <canvas id="radar-@Projects.ElementAt(i).Id" width="450" height="300"></canvas>
                                             <script>
-                                                new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.Radar(Projects.ElementAt(i)), { animation: Modernizr.canvas });
+                                                new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.ProjectRadar(Projects.ElementAt(i)), { animation: Modernizr.canvas });
                                             </script>
                                         }
                                         @Html.Sanitize(Html.Marked(Projects.ElementAt(i).Hint).ToString())
