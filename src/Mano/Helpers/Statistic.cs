@@ -26,8 +26,11 @@ namespace Mano.Helpers
                 .ToList();
             var DB = self.ViewContext.HttpContext.RequestServices.GetRequiredService<ManoContext>();
             var map = DB.Extensions
-                .Where(x => extensions.Contains(x.Id))
+                .Where(x => extensions.Contains(x.Id) && (x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式))
                 .ToList();
+            var dic = map
+                .Select(x => new { Key = x.Id, Value = x.Type })
+                .ToDictionary(x => x.Key);
             radar.labels = map
                 .Select(x => x.Technology)
                 .ToList();
@@ -46,11 +49,22 @@ namespace Mano.Helpers
                 pointColor = "rgba(220,220,220,1)",
                 pointStrokeColor = "#fff"
             };
-            dataset1.data = project.Commits
-                .SelectMany(x => x.Changes)
-                .GroupBy(x => Path.GetExtension(x.Path))
-                .Select(x => x.Sum(y => y.Additions + y.Deletions))
-                .ToList();
+            foreach (var x in map)
+            {
+                var cnt = project.Commits
+                    .SelectMany(y => y.Changes)
+                    .Where(y => x.Type == dic[Path.GetExtension(y.Path)].Value)
+                    .Sum(y => y.Additions + y.Deletions);
+                dataset1.data.Add(cnt);
+            }
+            if (radar.labels.Contains("其他"))
+            {
+                var cnt = project.Commits
+                    .SelectMany(y => y.Changes)
+                    .Where(y => !map.Select(x => x.Id).Contains(Path.GetExtension(y.Path)))
+                    .Sum(y => y.Additions + y.Deletions);
+                dataset1.data.Add(cnt);
+            }
             var dataset2 = new RadarChartDataSet
             {
                 fillColor = "rgba(151,187,205,0.5)",
@@ -63,7 +77,7 @@ namespace Mano.Helpers
                 var cnt = project.Commits
                     .Where(y => emails.Contains(y.Email))
                     .SelectMany(y => y.Changes)
-                    .Where(y => Path.GetExtension(y.Path) == x.Id)
+                    .Where(y => x.Type == dic[Path.GetExtension(y.Path)].Value)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset2.data.Add(cnt);
             }
@@ -95,8 +109,11 @@ namespace Mano.Helpers
                 .ToList();
             var DB = self.ViewContext.HttpContext.RequestServices.GetRequiredService<ManoContext>();
             var map = DB.Extensions
-                .Where(x => extensions.Contains(x.Id))
+                .Where(x => extensions.Contains(x.Id) && (x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式))
                 .ToList();
+            var dic = map
+                .Select(x => new { Key = x.Id, Value = x.Type })
+                .ToDictionary(x => x.Key);
             radar.labels = map
                 .Select(x => x.Technology)
                 .ToList();
@@ -115,12 +132,24 @@ namespace Mano.Helpers
                 pointColor = "rgba(220,220,220,1)",
                 pointStrokeColor = "#fff"
             };
-            dataset1.data = projects
-                .SelectMany(x => x.Commits)
-                .SelectMany(x => x.Changes)
-                .GroupBy(x => Path.GetExtension(x.Path))
-                .Select(x => x.Sum(y => y.Additions + y.Deletions))
-                .ToList();
+            foreach (var x in map)
+            {
+                var cnt = projects
+                    .SelectMany(y => y.Commits)
+                    .SelectMany(y => y.Changes)
+                    .Where(y => x.Type == dic[Path.GetExtension(y.Path)].Value)
+                    .Sum(y => y.Additions + y.Deletions);
+                dataset1.data.Add(cnt);
+            }
+            if (radar.labels.Contains("其他"))
+            {
+                var cnt = projects
+                    .SelectMany(y => y.Commits)
+                    .SelectMany(y => y.Changes)
+                    .Where(y => !map.Select(x => x.Id).Contains(Path.GetExtension(y.Path)))
+                    .Sum(y => y.Additions + y.Deletions);
+                dataset1.data.Add(cnt);
+            }
             var dataset2 = new RadarChartDataSet
             {
                 fillColor = "rgba(151,187,205,0.5)",
@@ -134,7 +163,7 @@ namespace Mano.Helpers
                     .SelectMany(y => y.Commits)
                     .Where(y => emails.Contains(y.Email))
                     .SelectMany(y => y.Changes)
-                    .Where(y => Path.GetExtension(y.Path) == x.Id)
+                    .Where(y => x.Type == dic[Path.GetExtension(y.Path)].Value)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset2.data.Add(cnt);
             }
