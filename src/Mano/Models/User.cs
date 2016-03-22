@@ -25,6 +25,8 @@ namespace Mano.Models
 
         public string Address { get; set; }
 
+        public DateTime Birthday { get; set; }
+
         [MaxLength(18)]
         public string PRCID { get; set; }
 

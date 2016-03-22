@@ -21,9 +21,12 @@ namespace Mano.Models
         [MaxLength(256)]
         public string ProjectUrl { get; set; }
 
+        [MaxLength(32)]
+        public string Position { get; set; }
+
         public DateTime Begin { get; set; }
 
-        public DateTime End { get; set; }
+        public DateTime? End { get; set; }
 
         [ForeignKey("User")]
         public long UserId { get; set; }
@@ -40,6 +43,10 @@ namespace Mano.Models
         public DateTime LastPullTime { get; set; }
 
         public DateTime LastEditTime { get; set; }
+
+        public string Hint { get; set; }
+
+        public bool Verified { get; set; }
 
         public virtual ICollection<Commit> Commits { get; set; } = new List<Commit>();
     }

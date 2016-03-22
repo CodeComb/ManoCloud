@@ -49,6 +49,8 @@ namespace Mano.Models
             builder.Entity<Project>(e =>
             {
                 e.HasIndex(x => x.Type);
+                e.HasIndex(x => x.Begin);
+                e.HasIndex(x => x.End);
             });
 
             builder.Entity<Change>(e =>
@@ -68,6 +70,23 @@ namespace Mano.Models
             {
                 e.HasIndex(x => x.Verified);
                 e.HasIndex(x => x.EmailAddress);
+            });
+
+            builder.Entity<Skill>(e =>
+            {
+                e.HasIndex(x => x.Begin);
+            });
+
+            builder.Entity<Experience>(e =>
+            {
+                e.HasIndex(x => x.Begin);
+                e.HasIndex(x => x.End);
+            });
+
+            builder.Entity<Education>(e =>
+            {
+                e.HasIndex(x => x.Begin);
+                e.HasIndex(x => x.End);
             });
         }
     }

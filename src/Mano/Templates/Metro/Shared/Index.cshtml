@@ -56,7 +56,7 @@
                                     <!-- You can edit name and lastname -->
                                     <div class="name">@Model.Name</div>
                                     <div class="pos">@Model.Position</div>
-                                    <div class="pos">@Model.Province @Model.City</div>
+                                    <div class="pos">@(DateTime.Now.Year - Model.Birthday.Year)岁 @Model.Province @Model.City</div>
                                 </div>
                             </div>
                         </div>
@@ -232,22 +232,26 @@
                         {
                             <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
                                 <div class="resume_period category1">
-                                    <span class="period_from">@Experiences.ElementAt(i).Begin.ToString("YYYY/MM")</span>
-                                    <div class="period_to">@(Experiences.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
+                                    <span class="period_from">@Projects.ElementAt(i).Begin.ToString("YYYY/MM")</span>
+                                    <div class="period_to">@(Projects.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
                                 </div>
                                 <div class="extra_wrap">
                                     <div class="resume_header">
                                         <h4 class="post_title">
                                             <span class="post_title_icon category1 icon2"></span>
-                                            @Experiences.ElementAt(i).Company
+                                            @Projects.ElementAt(i).Tilte
                                         </h4>
                                         <h5 class="resume_position category1">
                                             <span class="icon icon2"></span>
-                                            @Experiences.ElementAt(i).Position
+                                            @Projects.ElementAt(i).Position
                                         </h5>
                                     </div>
                                     <div class="resume_content">
-                                        @Html.Sanitize(Html.Marked(Experiences.ElementAt(i).Hint).ToString())
+                                        @if (Projects.ElementAt(i).Verified)
+                                        { 
+
+                                        }
+                                        @Html.Sanitize(Html.Marked(Projects.ElementAt(i).Hint).ToString())
                                     </div>
                                 </div>
                             </article>
