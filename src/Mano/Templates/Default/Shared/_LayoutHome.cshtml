@@ -40,7 +40,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     @if (User.IsSignedIn())
                     {
-                        <li><a asp-action="Login" asp-controller="Account">@User.Current.Name</a></li>
+                        <li><a asp-action="Login" asp-controller="Account">@(User.Current.Name ?? User.Current.UserName)</a></li>
                         <li><a href="javascript:;">注销</a></li>
                     }
                     else
@@ -58,6 +58,10 @@
             <p>Copyright &copy; 2016 Mano Cloud - Harbin Code Comb Technology Co., Ltd.</p>
         </div>
     </footer>
+    @if (User.IsSignedIn())
+    {
+        <form id="frmLogout" asp-action="Logout" asp-controller="Account" method="post"></form>
+    }
     <script src="~/assets/default/scripts/jquery.min.js"></script>
     <script src="~/assets/default/scripts/bootstrap.min.js"></script>
     <script src="~/assets/default/scripts/jquery.fancybox.pack.js?v=2.1.5"></script>

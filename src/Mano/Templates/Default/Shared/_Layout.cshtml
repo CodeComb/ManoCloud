@@ -38,7 +38,7 @@
                 <ul class="nav navbar-nav navbar-right  navbar-features">
                     @if (User.IsSignedIn())
                     {
-                        <li><a asp-action="Login" asp-controller="Account">@User.Current.Name</a></li>
+                        <li><a asp-action="Login" asp-controller="Account">@(User.Current.Name ?? User.Current.UserName)</a></li>
                         <li><a href="javascript:;">注销</a></li>
                     }
                     else
