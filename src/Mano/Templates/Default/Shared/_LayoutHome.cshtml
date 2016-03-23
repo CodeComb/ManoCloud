@@ -9,7 +9,9 @@
     <link rel="shortcut icon" href="/favicon.ico">
     <title>@ViewBag.Title - Mano Cloud</title>
     <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel="stylesheet" type="text/css">
+    <link href="~/assets/default/styles/octicons.css" rel="stylesheet">
     <link href="~/assets/default/styles/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/default/styles/jquery.fancybox.css?v=2.1.5" rel="stylesheet" media="screen">
     <link href="~/assets/default/styles/site.css" rel="stylesheet">
 
     <!--[if lt IE 9]>
@@ -28,14 +30,14 @@
                     <span class="icon-bar"></span>
                 </button>
             </div>
-            <div class="collapse navbar-collapse navbar-ex1-collapse navbar-features">
-                <ul class="nav navbar-nav  navbar-features">
-                    <li><a asp-action="Index" asp-controller="Home">首页</a></li>
+            <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a asp-action="Index" asp-controller="Home">首页</a></li>
                     <li><a asp-action="Index" asp-controller="Enterprise">企业</a></li>
                     <li><a asp-action="Index" asp-controller="Coder">码农</a></li>
                     <li><a asp-action="Index" asp-controller="FAQ">FAQ</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right  navbar-features">
+                <ul class="nav navbar-nav navbar-right">
                     @if (User.IsSignedIn())
                     {
                         <li><a asp-action="Login" asp-controller="Account">@User.Current.Name</a></li>

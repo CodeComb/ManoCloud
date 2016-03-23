@@ -10,6 +10,12 @@ namespace Mano.Controllers
 {
     public class AccountController : BaseController
     {
+        public override void Prepare()
+        {
+            base.Prepare();
+            Cookies["ASPNET_TEMPLATE"] = "Default";
+        }
+
         [HttpGet]
         public IActionResult Login()
         {
