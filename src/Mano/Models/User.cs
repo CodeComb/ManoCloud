@@ -52,6 +52,8 @@ namespace Mano.Models
         [MaxLength(32)]
         public string Template { get; set; }
 
+        public DateTime RegisteryTime { get; set; }
+
         public virtual ICollection<Domain> Domains { get; set; } = new List<Domain>();
 
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();

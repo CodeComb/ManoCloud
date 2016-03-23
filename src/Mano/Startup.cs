@@ -42,6 +42,8 @@ namespace Mano
             services.AddSignalR();
             services.AddAntiXss();
             services.AddConfiguration();
+            services.AddSmtpEmailSender("smtp.exmail.qq.com", 25, "Mano Cloud", "noreply@mano.cloud", "noreply@mano.cloud", "ManoCloud123456");
+            services.AddAesCrypto();
         }
 
         public async void Configure(IApplicationBuilder app, ILoggerFactory logger)

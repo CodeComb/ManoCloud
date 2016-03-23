@@ -88,6 +88,11 @@ namespace Mano.Models
                 e.HasIndex(x => x.Begin);
                 e.HasIndex(x => x.End);
             });
+
+            builder.Entity<User>(e =>
+            {
+                e.HasIndex(x => x.RegisteryTime);
+            });
         }
     }
 }
