@@ -303,7 +303,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, string qq, IFormFile avatar)
+        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, string qq, string wechat, DateTime? birthday, IFormFile avatar)
         {
             var user = DB.Users
                 .Single(x => x.Id == id);
@@ -312,18 +312,24 @@ namespace Mano.Controllers
             user.Address = address;
             user.Sex = sex;
             user.PRCID = prcid;
+            user.QQ = qq;
+            user.WeChat = wechat;
+            if (birthday.HasValue)
+                user.Birthday = birthday.Value;
             if (avatar != null)
             {
                 if (user.AvatarId.HasValue)
                     DB.Files.Remove(user.Avatar);
-                DB.Files.Add(new CodeComb.AspNet.Upload.Models.File
+                var file = new CodeComb.AspNet.Upload.Models.File
                 {
                     Bytes = avatar.ReadAllBytes(),
                     ContentLength = avatar.Length,
                     Time = DateTime.Now,
                     ContentType = avatar.ContentType,
                     FileName = avatar.GetFileName()
-                });
+                };
+                DB.Files.Add(file);
+                user.AvatarId = file.Id;
             }
             DB.SaveChanges();
             return Prompt(x => 

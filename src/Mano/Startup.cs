@@ -36,6 +36,9 @@ namespace Mano
             services.AddMvc()
                 .AddTemplate()
                 .AddCookieTemplateProvider();
+            
+            services.AddFileUpload()
+                .AddEntityFrameworkStorage<ManoContext>();
 
             services.AddSmartUser<User, long>();
             services.AddSmartCookies();
@@ -49,8 +52,9 @@ namespace Mano
         public async void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
             logger.AddConsole();
-            logger.MinimumLevel = LogLevel.Information;
+            logger.MinimumLevel = LogLevel.Warning;
 
+            app.UseFileUpload("/assets/shared/jquery.codecomb.fileupload.js");
             app.UseAutoAjax();
             app.UseIdentity();
             app.UseStaticFiles();

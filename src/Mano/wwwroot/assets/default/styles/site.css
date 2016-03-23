@@ -868,3 +868,9 @@ code {
     float: left;
     margin-right: 25px;
 }
+
+.profile-avatar{
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 15px;
+}
