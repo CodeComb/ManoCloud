@@ -41,7 +41,7 @@
                     @if (User.IsSignedIn())
                     {
                         <li><a asp-action="Index" asp-controller="Account" asp-route-id="@User.Current.Id">@(User.Current.Name ?? User.Current.UserName)</a></li>
-                        <li><a href="javascript:;">注销</a></li>
+                        <li><a href="javascript:$('#frmLogout').submit()">注销</a></li>
                     }
                     else
                     {

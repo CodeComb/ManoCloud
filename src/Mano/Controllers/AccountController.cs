@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using Mano.Models;
 
 namespace Mano.Controllers
 {
+    [Authorize]
     public class AccountController : BaseController
     {
         public override void Prepare()
@@ -23,6 +25,8 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [GuestOnly]
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
@@ -30,6 +34,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(string username, string password, bool remember, [FromHeader] string Referer)
         {
             if (username.Contains('@'))
@@ -49,12 +54,14 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(string email, [FromServices] IConfiguration Config)
         {
@@ -88,6 +95,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult RegisterDetail(string key)
         {
             // 此时仍然需要检测一遍邮箱是否被注册
@@ -105,6 +113,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterDetail(string key, string username, string password)
         {
@@ -145,12 +154,14 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult Forgot()
         {
             return View();
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Forgot(string email, [FromServices] IConfiguration Config)
         {
@@ -183,6 +194,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult ForgotDetail(string key)
         {
             // 判断该邮箱是否已经存在 不存在不能密码重置
@@ -200,6 +212,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotDetail(string key, string password, string confirm)
         {
@@ -310,7 +323,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, string qq, string wechat, DateTime? birthday, IFormFile avatar)
+        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
         {
             var user = DB.Users
                 .Single(x => x.Id == id);
@@ -321,6 +334,7 @@ namespace Mano.Controllers
             user.PRCID = prcid;
             user.QQ = qq;
             user.WeChat = wechat;
+            user.Name = name;
             if (birthday.HasValue)
                 user.Birthday = birthday.Value;
             if (avatar != null)
