@@ -4,7 +4,7 @@
 <div class="jumbotron masthead jumbopurple jumbotron-compact">
     <div class="container main_container">
         <h1 class="main_header">
-            <a href="javascript:;">注册成为 Mano Cloud 会员</a>
+            <a href="javascript:;">成为 Mano Cloud 会员</a>
         </h1>
         <h3>步骤一：验证您的有效电子邮箱</h3>
     </div>
@@ -19,7 +19,7 @@
         <form class="form col-md-6 col-md-offset-3" asp-controller="Account" asp-action="Register" method="post">
             <p>
                 <label>电子邮箱</label>
-                <input type="text" id="inputEmail" class="form-control" placeholder="Email" required autofocus>
+                <input type="text" id="inputEmail" class="form-control" placeholder="Email" name="email" required autofocus>
             </p>
             <button class="btn btn-lg btn-primary btn-block" type="submit">下一步</button>
         </form>

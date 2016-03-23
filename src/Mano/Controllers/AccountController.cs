@@ -189,7 +189,7 @@ namespace Mano.Controllers
                     x.Details = $"电子邮箱{email}不存在，请更换后重试！";
                     x.StatusCode = 400;
                 });
-            return View();
+            return View(DB.Users.Single(x => x.Email == email));
         }
 
         [HttpPost]
