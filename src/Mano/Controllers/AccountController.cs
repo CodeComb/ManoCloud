@@ -41,7 +41,7 @@ namespace Mano.Controllers
                 username = DB.Users.SingleOrDefault(x => x.Email == username)?.UserName ?? "";
             var result = await SignInManager.PasswordSignInAsync(username, password, remember, false);
             if (result.Succeeded)
-                return Redirect(Referer ?? Url.Action("Index", "Home"));
+                return RedirectToAction("Index", "Account");
             else
                 return Prompt(x =>
                 {
@@ -61,6 +61,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
+        [GuestOnly]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(string email, [FromServices] IConfiguration Config)
@@ -95,6 +96,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [GuestOnly]
         [AllowAnonymous]
         public IActionResult RegisterDetail(string key)
         {
@@ -113,6 +115,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
+        [GuestOnly]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterDetail(string key, string username, string password)
@@ -161,6 +164,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
+        [GuestOnly]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Forgot(string email, [FromServices] IConfiguration Config)
@@ -194,6 +198,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [GuestOnly]
         [AllowAnonymous]
         public IActionResult ForgotDetail(string key)
         {
@@ -212,6 +217,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
+        [GuestOnly]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ForgotDetail(string key, string password, string confirm)
@@ -269,9 +275,11 @@ namespace Mano.Controllers
             });
         }
 
-        [Route("/Profile/{id:long}")]
-        public IActionResult Index(long id)
+        [Route("/Profile/{id:long?}")]
+        public IActionResult Index(long? id)
         {
+            if (!id.HasValue)
+                id = User.Current.Id;
             var user = DB.Users
                 .Include(x => x.Domains)
                 .Include(x => x.Emails)
