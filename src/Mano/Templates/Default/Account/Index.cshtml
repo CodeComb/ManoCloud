@@ -6,7 +6,14 @@
 <script src="~/assets/default/scripts/chart.js"></script>
 <div class="jumbotron masthead jumbopurple jumbotron-compact">
     <div class="container main_container">
-        <img class="avatar" src="~/assets/default/images/non-avatar.png" class="avatar" />
+        @if (Model.AvatarId.HasValue)
+        {
+            <img class="avatar" src="/file/download/@Model.AvatarId.Value" />
+        }
+        else
+        {
+            <img class="avatar" src="~/assets/default/images/non-avatar.png" />
+        }
         <div>
             <h1 class="main_header">
                 <a href="javascript:;">@(Model.Name ?? Model.UserName)</a>

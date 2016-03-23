@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Http;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -254,7 +255,7 @@ namespace Mano.Controllers
             });
         }
 
-        [Route("/Account/{id:long}")]
+        [Route("/Profile/{id:long}")]
         public IActionResult Index(long id)
         {
             var user = DB.Users
@@ -270,6 +271,65 @@ namespace Mano.Controllers
                 .ThenInclude(x => x.Commit)
                 .SingleOrDefault(x => x.Id == id);
             return View(user);
+        }
+
+        [HttpGet]
+        public IActionResult Profile(long id)
+        {
+            var user = DB.Users
+                .Include(x => x.Domains)
+                .Include(x => x.Emails)
+                .Include(x => x.Skills)
+                .Include(x => x.Experiences)
+                .Include(x => x.Certifications)
+                .Include(x => x.Educations)
+                .Include(x => x.Projects)
+                .ThenInclude(x => x.Commits)
+                .ThenInclude(x => x.Changes)
+                .ThenInclude(x => x.Commit)
+                .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x => 
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, IFormFile avatar)
+        {
+            var user = DB.Users
+                .Single(x => x.Id == id);
+            user.City = city;
+            user.Province = province;
+            user.Address = address;
+            user.Sex = sex;
+            user.PRCID = prcid;
+            if (avatar != null)
+            {
+                if (user.AvatarId.HasValue)
+                    DB.Files.Remove(user.Avatar);
+                DB.Files.Add(new CodeComb.AspNet.Upload.Models.File
+                {
+                    Bytes = avatar.ReadAllBytes(),
+                    ContentLength = avatar.Length,
+                    Time = DateTime.Now,
+                    ContentType = avatar.ContentType,
+                    FileName = avatar.GetFileName()
+                });
+            }
+            DB.SaveChanges();
+            return Prompt(x => 
+            {
+                x.Title = "修改成功";
+                x.Details = "您的个人资料已经成功修改！";
+                x.RedirectText = "查看个人资料";
+                x.RedirectUrl = Url.Action("Index", "Account", new { Id = id });
+            });
         }
     }
 }
