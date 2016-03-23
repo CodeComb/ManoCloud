@@ -44,6 +44,7 @@ namespace Mano.Models
             builder.Entity<Domain>(e =>
             {
                 e.HasIndex(x => x.DomainName);
+                e.HasIndex(x => x.Verified);
             });
 
             builder.Entity<Project>(e =>

@@ -17,5 +17,7 @@ namespace Mano.Models
         public User User { get; set; }
 
         public bool Default { get; set; }
+
+        public bool Verified { get; set; }
     }
 }

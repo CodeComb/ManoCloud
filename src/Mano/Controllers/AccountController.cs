@@ -118,7 +118,7 @@ namespace Mano.Controllers
         [GuestOnly]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterDetail(string key, string username, string password)
+        public async Task<IActionResult> RegisterDetail(string key, string username, string password, [FromServices] IConfiguration Config)
         {
             // 此时仍然需要检测一遍邮箱是否被注册
             var email = Aes.Decrypt(key);
@@ -140,6 +140,16 @@ namespace Mano.Controllers
             await UserManager.AddToRoleAsync(user, "Member");
             await UserManager.AddClaimAsync(user, new System.Security.Claims.Claim("编辑个人资料", user.Id.ToString()));
             if (result.Succeeded)
+            {
+                DB.Domains.Add(new Domain
+                {
+                    Default = true,
+                    DomainName = Config["SLD"].Replace("*", user.UserName),
+                    Verified = true,
+                    UserId = user.Id
+                });
+                DB.SaveChanges();
+
                 return Prompt(x =>
                 {
                     x.Title = "注册成功";
@@ -147,13 +157,17 @@ namespace Mano.Controllers
                     x.RedirectText = "现在登录";
                     x.RedirectUrl = Url.Action("Login", "Account");
                 });
+            }
             else
+            {
+
                 return Prompt(x =>
                 {
                     x.Title = "注册失败";
                     x.Details = result.Errors.First().Description;
                     x.StatusCode = 400;
                 });
+            }
         }
 
         [HttpGet]
