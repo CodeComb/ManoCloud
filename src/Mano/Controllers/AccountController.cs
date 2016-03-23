@@ -26,6 +26,8 @@ namespace Mano.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(string username, string password, bool remember, [FromHeader] string Referer)
         {
+            if (username.Contains('@'))
+                username = DB.Users.SingleOrDefault(x => x.Email == username)?.UserName ?? "";
             var result = await SignInManager.PasswordSignInAsync(username, password, remember, false);
             if (result.Succeeded)
                 return Redirect(Referer ?? Url.Action("Index", "Home"));

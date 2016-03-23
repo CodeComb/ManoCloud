@@ -1,4 +1,7 @@
-﻿<div class="jumbotron masthead jumbopurple jumbotron-compact">
+﻿@{ 
+    ViewBag.Title = "登录";
+}
+<div class="jumbotron masthead jumbopurple jumbotron-compact">
     <div class="container main_container">
         <h1 class="main_header">
             <a href="javascript:;">用户登录</a>
@@ -11,11 +14,11 @@
            <form class="form col-md-6 col-md-offset-3" asp-controller="Account" asp-action="Login" method="post">
                <p>
                    <label>用户名 / 电子邮箱</label>
-                   <input type="text" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                   <input type="text" id="inputEmail" class="form-control" placeholder="用户名 / 电子邮箱" required autofocus>
                </p>
                <p>
                    <label>密码</label>
-                   <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                   <input type="password" id="inputPassword" class="form-control" placeholder="密码" required>
                </p>
                <div class="checkbox">
                    <label>
