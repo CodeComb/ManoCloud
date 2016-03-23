@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mano.Models;
@@ -251,6 +252,22 @@ namespace Mano.Controllers
                 x.RedirectUrl = Url.Action("Login", "Account");
                 x.HideBack = true;
             });
+        }
+
+        [Route("/Account/{id:long}")]
+        public IActionResult Index(long id)
+        {
+            var user = DB.Users
+                .Include(x => x.Emails)
+                .Include(x => x.Skills)
+                .Include(x => x.Experiences)
+                .Include(x => x.Certifications)
+                .Include(x => x.Educations)
+                .Include(x => x.Projects)
+                .ThenInclude(x => x.Commits)
+                .ThenInclude(x => x.Changes)
+                .SingleOrDefault(x => x.Id == id);
+            return View(user);
         }
     }
 }

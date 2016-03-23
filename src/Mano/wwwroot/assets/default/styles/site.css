@@ -861,8 +861,10 @@ code {
 }
 
 .avatar {
-    width: 32px;
-    height: 32px;
+    width: 115px;
+    height: 115px;
     border-radius: 50%;
-    border: 2px solid #fff;
+    border: 8px solid rgba(255,255,255,0.25);
+    float: left;
+    margin-right: 25px;
 }

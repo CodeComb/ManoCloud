@@ -181,5 +181,46 @@ namespace Mano.Helpers
             radar.datasets.Add(dataset2);
             return new HtmlString(JsonConvert.SerializeObject(radar));
         }
+        public static List<SkillStatistics> UserSkill<TModel>(this IHtmlHelper<TModel> self, IEnumerable<Project> projects)
+            where TModel : User
+        {
+            var emails = self.ViewData.Model.Emails
+                .Select(x => x.EmailAddress)
+                .ToList();
+            // var ret = new List<SkillStatistics>();
+            var changes = projects
+                .SelectMany(x => x.Commits)
+                .Where(x => emails.Contains(x.Email))
+                .SelectMany(x => x.Changes)
+                .ToList();
+            var DB = self.ViewContext.HttpContext.RequestServices.GetRequiredService<ManoContext>();
+            var dic = DB.Extensions
+                .Where(x => changes.Select(y => Path.GetExtension(y.Path)).Contains(x.Id) && (x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式))
+                .Select(x => new { Key = x.Id, Value = x.Type })
+                .ToDictionary(x => x.Key);
+            var ret = changes
+                .GroupBy(x => dic[Path.GetExtension(x.Path)])
+                .Select(x => new SkillStatistics
+                {
+                    Begin = x.Min(y => y.Commit.Time),
+                    Skill = x.Key.ToString(),
+                    Count = x.Sum(y => y.Additions + y.Deletions)
+                })
+                .ToList();
+            var others = changes
+                .Where(x => !dic.ContainsKey(Path.GetExtension(x.Path)))
+                .ToList();
+            if (others.Count > 0)
+            {
+                ret.Add(new SkillStatistics
+                {
+                    Begin = others.Min(x => x.Commit.Time),
+                    Count = others.Sum(x => x.Additions + x.Deletions),
+                    Skill = "其他"
+                });
+            }
+            ret = ret.OrderByDescending(x => x.Count).ToList();
+            return ret;
+        }
     }
 }
