@@ -349,6 +349,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult Password(long id)
         {
             var user = DB.Users
@@ -371,6 +372,39 @@ namespace Mano.Controllers
                     x.StatusCode = 404;
                 });
             return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public async Task<IActionResult> Password(long id, string oldpwd, string password, string confirm)
+        {
+            var user = DB.Users
+               .Single(x => x.Id == id);
+            if (password != confirm)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = "找回密码失败";
+                    x.Details = $"两次输入密码不一致！";
+                    x.StatusCode = 400;
+                });
+            }
+            var result = await UserManager.ChangePasswordAsync(user, oldpwd, password);
+            if (!result.Succeeded)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = "密码修改失败";
+                    x.Details = $"原始密码输入错误，请检查后重试！";
+                    x.StatusCode = 400;
+                });
+            }
+            return Prompt(x =>
+            {
+                x.Title = "密码修改成功";
+                x.Details = $"新密码已经生效，下次请使用新密码进行登录！";
+            });
         }
     }
 }
