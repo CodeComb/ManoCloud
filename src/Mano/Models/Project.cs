@@ -11,7 +11,7 @@ namespace Mano.Models
         public Guid Id { get; set; }
 
         [MaxLength(128)]
-        public string Tilte { get; set; }
+        public string Title { get; set; }
 
         public CommunityType Type { get; set; }
 

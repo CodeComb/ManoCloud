@@ -184,7 +184,7 @@
                                         <span class="progressbar">
                                             <span class="progress" style="background-color: @Colors[i % Colors.Length]">
                                                 <span class="caption_wrap">
-                                                    <span class="caption">@Model.Skills.ElementAt(i).Title / @Model.Skills.ElementAt(i).Display / @Model.Skills.ElementAt(i).Count 行</span>
+                                                    <span class="caption">@Model.Skills.ElementAt(i).Title / @Model.Skills.ElementAt(i).Display / @Model.Skills.ElementAt(i).Count.ToString("C") 行</span>
                                                     <span class="value hidden">@Html.PercentP(Model.Skills.ElementAt(i).TotalDays)</span>
                                                 </span>
                                             </span>
@@ -241,7 +241,7 @@
                                     <div class="resume_header">
                                         <h4 class="post_title">
                                             <span class="post_title_icon category1 icon2"></span>
-                                            @Projects.ElementAt(i).Tilte
+                                            @Projects.ElementAt(i).Title
                                         </h4>
                                         <h5 class="resume_position category1">
                                             <span class="icon icon2"></span>

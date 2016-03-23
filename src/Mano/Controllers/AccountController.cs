@@ -258,6 +258,7 @@ namespace Mano.Controllers
         public IActionResult Index(long id)
         {
             var user = DB.Users
+                .Include(x => x.Domains)
                 .Include(x => x.Emails)
                 .Include(x => x.Skills)
                 .Include(x => x.Experiences)
@@ -266,6 +267,7 @@ namespace Mano.Controllers
                 .Include(x => x.Projects)
                 .ThenInclude(x => x.Commits)
                 .ThenInclude(x => x.Changes)
+                .ThenInclude(x => x.Commit)
                 .SingleOrDefault(x => x.Id == id);
             return View(user);
         }

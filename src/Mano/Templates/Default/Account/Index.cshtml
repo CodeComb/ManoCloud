@@ -2,6 +2,8 @@
 @{ 
     ViewBag.Title = Model.Name ?? Model.UserName;
 }
+<script src="~/assets/default/scripts/modernizr.min.js"></script>
+<script src="~/assets/default/scripts/chart.js"></script>
 <div class="jumbotron masthead jumbopurple jumbotron-compact">
     <div class="container main_container">
         <img class="avatar" src="~/assets/default/images/non-avatar.png" class="avatar" />
@@ -16,11 +18,41 @@
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
+            <h2>项目概况</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>项目代码量</th>
+                        <th>参与人数</th>
+                        <th>贡献</th>
+                        <th>项目周期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ ProjectStatistics s; }
+                    @foreach (var x in Model.Projects.Where(x => x.Commits.Count > 0))
+                    {
+                        { s = Html.ProjectStatistics(x); }
+                        <tr>
+                            <td>@x.Title</td>
+                            <td>@s.Count.ToString("C") 行</td>
+                            <td>@s.Contributors</td>
+                            <td>@s.Contributed.ToString("C") 行 (@((s.Contributed * 100 / s.Count).ToString("0.0"))%)</td>
+                            <td>
+                                @s.Begin.ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.End).TotalDays <= 7 ? "至今" : s.End.ToString("yyyy-MM-dd"))
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
             <h2>技能雷达图</h2>
             <canvas id="chartRadar" style="width:50%; height:250px;"></canvas>
             <script>
                 new Chart(document.getElementById("chartRadar").getContext("2d")).Radar(@Html.UserRadar(Model.Projects), { animation: Modernizr.canvas });
             </script>
+            <br />
             <h2>代码统计</h2>
             <table class="table">
                 <thead>
@@ -35,7 +67,7 @@
                     { 
                         <tr>
                             <td>@x.Skill</td>
-                            <td>@x.Count 行</td>
+                            <td>@x.Count.ToString("C") 行</td>
                             <td>@x.Display</td>
                         </tr>
                     }

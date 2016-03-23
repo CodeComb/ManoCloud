@@ -33,9 +33,6 @@ namespace Mano.Models
         [MaxLength(64)]
         public string Name { get; set; }
 
-        [MaxLength(32)]
-        public string UrlKey { get; set; }
-
         public string BlogUrl { get; set; }
 
         [MaxLength(64)]

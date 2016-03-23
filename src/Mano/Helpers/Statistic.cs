@@ -187,7 +187,6 @@ namespace Mano.Helpers
             var emails = self.ViewData.Model.Emails
                 .Select(x => x.EmailAddress)
                 .ToList();
-            // var ret = new List<SkillStatistics>();
             var changes = projects
                 .SelectMany(x => x.Commits)
                 .Where(x => emails.Contains(x.Email))
@@ -220,6 +219,20 @@ namespace Mano.Helpers
                 });
             }
             ret = ret.OrderByDescending(x => x.Count).ToList();
+            return ret;
+        }
+        public static ProjectStatistics ProjectStatistics<TModel>(this IHtmlHelper<TModel> self, Project project)
+            where TModel : User
+        {
+            var emails = self.ViewData.Model.Emails
+                .Select(x => x.EmailAddress)
+                .ToList();
+            var ret = new ProjectStatistics();
+            ret.Begin = project.Commits.Min(x => x.Time);
+            ret.End = project.Commits.Max(x => x.Time);
+            ret.Count = project.Commits.Sum(x => x.Changes.Sum(y => y.Additions + y.Deletions));
+            ret.Contributed = project.Commits.Where(x => emails.Contains(x.Email)).Sum(x => x.Changes.Sum(y => y.Additions + y.Deletions));
+            ret.Contributors = project.Commits.Select(x => x.Email).Distinct().Count();
             return ret;
         }
     }

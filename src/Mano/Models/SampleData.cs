@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.PlatformAbstractions;
 
@@ -16,7 +15,8 @@ namespace Mano.Models
             var DB = services.GetRequiredService<ManoContext>();
             var UserManager = services.GetRequiredService<UserManager<User>>();
             var RoleManager = services.GetRequiredService<RoleManager<IdentityRole<long>>>();
-            var env = services.GetRequiredService<IApplicationEnvironment>();
+            var Env = services.GetRequiredService<IApplicationEnvironment>();
+            var Config = services.GetRequiredService<IConfiguration>();
 
             if (DB.Database.EnsureCreated())
             {
@@ -28,11 +28,18 @@ namespace Mano.Models
                 var user = new User
                 {
                     UserName = "admin",
-                    Email = "1@1234.sh"
+                    Email = "1@1234.sh",
+                    RegisteryTime = DateTime.Now
                 };
 
                 await UserManager.CreateAsync(user, "123456");
                 await UserManager.AddToRoleAsync(user, "Root");
+                DB.Domains.Add(new Domain
+                {
+                    UserId = user.Id,
+                    DomainName = Config["SLD"].Replace("*", user.UserName),
+                    Default = true
+                });
 
                 DB.Extensions.Add(new Extension { Id = ".js", Technology = "JavaScript", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".cs", Technology = "C#.Net", Type = TechnologyType.编程语言 });

@@ -1,9 +1,10 @@
-﻿<div class="col-md-3">
+﻿@model User
+<div class="col-md-3">
     <nav class="bs-docs-sidebar">
         <h4>用户信息</h4>
         <ul class="nav bs-docs-sidenav">
-            <li><a href="/">个人资料</a></li>
-            <li><a href="/">查看简历</a></li>
+            <li><a asp-action="Index" asp-controller="Account" asp-route-id="@Model.Id">个人资料</a></li>
+            <li><a href="//@Model.Domains.OrderByDescending(x => x.Default).First().DomainName">查看简历</a></li>
         </ul>
 
         @if (User.IsSignedIn() && (User.AnyRoles("Root, Master") || User.Current.Id == Model.Id))
