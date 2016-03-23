@@ -1,0 +1,50 @@
+﻿@model User
+@{ 
+    ViewBag.Title = "编辑个人资料";
+}
+
+@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<div class="container page-container vertical-center">
+    <div class="row">
+        <h2>编辑个人资料</h2>
+        <form class="form col-md-6 col-md-offset-3" asp-controller="Account" asp-action="Profile" method="post" enctype="multipart/form-data">
+            <p>
+                <label>省份</label>
+                <input type="text" asp-for="Province" class="form-control" required>
+            </p>
+            <p>
+                <label>城市</label>
+                <input type="text" asp-for="City" class="form-control" required>
+            </p>
+            <p>
+                <label>住址</label>
+                <input type="text" asp-for="Address" class="form-control" required>
+            </p>
+            <p>
+                <label>身份证号码</label>
+                <input type="text" asp-for="PRCID" class="form-control" required>
+            </p>
+            <p>
+                <label>QQ号码</label>
+                <input type="text" asp-for="QQ" class="form-control" required>
+            </p>
+            <p>
+                <label>微信号码</label>
+                <input type="text" asp-for="WeChat" class="form-control" required>
+            </p>
+            <p>
+                <label>头像</label>
+                @if (Model.AvatarId.HasValue)
+                {
+                    <img src="/file/download/@Model.AvatarId.Value" />
+                }
+                else
+                {
+                    <img src="~/assets/default/images/non-avatar.png" />
+                }
+                <input type="file" name="avatar" /> 建议上传200×200尺寸的图片
+            </p>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">保存资料</button>
+        </form>
+    </div>
+</div>

@@ -126,6 +126,7 @@ namespace Mano.Controllers
             };
             var result = await UserManager.CreateAsync(user, password);
             await UserManager.AddToRoleAsync(user, "Member");
+            await UserManager.AddClaimAsync(user, new System.Security.Claims.Claim("编辑个人资料", user.Id.ToString()));
             if (result.Succeeded)
                 return Prompt(x =>
                 {
@@ -274,6 +275,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult Profile(long id)
         {
             var user = DB.Users
@@ -300,7 +302,8 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, IFormFile avatar)
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, string qq, IFormFile avatar)
         {
             var user = DB.Users
                 .Single(x => x.Id == id);

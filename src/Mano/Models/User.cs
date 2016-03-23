@@ -11,19 +11,31 @@ namespace Mano.Models
     {
         public Sex Sex { get; set; }
 
+        [MaxLength(32)]
         public string City { get; set; }
 
+        [MaxLength(32)]
         public string Province { get; set; }
 
+        [MaxLength(32)]
         public string GitHub { get; set; }
 
+        [MaxLength(32)]
         public string GitOSC { get; set; }
 
+        [MaxLength(32)]
         public string GitCSDN { get; set; }
-
+        
         public string Introduction { get; set; }
 
+        [MaxLength(64)]
         public string Address { get; set; }
+
+        [MaxLength(16)]
+        public string QQ { get; set; }
+
+        [MaxLength(16)]
+        public string WeChat { get; set; }
 
         public DateTime Birthday { get; set; }
 
@@ -33,6 +45,7 @@ namespace Mano.Models
         [MaxLength(64)]
         public string Name { get; set; }
 
+        [MaxLength(64)]
         public string BlogUrl { get; set; }
 
         [MaxLength(64)]
