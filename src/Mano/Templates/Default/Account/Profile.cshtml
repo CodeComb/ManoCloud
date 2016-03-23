@@ -10,7 +10,7 @@
     <div class="row">
         <div class="col-md-9">
             <h2>编辑个人资料</h2>
-            <form class="form col-md-8" asp-controller="Account" asp-action="Profile" method="post" enctype="multipart/form-data">
+            <form class="form col-md-8" asp-controller="Account" asp-action="Profile" method="post" asp-route-id="@Model.Id" enctype="multipart/form-data">
                 <p>
                     <label>省份</label>
                     <input type="text" asp-for="Province" class="form-control">

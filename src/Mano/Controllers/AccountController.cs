@@ -271,6 +271,13 @@ namespace Mano.Controllers
                 .ThenInclude(x => x.Changes)
                 .ThenInclude(x => x.Commit)
                 .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
             return View(user);
         }
 
@@ -339,6 +346,31 @@ namespace Mano.Controllers
                 x.RedirectText = "查看个人资料";
                 x.RedirectUrl = Url.Action("Index", "Account", new { Id = id });
             });
+        }
+
+        [HttpGet]
+        public IActionResult Password(long id)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .ThenInclude(x => x.Commits)
+               .ThenInclude(x => x.Changes)
+               .ThenInclude(x => x.Commit)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
         }
     }
 }
