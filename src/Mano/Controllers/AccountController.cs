@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Mano.Models;
 
 namespace Mano.Controllers
@@ -14,6 +15,9 @@ namespace Mano.Controllers
         {
             base.Prepare();
             Cookies["ASPNET_TEMPLATE"] = "Default";
+            var Config = Resolver.GetRequiredService<IConfiguration>();
+            if (Request.Host.ToString() != Config["Host"])
+                Response.Redirect("//" + Config["Host"]);
         }
 
         [HttpGet]
