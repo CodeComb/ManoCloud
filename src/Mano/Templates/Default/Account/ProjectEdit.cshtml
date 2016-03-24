@@ -1,6 +1,6 @@
 ﻿@model User
 @{
-    ViewBag.Title = "我的项目";
+    ViewBag.Title = "编辑项目";
 }
 
 @Html.Partial("~/Templates/Default/Account/Header.cshtml")
@@ -9,76 +9,40 @@
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
-            <h2>我的项目</h2>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>项目名称</th>
-                        <th>更新类型</th>
-                        <th>最后更新</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var x in Model.Projects)
-                    {
-                        <tr>
-                            <td>@x.Title</td>
-                            <td>
-                                @if (x.Type == CommunityType.None)
-                                {
-                                    <span class="label label-info">手动更新</span>
-                                }
-                                else
-                                {
-                                    <span class="label label-success">自动更新</span>
-                                }
-                            </td>
-                            <td>@(x.Verified ? x.LastPullTime.ToString("yyyy-MM-dd") : x.LastEditTime.ToString("yyyy-MM-dd"))</td>
-                            <td>
-                                <a asp-action="ProjectEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑项目</a>
-                                <a href="javascript:deleteProject('@x.Id')">删除项目</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <br />
-            <h2>新建项目</h2>
-            <form asp-action="ProjectAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+            <form asp-action="ProjectEdit" asp-controller="Account" asp-route-id="@Model.Id" method="post">
                 <div class="row">
                     <div class="col-md-6">
                         <p>
                             <label>项目名称 *</label>
-                            <input type="text" name="title" class="form-control" required>
+                            <input type="text" name="title" value="@ViewBag.Project.Title" class="form-control" required>
                         </p>
                         <p>
                             <label>担任角色 *</label>
-                            <input type="text" name="position" class="form-control" required>
+                            <input type="text" name="position" value="@ViewBag.Project.Position" class="form-control" required>
                         </p>
                         <p>
                             <label>项目链接</label>
-                            <input type="text" name="projecturl" class="form-control">
+                            <input type="text" name="projecturl" value="@ViewBag.Project.ProjectUrl" class="form-control">
                         </p>
                         <p>
                             <label>更新方式 *</label>
                             <br />
                             <select class="form-control" name="update" id="lstUpdate">
-                                <option>自动更新</option>
-                                <option>手动更新</option>
+                                <!option @(ViewBag.Project.Type == CommunityType.None ? "" : "selected")>自动更新</!option>
+                                <!option @(ViewBag.Project.Type != CommunityType.None ? "" : "selected")>手动更新</!option>
                             </select>
                         </p>
                         <p class="auto-update">
                             <label>Git 源 *</label>
-                            <input type="text" name="ThirdPartyUrl" class="form-control">
+                            <input type="text" name="ThirdPartyUrl" value="@ViewBag.Project.ThirdPartyUrl" class="form-control">
                         </p>
                         <p class="manual-update">
                             <label>项目开始时间 *</label>
-                            <input type="text" name="begin" class="datetime form-control">
+                            <input type="text" name="begin" value="@ViewBag.Project.Begin" class="datetime form-control">
                         </p>
                         <p class="manual-update">
                             <label>项目结束时间 (不填表示至今)</label>
-                            <input type="text" name="end" class="datetime form-control">
+                            <input type="text" name="end" value="@ViewBag.Project.End" class="datetime form-control">
                         </p>
                     </div>
                 </div>
@@ -87,7 +51,7 @@
                         <label>项目简介</label>
                         <br />
                         <div class="markdown-editor-outer">
-                            <textarea class="textbox markdown-editor" name="hint"></textarea>
+                            <textarea class="textbox markdown-editor" name="hint">@ViewBag.Project.Hint</textarea>
                             <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
                         </div>
                     </div>
@@ -95,7 +59,7 @@
                 <div class="row">
                     <br />
                     <div class="col-md-2">
-                        <button class="btn btn-lg btn-primary btn-block" type="submit">创建项目</button>
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">保存项目</button>
                     </div>
                 </div>
             </form>

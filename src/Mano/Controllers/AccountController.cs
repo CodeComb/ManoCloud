@@ -17,6 +17,7 @@ namespace Mano.Controllers
     [Authorize]
     public class AccountController : BaseController
     {
+        #region Infrastructures
         public override void Prepare()
         {
             base.Prepare();
@@ -25,6 +26,62 @@ namespace Mano.Controllers
             if (Request.Host.ToString() != Config["Host"])
                 Response.Redirect("//" + Config["Host"]);
         }
+
+        public CommunityType GetCommunityType(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return CommunityType.None;
+            if (url.IndexOf("github.com") >= 0)
+                return CommunityType.GitHub;
+            if (url.IndexOf("oschina.net") >= 0)
+                return CommunityType.GitOSC;
+            if (url.IndexOf("csdn.net") >= 0)
+                return CommunityType.GitCSDN;
+            if (url.IndexOf("codeplex.com") >= 0)
+                return CommunityType.CodePlex;
+            if (url.IndexOf("coding.net") >= 0)
+                return CommunityType.CodingNet;
+            return CommunityType.Git;
+        }
+
+        public Task Sync(User user)
+        {
+            var serviceScope = Resolver.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var db = serviceScope.ServiceProvider.GetService<ManoContext>();
+            return Task.Factory.StartNew(async () =>
+            {
+                var ret = new List<Community.Project>();
+                if (!string.IsNullOrWhiteSpace(user.GitHub))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitHub));
+                if (!string.IsNullOrWhiteSpace(user.CodePlex))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodePlex));
+                if (!string.IsNullOrWhiteSpace(user.GitOSC))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitOSC));
+                if (!string.IsNullOrWhiteSpace(user.GitCSDN))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitCSDN));
+                if (!string.IsNullOrWhiteSpace(user.CodingNet))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodingNet));
+                ret = ret.DistinctBy(x => x.Git).ToList();
+                var existed = user.Projects.Select(x => x.ThirdPartyUrl).ToList();
+                foreach (var x in ret)
+                {
+                    if (!existed.Contains(x.Git))
+                    {
+                        db.Projects.Add(new Project
+                        {
+                            Title = x.Title,
+                            ThirdPartyUrl = x.Git,
+                            UserId = user.Id,
+                            Verified = true,
+                            Type = GetCommunityType(x.Git)
+                        });
+                    }
+                }
+                db.SaveChanges();
+                serviceScope.Dispose();
+            });
+        }
+        #endregion
 
         [HttpGet]
         [GuestOnly]
@@ -768,26 +825,10 @@ namespace Mano.Controllers
                 });
             return View(user);
         }
-
-        private CommunityType GetCommunityType(string url)
-        {
-            if (string.IsNullOrWhiteSpace(url))
-                return CommunityType.None;
-            if (url.IndexOf("github.com") >= 0)
-                return CommunityType.GitHub;
-            if (url.IndexOf("oschina.net") >= 0)
-                return CommunityType.GitOSC;
-            if (url.IndexOf("csdn.net") >= 0)
-                return CommunityType.GitCSDN;
-            if (url.IndexOf("codeplex.com") >= 0)
-                return CommunityType.CodePlex;
-            if (url.IndexOf("coding.net") >= 0)
-                return CommunityType.CodingNet;
-            return CommunityType.Git;
-        }
-
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("/Account/Project/{id}/Add/{pid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectAdd(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
@@ -852,6 +893,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Route("/Account/Project/{id}/Delete/{pid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectDelete(long id, Guid pid)
         {
@@ -869,6 +911,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
+        [Route("/Account/Project/{id}/Edit/{pid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectEdit(long id, Guid pid)
         {
@@ -903,41 +946,35 @@ namespace Mano.Controllers
             return View(user);
         }
 
-        public Task Sync(User user)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Project/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ProjectEdit(long id, Guid pid, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
-            var serviceScope = Resolver.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            var db = serviceScope.ServiceProvider.GetService<ManoContext>();
-            return Task.Factory.StartNew(async ()=>
+            var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).Single();
+            project.Title = title;
+            project.ProjectUrl = projecturl;
+            project.Position = position;
+            project.Hint = hint;
+            if (project.ThirdPartyUrl != thirdpartyurl)
             {
-                var ret = new List<Community.Project>();
-                if (!string.IsNullOrWhiteSpace(user.GitHub))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitHub));
-                if (!string.IsNullOrWhiteSpace(user.CodePlex))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodePlex));
-                if (!string.IsNullOrWhiteSpace(user.GitOSC))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitOSC));
-                if (!string.IsNullOrWhiteSpace(user.GitCSDN))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitCSDN));
-                if (!string.IsNullOrWhiteSpace(user.CodingNet))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodingNet));
-                ret = ret.DistinctBy(x => x.Git).ToList();
-                var existed = user.Projects.Select(x => x.ThirdPartyUrl).ToList();
-                foreach (var x in ret)
-                {
-                    if (!existed.Contains(x.Git))
-                    {
-                        db.Projects.Add(new Project
-                        {
-                            Title = x.Title,
-                            ThirdPartyUrl = x.Git,
-                            UserId = user.Id,
-                            Verified = true,
-                            Type = GetCommunityType(x.Git)
-                        });
-                    }
-                }
-                db.SaveChanges();
-                serviceScope.Dispose();
+                project.ThirdPartyUrl = thirdpartyurl;
+                project.Type = GetCommunityType(thirdpartyurl);
+            }
+            if (project.Type == CommunityType.None)
+            {
+                project.Verified = false;
+                project.Begin = begin.Value;
+                project.End = end;
+            }
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "修改成功";
+                x.Details = "项目信息修改成功！";
+                x.RedirectText = "返回项目列表";
+                x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
             });
         }
     }
