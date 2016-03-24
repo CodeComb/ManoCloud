@@ -495,6 +495,12 @@ namespace Mano.Controllers
                     x.StatusCode = 404;
                 });
             var email = user.Emails.Single(x => x.Id == eid);
+            if (email.EmailAddress == user.Email)
+                return Prompt(x =>
+                {
+                    x.Title = "取消绑定失败";
+                    x.Details = "您不能将主要的邮箱取消绑定！";
+                });
             DB.Emails.Remove(email);
             DB.SaveChanges();
             return Prompt(x =>
