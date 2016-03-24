@@ -834,6 +834,7 @@ namespace Mano.Controllers
             proj.LastEditTime = DateTime.Now;
             proj.UserId = id;
             proj.ThirdPartyUrl = thirdpartyurl;
+            proj.Type = GetCommunityType(thirdpartyurl);
             proj.Verified = false;
             DB.Projects.Add(proj);
             DB.SaveChanges();

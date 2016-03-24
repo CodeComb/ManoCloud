@@ -24,7 +24,16 @@
                     {
                         <tr>
                             <td>@x.Title</td>
-                            <td>@(x.Type == CommunityType.None && x.Verified ? "自动更新" : "手动更新")</td>
+                            <td>
+                                @if (x.Type == CommunityType.None)
+                                {
+                                    <span class="label label-info">手动更新</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-success">自动更新</span>
+                                }
+                            </td>
                             <td>@(x.Verified ? x.LastPullTime.ToString("yyyy-MM-dd") : x.LastEditTime.ToString("yyyy-MM-dd"))</td>
                             <td>
                                 <a asp-action="ProjectEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑项目</a>
