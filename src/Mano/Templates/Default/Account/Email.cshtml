@@ -39,7 +39,10 @@
                             <td>
                                 @if (x.EmailAddress != Model.Email)
                                 {
-                                    <a href="javascript:primaryEmail('@x.Id');">设为主要</a>
+                                    @if (x.Verified)
+                                    {
+                                        <a href="javascript:primaryEmail('@x.Id');">设为主要</a>
+                                    }
                                     <a href="javascript:deleteEmail('@x.Id');">取消绑定</a>
                                 }
                                 @if (!x.Verified)
