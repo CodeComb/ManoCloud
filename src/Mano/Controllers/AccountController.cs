@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 using Microsoft.AspNet.Authorization;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -77,7 +78,6 @@ namespace Mano.Controllers
 
             // 发送激活信
             var aes_email = Aes.Encrypt(email);
-            //var url = Url.Link("default", new { action = "RegisterDetail", controller = "Account", key = aes_email });
             var url = $"http://{Config["Host"]}/Account/RegisterDetail?key={WebUtility.UrlEncode(aes_email)}";
             await Mail.SendEmailAsync(email, "Mano Cloud 新用户注册验证信", $@"<html>
             <head></head>
@@ -141,6 +141,8 @@ namespace Mano.Controllers
             await UserManager.AddClaimAsync(user, new System.Security.Claims.Claim("编辑个人资料", user.Id.ToString()));
             if (result.Succeeded)
             {
+                user.EmailConfirmed = true;
+
                 DB.Domains.Add(new Domain
                 {
                     Default = true,
@@ -148,6 +150,14 @@ namespace Mano.Controllers
                     Verified = true,
                     UserId = user.Id
                 });
+
+                DB.Emails.Add(new Email
+                {
+                    EmailAddress = user.Email,
+                    UserId = user.Id,
+                    Verified = true
+                });
+
                 DB.SaveChanges();
 
                 return Prompt(x =>
@@ -440,6 +450,171 @@ namespace Mano.Controllers
             {
                 x.Title = "密码修改成功";
                 x.Details = $"新密码已经生效，下次请使用新密码进行登录！";
+            });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Email(long id)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .ThenInclude(x => x.Commits)
+               .ThenInclude(x => x.Changes)
+               .ThenInclude(x => x.Commit)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult EmailDelete(long id, Guid eid)
+        {
+            var user = DB.Users
+               .Include(x => x.Emails)
+               .SingleOrDefault(x => x.Id == id);
+            if (!user.Emails.Any(x => x.Id == eid))
+                return Prompt(x =>
+                {
+                    x.Title = "取消绑定失败";
+                    x.Details = "没有找到这个电子邮箱地址";
+                    x.StatusCode = 404;
+                });
+            var email = user.Emails.Single(x => x.Id == eid);
+            DB.Emails.Remove(email);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "取消绑定成功";
+                x.Details = $"您已成功解除了{email.EmailAddress}与您Mano Cloud帐号的绑定！";
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult EmailPrimary(long id, Guid eid)
+        {
+            var user = DB.Users
+               .Include(x => x.Emails)
+               .SingleOrDefault(x => x.Id == id);
+            if (!user.Emails.Any(x => x.Id == eid))
+                return Prompt(x =>
+                {
+                    x.Title = "取消绑定失败";
+                    x.Details = "没有找到这个电子邮箱地址";
+                    x.StatusCode = 404;
+                });
+            var email = user.Emails.Single(x => x.Id == eid);
+            if (!email.Verified)
+                return Prompt(x =>
+                {
+                    x.Title = "设置失败";
+                    x.Details = "您需要先验证该邮箱的有效性";
+                    x.StatusCode = 400;
+                });
+            if (DB.Users.Where(x => x.Email == email.EmailAddress).Count() > 0)
+                return Prompt(x =>
+                {
+                    x.Title = "设置失败";
+                    x.Details = "已经有其他用户将该邮箱设置为主要邮箱，请您更换其他邮箱再试";
+                    x.StatusCode = 400;
+                });
+            user.Email = email.EmailAddress;
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "设置成功";
+                x.Details = $"您现在可以使用{email.EmailAddress}作为登录凭据了";
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public async Task<IActionResult> EmailAdd(long id, string email, [FromServices] IConfiguration Config)
+        {
+            var reg = new Regex("[a-zA-Z0-9_.-]{0,}@[a-zA-Z0-9_.-]{0,}");
+            if (!reg.IsMatch(email))
+                return Prompt(x =>
+                {
+                    x.Title = "绑定失败";
+                    x.Details = $"您欲绑定的电子邮箱{email}不合法！";
+                    x.StatusCode = 400;
+                });
+
+            var user = DB.Users
+               .Include(x => x.Emails)
+               .SingleOrDefault(x => x.Id == id);
+            if (user.Emails.Any(x => x.EmailAddress == email))
+                return Prompt(x =>
+                {
+                    x.Title = "绑定失败";
+                    x.Details = $"您已经绑定过邮箱{email}，请不要重复绑定！";
+                    x.StatusCode = 400;
+                });
+            DB.Emails.Add(new Email
+            {
+                EmailAddress = email,
+                Verified = false,
+                UserId = user.Id
+            });
+            DB.SaveChanges();
+            // 发送激活信
+            var aes_email = Aes.Encrypt(email);
+            var aes_uid = Aes.Encrypt(user.Id.ToString());
+            var url = $"http://{Config["Host"]}/Account/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={aes_uid}";
+            await Mail.SendEmailAsync(email, "Mano Cloud 新用户注册验证信", $@"<html>
+                    <head></head>
+                    <body>
+                    <p><a href=""{url}"">点击继续注册</a></p>
+                    </body>
+                </html>");
+            return Prompt(x =>
+            {
+                x.Title = "绑定邮箱";
+                x.Details = $"我们已经向电子邮箱{email}中发送了一封带有验证链接的电子邮件，请您按照电子邮件中的提示进行下一步操作";
+                x.RedirectText = "进入邮箱";
+                x.RedirectUrl = "http://mail." + email.Split('@')[1];
+            });
+        }
+
+        public IActionResult EmailVerify(string email, string uid)
+        {
+            var d_uid = Convert.ToInt64(Aes.Decrypt(uid));
+            var d_email = Aes.Decrypt(email);
+            var eml = DB.Emails
+                .Where(x => x.UserId == d_uid && x.EmailAddress == d_email && !x.Verified)
+                .SingleOrDefault();
+            if (eml == null)
+                return Prompt(x =>
+                {
+                    x.Title = "绑定失败";
+                    x.Details = $"没有找到与您的Mano Cloud帐号关联的电子邮箱{d_email}！";
+                });
+            eml.Verified = true;
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "绑定成功";
+                x.Details = $"电子邮箱{d_email}已经成功与您的Mano Cloud帐号绑定！";
+                x.RedirectText = "返回绑定列表";
+                x.RedirectUrl = Url.Action("Email", "Account", new { id = eml.UserId });
+                x.HideBack = true;
             });
         }
     }

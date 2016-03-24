@@ -40,6 +40,12 @@ namespace Mano.Models
                     DomainName = Config["SLD"].Replace("*", user.UserName),
                     Default = true
                 });
+                DB.Emails.Add(new Email
+                {
+                    Verified = true,
+                    EmailAddress = user.Email,
+                    UserId = user.Id
+                });
 
                 DB.Extensions.Add(new Extension { Id = ".js", Technology = "JavaScript", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".cs", Technology = "C#.Net", Type = TechnologyType.编程语言 });

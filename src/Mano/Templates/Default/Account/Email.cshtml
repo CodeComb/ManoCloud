@@ -1,0 +1,78 @@
+﻿@model User
+@{ 
+    ViewBag.Title = Model.Name ?? Model.UserName;
+}
+<script src="~/assets/default/scripts/modernizr.min.js"></script>
+<script src="~/assets/default/scripts/chart.js"></script>
+@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">
+            <h2>已绑定</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>电子邮箱地址</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Model.Emails)
+                    { 
+                        <tr>
+                            <td>@x.EmailAddress</td>
+                            <td>
+                                @if (x.EmailAddress == Model.Email)
+                                { 
+                                    <span class="label info">主要的</span>
+                                }
+                                else if (x.Verified)
+                                {
+                                    <span class="label success">已验证</span>
+                                }
+                                else
+                                {
+                                    <span class="label danger">未验证</span>
+                                }
+                            </td>
+                            <td>
+                                @if (x.EmailAddress != Model.Email)
+                                {
+                                    <a href="javascript:primaryEmail('@x.Id');">设为主要</a>
+                                }
+                                <a href="javascript:deleteEmail('@x.Id');">取消绑定</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <h2>绑定新邮箱</h2>
+            <form asp-action="EmailAdd" asp-controller="Account" method="post" asp-route-id="@Model.Id" class="row">
+                <div class="col-md-4">
+                    <input type="email" name="email" class="form-control" placeholder="欲绑定的Email地址" />
+                </div>
+                <div class="col-md-2">
+                    <input type="submit" class="btn btn-primary" value="发送验证信" />
+                </div>
+            </form>
+        </div>
+        @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
+        <form asp-action="EmailDelete" asp-controller="Account" id="frmDelete" method="post" asp-route-id="@Model.Id">
+            <input type="hidden" id="deleteId" name="eid" />
+        </form>
+        <form asp-action="EmailPrimary" asp-controller="Account" id="frmPrimary" method="post" asp-route-id="@Model.Id">
+            <input type="hidden" id="primaryId" name="eid" />
+        </form>
+        <script>
+            function deleteEmail(id) {
+                $('#deleteId').val(id);
+                $('#frmDelete').submit();
+            }
+            function primaryEmail(id) {
+                $('#primaryId').val(id);
+                $('#frmPrimary').submit();
+            }
+        </script>
+    </div>
+</div>
