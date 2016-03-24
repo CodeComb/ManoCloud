@@ -26,9 +26,9 @@
                         { s = Html.ProjectStatistics(x); }
                         <tr>
                             <td>@x.Title</td>
-                            <td>@s.Count.ToString("C") 行</td>
+                            <td>@s.Count.ToSplitedString() 行</td>
                             <td>@s.Contributors</td>
-                            <td>@s.Contributed.ToString("C") 行 (@((s.Contributed * 100 / s.Count).ToString("0.0"))%)</td>
+                            <td>@s.Contributed.ToSplitedString() 行 (@((s.Contributed * 100 / s.Count).ToString("0.0"))%)</td>
                             <td>
                                 @s.Begin.ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.End).TotalDays <= 7 ? "至今" : s.End.ToString("yyyy-MM-dd"))
                             </td>
@@ -57,7 +57,7 @@
                     { 
                         <tr>
                             <td>@x.Skill</td>
-                            <td>@x.Count.ToString("C") 行</td>
+                            <td>@x.Count.ToSplitedString() 行</td>
                             <td>@x.Display</td>
                         </tr>
                     }

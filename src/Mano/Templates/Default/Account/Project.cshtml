@@ -14,28 +14,16 @@
                 <thead>
                     <tr>
                         <th>项目名称</th>
-                        <th>项目代码量</th>
-                        <th>参与人数</th>
-                        <th>贡献</th>
-                        <th>项目周期</th>
                         <th>更新类型</th>
                         <th>最后更新</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @{ ProjectStatistics s; }
                     @foreach (var x in Model.Projects)
                     {
-                        { s = Html.ProjectStatistics(x); }
                         <tr>
                             <td>@x.Title</td>
-                            <td>@s.Count.ToString("C") 行</td>
-                            <td>@s.Contributors</td>
-                            <td>@s.Contributed.ToString("C") 行 (@((s.Contributed * 100 / (s.Count == 0 ? 1 : s.Count)).ToString("0.0"))%)</td>
-                            <td>
-                                @s.Begin.ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.End).TotalDays <= 7 ? "至今" : s.End.ToString("yyyy-MM-dd"))
-                            </td>
                             <td>@(x.Type == CommunityType.None && x.Verified ? "自动更新" : "手动更新")</td>
                             <td>@(x.Verified ? x.LastPullTime.ToString("yyyy-MM-dd") : x.LastEditTime.ToString("yyyy-MM-dd"))</td>
                             <td>
