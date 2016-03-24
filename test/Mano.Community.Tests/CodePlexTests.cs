@@ -6,13 +6,13 @@ using Xunit;
 
 namespace Mano.Community.Tests
 {
-    public class GitHubTests
+    public class CodePlexTests
     {
         [Fact]
-        public async void GitHubTest()
+        public async void CodePlexTest()
         {
-            var ret = await ProjectGetter.FromGitHub("Kagamine");
-            Assert.Equal(64, ret.Count);
+            var ret = await ProjectGetter.FromCodePlex("jiangzm");
+            Assert.Equal(43, ret.Count);
         }
     }
 }
