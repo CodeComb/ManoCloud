@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -692,6 +693,7 @@ namespace Mano.Controllers
             user.CodePlex = codeplex;
             user.CodingNet = codingnet;
             DB.SaveChanges();
+            Sync(user);
             return Prompt(x =>
             {
                 x.Title = "设置成功";
@@ -863,11 +865,7 @@ namespace Mano.Controllers
                 });
             DB.Projects.Remove(project);
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "删除成功";
-                x.Details = $"您已成功将{project.Title}删除！";
-            });
+            return RedirectToAction("Project", "Account", new { id = id });
         }
 
         [HttpGet]
@@ -903,6 +901,44 @@ namespace Mano.Controllers
                 });
             ViewBag.Project = project;
             return View(user);
+        }
+
+        public Task Sync(User user)
+        {
+            var serviceScope = Resolver.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var db = serviceScope.ServiceProvider.GetService<ManoContext>();
+            return Task.Factory.StartNew(async ()=>
+            {
+                var ret = new List<Community.Project>();
+                if (!string.IsNullOrWhiteSpace(user.GitHub))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitHub));
+                if (!string.IsNullOrWhiteSpace(user.CodePlex))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodePlex));
+                if (!string.IsNullOrWhiteSpace(user.GitOSC))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitOSC));
+                if (!string.IsNullOrWhiteSpace(user.GitCSDN))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitCSDN));
+                if (!string.IsNullOrWhiteSpace(user.CodingNet))
+                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodingNet));
+                ret = ret.DistinctBy(x => x.Git).ToList();
+                var existed = user.Projects.Select(x => x.ThirdPartyUrl).ToList();
+                foreach (var x in ret)
+                {
+                    if (!existed.Contains(x.Git))
+                    {
+                        db.Projects.Add(new Project
+                        {
+                            Title = x.Title,
+                            ThirdPartyUrl = x.Git,
+                            UserId = user.Id,
+                            Verified = true,
+                            Type = GetCommunityType(x.Git)
+                        });
+                    }
+                }
+                db.SaveChanges();
+                serviceScope.Dispose();
+            });
         }
     }
 }

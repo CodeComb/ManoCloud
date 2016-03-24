@@ -20,7 +20,8 @@
     "CodeComb.Security.Aes": "2.0.0-rc1-final",
     "CodeComb.Marked": "2.0.0-rc1-final",
     "EntityFramework7.Npgsql": "3.1.0-rc1-3",
-    "Mano.Parser": "1.0.0-*"
+    "Mano.Parser": "1.0.0-*",
+    "Mano.Community": "1.0.0-*"
   },
 
   "commands": {
