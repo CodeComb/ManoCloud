@@ -583,11 +583,11 @@ namespace Mano.Controllers
             // 发送激活信
             var aes_email = Aes.Encrypt(email);
             var aes_uid = Aes.Encrypt(user.Id.ToString());
-            var url = $"http://{Config["Host"]}/Account/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={aes_uid}";
-            await Mail.SendEmailAsync(email, "Mano Cloud 新用户注册验证信", $@"<html>
+            var url = $"http://{Config["Host"]}/Account/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={WebUtility.UrlEncode(aes_uid)}";
+            await Mail.SendEmailAsync(email, "Mano Cloud 绑定邮箱验证信", $@"<html>
                     <head></head>
                     <body>
-                    <p><a href=""{url}"">点击继续注册</a></p>
+                    <p><a href=""{url}"">点击继续绑定邮箱</a></p>
                     </body>
                 </html>");
             return Prompt(x =>

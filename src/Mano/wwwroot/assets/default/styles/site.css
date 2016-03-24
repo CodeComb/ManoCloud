@@ -867,6 +867,7 @@ code {
     border: 8px solid rgba(255,255,255,0.25);
     float: left;
     margin-right: 25px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.15);
 }
 
 .profile-avatar{
