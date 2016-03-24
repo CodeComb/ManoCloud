@@ -228,8 +228,16 @@ namespace Mano.Helpers
                 .Select(x => x.EmailAddress)
                 .ToList();
             var ret = new ProjectStatistics();
-            ret.Begin = project.Commits.Min(x => x.Time);
-            ret.End = project.Commits.Max(x => x.Time);
+            if (project.Commits.Count > 0)
+            {
+                ret.Begin = project.Commits.Min(x => x.Time);
+                ret.End = project.Commits.Max(x => x.Time);
+            }
+            else
+            {
+                ret.Begin = DateTime.Now;
+                ret.End = DateTime.Now;
+            }
             ret.Count = project.Commits.Sum(x => x.Changes.Sum(y => y.Additions + y.Deletions));
             ret.Contributed = project.Commits.Where(x => emails.Contains(x.Email)).Sum(x => x.Changes.Sum(y => y.Additions + y.Deletions));
             ret.Contributors = project.Commits.Select(x => x.Email).Distinct().Count();
