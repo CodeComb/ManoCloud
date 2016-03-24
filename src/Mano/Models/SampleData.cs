@@ -29,7 +29,8 @@ namespace Mano.Models
                 {
                     UserName = "admin",
                     Email = "1@1234.sh",
-                    RegisteryTime = DateTime.Now
+                    RegisteryTime = DateTime.Now,
+                    GitHub = "Cream2015"
                 };
 
                 await UserManager.CreateAsync(user, "123456");
@@ -146,6 +147,14 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".psd", Technology = "Photoshop", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".swf", Technology = "Adobe Flash", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".ai", Technology = "Adobe Illustrator", Type = TechnologyType.工具或框架 });
+
+                DB.Nodes.Add(new Node
+                {
+                    Key = "6385e6812567439cb3389fb9d1cbc15b",
+                    MaxSize = 10240,
+                    Url = "http://localhost:5008",
+                    Status = NodeStatus.Offline
+                });
 
                 DB.SaveChanges();
             }

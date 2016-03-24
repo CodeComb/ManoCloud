@@ -27,7 +27,7 @@ namespace Mano.Controllers
                 Response.Redirect("//" + Config["Host"]);
         }
 
-        public CommunityType GetCommunityType(string url)
+        public static CommunityType GetCommunityType(string url)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return CommunityType.None;
@@ -46,7 +46,12 @@ namespace Mano.Controllers
 
         public Task Sync(User user)
         {
-            var serviceScope = Resolver.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            return Sync(Resolver, user);
+        }
+
+        public static Task Sync(IServiceProvider services, User user)
+        {
+            var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope();
             var db = serviceScope.ServiceProvider.GetService<ManoContext>();
             return Task.Factory.StartNew(async () =>
             {
@@ -749,6 +754,7 @@ namespace Mano.Controllers
             user.GitCSDN = gitcsdn;
             user.CodePlex = codeplex;
             user.CodingNet = codingnet;
+            user.LastPullTime = DateTime.Now;
             DB.SaveChanges();
             Sync(user);
             return Prompt(x =>

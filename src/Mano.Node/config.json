@@ -1,5 +1,5 @@
 ﻿{
-  "Api": "https://www.mano.cloud/Api/",
+  "Api": "http://localhost:5000/Api",
   "Key": "6385e6812567439cb3389fb9d1cbc15b",
-  "Pool": "C:\\Pool"
+  "Pool": "C:\\Pool\\"
 }

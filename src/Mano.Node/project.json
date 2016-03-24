@@ -8,6 +8,7 @@
     "Mano.Parser": "1.0.0-*",
     "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
     "CodeComb.AspNet.Extensions": "2.0.0-rc1-final-3"
   },
 

@@ -38,7 +38,9 @@
             </table>
             <br />
             <h2>技能雷达图</h2>
-            <canvas id="chartRadar" style="width:50%; height:250px;"></canvas>
+            <div>
+                <canvas id="chartRadar" height="600" width="700" style="max-width:100%;"></canvas>
+            </div>
             <script>
                 new Chart(document.getElementById("chartRadar").getContext("2d")).Radar(@Html.UserRadar(Model.Projects), { animation: Modernizr.canvas });
             </script>

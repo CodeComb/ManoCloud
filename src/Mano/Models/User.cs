@@ -70,6 +70,8 @@ namespace Mano.Models
 
         public DateTime RegisteryTime { get; set; }
 
+        public DateTime LastPullTime { get; set; }
+
         public virtual ICollection<Domain> Domains { get; set; } = new List<Domain>();
 
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();

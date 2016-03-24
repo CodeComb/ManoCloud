@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Mano.Node
 {
@@ -12,8 +13,11 @@ namespace Mano.Node
             services.AddConfiguration();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
+            logger.MinimumLevel = LogLevel.Information;
+            logger.AddConsole();
+
             app.UseMvcWithDefaultRoute();
         }
 

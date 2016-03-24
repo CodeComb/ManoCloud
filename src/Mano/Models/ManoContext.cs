@@ -93,6 +93,7 @@ namespace Mano.Models
             builder.Entity<User>(e =>
             {
                 e.HasIndex(x => x.RegisteryTime);
+                e.HasIndex(x => x.LastPullTime);
             });
         }
     }

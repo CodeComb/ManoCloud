@@ -47,8 +47,8 @@ namespace Mano.Models
                 if (TotalDays < 30)
                     return TotalDays + "天";
                 if (TotalDays < 365)
-                    return (TotalDays / 30).ToString("0.0") + "个月";
-                return (TotalDays / 365).ToString("0.0") + "年";
+                    return (TotalDays / 30).ToString() + "个月";
+                return (TotalDays / 365).ToString() + "年";
             }
         }
 

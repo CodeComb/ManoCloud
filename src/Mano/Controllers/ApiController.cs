@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Text;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Newtonsoft.Json;
@@ -12,16 +14,22 @@ namespace Mano.Controllers
     public class ApiController : BaseController
     {
         [HttpPost]
-        public IActionResult PushLogs(Guid id, string json, double size, string key)
+        public IActionResult PushLogs(Guid id, IFormFile json, double size, string key)
         {
             if (DB.Nodes.SingleOrDefault(x => x.Key == key) == null)
                 return Content("no");
             var project = DB.Projects.Single(x => x.Id == id);
             project.Size = size;
-            var commits = JsonConvert.DeserializeObject<List<Commit>>(json);
+            var Json = Encoding.UTF8.GetString(json.ReadAllBytes());
+            var commits = JsonConvert.DeserializeObject<List<Commit>>(Json);
             foreach (var x in commits)
+            {
                 if (DB.Commits.SingleOrDefault(y => y.Id == x.Id) == null)
+                {
+                    x.ProjectId = id;
                     DB.Commits.Add(x);
+                }
+            }
             DB.SaveChanges();
             lock(this)
             {
@@ -37,6 +45,7 @@ namespace Mano.Controllers
                     .ThenInclude(x => x.Commit)
                     .Where(x => x.ProjectId == id)
                     .SelectMany(x => x.Changes)
+                    .Where(x => tech.ContainsKey(Path.GetExtension(x.Path)))
                     .GroupBy(x => tech[Path.GetExtension(x.Path)])
                     .Select(x => new { Key = x.Key, Count = x.Sum(y => y.Additions + y.Deletions), Begin = x.Min(y => y.Commit.Time) })
                     .ToList();
