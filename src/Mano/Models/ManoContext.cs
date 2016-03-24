@@ -39,11 +39,11 @@ namespace Mano.Models
         {
             base.OnModelCreating(builder);
 
-            builder.SetupBlob();
+            builder.SetupFiles();
 
             builder.Entity<Domain>(e =>
             {
-                e.HasIndex(x => x.DomainName);
+                e.HasIndex(x => x.DomainName).IsUnique();
                 e.HasIndex(x => x.Verified);
             });
 

@@ -54,7 +54,7 @@ namespace Mano
             logger.AddConsole();
             logger.MinimumLevel = LogLevel.Warning;
 
-            app.UseFileUpload("/assets/shared/jquery.codecomb.fileupload.js");
+            app.UseFileUpload("/assets/shared/scripts/jquery.codecomb.fileupload.js");
             app.UseAutoAjax();
             app.UseIdentity();
             app.UseStaticFiles();

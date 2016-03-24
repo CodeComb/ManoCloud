@@ -25,7 +25,13 @@ namespace Mano.Models
 
         [MaxLength(32)]
         public string GitCSDN { get; set; }
-        
+
+        [MaxLength(32)]
+        public string CodePlex { get; set; }
+
+        [MaxLength(32)]
+        public string CodingNet { get; set; }
+
         public string Introduction { get; set; }
 
         [MaxLength(64)]

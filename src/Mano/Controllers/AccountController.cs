@@ -652,5 +652,93 @@ namespace Mano.Controllers
                 </html>");
             return Redirect(Referer);
         }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Third(long id)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .ThenInclude(x => x.Commits)
+               .ThenInclude(x => x.Changes)
+               .ThenInclude(x => x.Commit)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Third(long id, string github, string gitosc, string gitcsdn, string codeplex, string codingnet)
+        {
+            var user = DB.Users
+               .SingleOrDefault(x => x.Id == id);
+            user.GitHub = github;
+            user.GitOSC = gitosc;
+            user.GitCSDN = gitcsdn;
+            user.CodePlex = codeplex;
+            user.CodingNet = codingnet;
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "设置成功";
+                x.Details = "第三方平台帐号绑定成功";
+            });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Introduction(long id)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .Include(x => x.Emails)
+              .Include(x => x.Skills)
+              .Include(x => x.Experiences)
+              .Include(x => x.Certifications)
+              .Include(x => x.Educations)
+              .Include(x => x.Projects)
+              .ThenInclude(x => x.Commits)
+              .ThenInclude(x => x.Changes)
+              .ThenInclude(x => x.Commit)
+              .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Introduction(long id, string Introduction)
+        {
+            var user = DB.Users
+               .SingleOrDefault(x => x.Id == id);
+            user.Introduction = Introduction;
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "修改成功";
+                x.Details = "自我介绍修改成功，新的自我介绍内容将展现在您的云简历中。";
+            });
+        }
     }
 }

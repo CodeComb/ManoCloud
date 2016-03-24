@@ -14,7 +14,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
     "CodeComb.AspNet.Extensions": "2.0.0-rc1-final-3",
     "CodeComb.AspNet.Localization": "2.0.0-rc1-final",
-    "CodeComb.AspNet.Upload": "2.0.0-rc1-final",
+    "CodeComb.AspNet.Upload": "2.0.0-rc1-final-2",
     "CodeComb.AspNet.AntiXSS": "2.0.0-rc1-final",
     "CodeComb.Net.EmailSender": "2.0.0-rc1-final",
     "CodeComb.Security.Aes": "2.0.0-rc1-final",

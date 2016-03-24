@@ -875,3 +875,30 @@ code {
     max-height: 200px;
     border-radius: 15px;
 }
+
+.markdown-editor-outer {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.markdown-editor {
+    border: none;
+    border-radius: 10px 10px 0 0;
+    outline: 0;
+    display: block;
+    height: 180px;
+    padding: 10px;
+    width: 100%;
+}
+
+.markdown-editor:focus {
+    box-shadow: none;
+}
+
+.markdown-editor-bottom {
+    background-color: #f2f2f2;
+    color: #888;
+    font-size: 10px;
+    padding: 5px 10px;
+    border-radius: 0 0 10px 10px;
+}
