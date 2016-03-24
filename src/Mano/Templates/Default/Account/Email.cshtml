@@ -18,7 +18,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var x in Model.Emails)
+                    @foreach (var x in Model.Emails.OrderByDescending(x => x.Verified))
                     { 
                         <tr>
                             <td>@x.EmailAddress</td>
@@ -72,7 +72,7 @@
         <form asp-action="EmailPrimary" asp-controller="Account" id="frmPrimary" method="post" asp-route-id="@Model.Id">
             <input type="hidden" id="primaryId" name="eid" />
         </form>
-        <form asp-action="EmailSend" asp-controller="Account" id="frmPrimary" method="post" asp-route-id="@Model.Id">
+        <form asp-action="EmailSend" asp-controller="Account" id="frmVerify" method="post" asp-route-id="@Model.Id">
             <input type="hidden" id="primaryId" name="eid" />
         </form>
         <script>
@@ -86,7 +86,7 @@
             }
             function verifyEmail(id) {
                 $('#primaryId').val(id);
-                $('#frmPrimary').submit();
+                $('#frmVerify').submit();
             }
         </script>
     </div>
