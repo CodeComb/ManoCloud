@@ -787,7 +787,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult ProjectCreate(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
+        public IActionResult ProjectAdd(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
             if (update == "自动更新")
             {
@@ -797,6 +797,28 @@ namespace Mano.Controllers
                     {
                         x.Title = "添加失败";
                         x.Details = "您已经添加过这个项目了，请不要重复添加！";
+                        x.StatusCode = 400;
+                    });
+                }
+                if (string.IsNullOrEmpty(thirdpartyurl))
+                {
+                    return Prompt(x =>
+                    {
+                        x.Title = "添加失败";
+                        x.Details = "请您填写Git源，Mano Cloud将根据此源Clone您项目的代码，以分析您所用技术及代码量。";
+                        x.StatusCode = 400;
+                    });
+                }
+            }
+            else
+            {
+
+                if (!begin.HasValue)
+                {
+                    return Prompt(x =>
+                    {
+                        x.Title = "添加失败";
+                        x.Details = "当您选择手动更新项目时，您必须填写项目开始时间。";
                         x.StatusCode = 400;
                     });
                 }
