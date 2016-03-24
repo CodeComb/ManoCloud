@@ -623,5 +623,40 @@ namespace Mano.Controllers
                 x.HideBack = true;
             });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public async Task<IActionResult> EmailSend(long id, Guid eid, [FromServices] IConfiguration Config)
+        {
+            var user = DB.Users
+               .Include(x => x.Emails)
+               .SingleOrDefault(x => x.Id == id);
+            var email = user.Emails.SingleOrDefault(x => x.Id == eid);
+            if (email == null)
+                return Prompt(x =>
+                {
+                    x.Title = "发送失败";
+                    x.Details = "没有找到指定的电子邮箱地址";
+                    x.StatusCode = 400;
+                });
+            // 发送激活信
+            var aes_email = Aes.Encrypt(email.EmailAddress);
+            var aes_uid = Aes.Encrypt(user.Id.ToString());
+            var url = $"http://{Config["Host"]}/Account/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={WebUtility.UrlEncode(aes_uid)}";
+            await Mail.SendEmailAsync(email.EmailAddress, "Mano Cloud 绑定邮箱验证信", $@"<html>
+                    <head></head>
+                    <body>
+                    <p><a href=""{url}"">点击继续绑定邮箱</a></p>
+                    </body>
+                </html>");
+            return Prompt(x =>
+            {
+                x.Title = "绑定邮箱";
+                x.Details = $"我们已经向电子邮箱{email}中发送了一封带有验证链接的电子邮件，请您按照电子邮件中的提示进行下一步操作";
+                x.RedirectText = "进入邮箱";
+                x.RedirectUrl = "http://mail." + email.EmailAddress.Split('@')[1];
+            });
+        }
     }
 }

@@ -42,6 +42,10 @@
                                     <a href="javascript:primaryEmail('@x.Id');">设为主要</a>
                                     <a href="javascript:deleteEmail('@x.Id');">取消绑定</a>
                                 }
+                                @if (!x.Verified)
+                                {
+                                    <a href="javascript:verifyEmail('@x.Id');">重发验证信</a>
+                                }
                             </td>
                         </tr>
                     }
@@ -65,12 +69,19 @@
         <form asp-action="EmailPrimary" asp-controller="Account" id="frmPrimary" method="post" asp-route-id="@Model.Id">
             <input type="hidden" id="primaryId" name="eid" />
         </form>
+        <form asp-action="EmailSend" asp-controller="Account" id="frmPrimary" method="post" asp-route-id="@Model.Id">
+            <input type="hidden" id="primaryId" name="eid" />
+        </form>
         <script>
             function deleteEmail(id) {
                 $('#deleteId').val(id);
                 $('#frmDelete').submit();
             }
             function primaryEmail(id) {
+                $('#primaryId').val(id);
+                $('#frmPrimary').submit();
+            }
+            function verifyEmail(id) {
                 $('#primaryId').val(id);
                 $('#frmPrimary').submit();
             }
