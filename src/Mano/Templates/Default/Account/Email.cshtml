@@ -18,8 +18,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var x in Model.Emails.OrderByDescending(x => x.Verified))
-                    { 
+                    @foreach (var x in Model.Emails.OrderByDescending(x => x.EmailAddress == Model.Email).ThenByDescending(x => x.Verified))
+                    {
                         <tr>
                             <td>@x.EmailAddress</td>
                             <td>
@@ -73,7 +73,7 @@
             <input type="hidden" id="primaryId" name="eid" />
         </form>
         <form asp-action="EmailSend" asp-controller="Account" id="frmVerify" method="post" asp-route-id="@Model.Id">
-            <input type="hidden" id="primaryId" name="eid" />
+            <input type="hidden" id="verifyId" name="eid" />
         </form>
         <script>
             function deleteEmail(id) {
@@ -85,7 +85,7 @@
                 $('#frmPrimary').submit();
             }
             function verifyEmail(id) {
-                $('#primaryId').val(id);
+                $('#verifyId').val(id);
                 $('#frmVerify').submit();
             }
         </script>

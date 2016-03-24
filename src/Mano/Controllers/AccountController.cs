@@ -599,10 +599,10 @@ namespace Mano.Controllers
             });
         }
 
-        public IActionResult EmailVerify(string email, string uid)
+        public IActionResult EmailVerify(string key, string uid)
         {
             var d_uid = Convert.ToInt64(Aes.Decrypt(uid));
-            var d_email = Aes.Decrypt(email);
+            var d_email = Aes.Decrypt(key);
             var eml = DB.Emails
                 .Where(x => x.UserId == d_uid && x.EmailAddress == d_email && !x.Verified)
                 .SingleOrDefault();
@@ -627,7 +627,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public async Task<IActionResult> EmailSend(long id, Guid eid, [FromServices] IConfiguration Config)
+        public async Task<IActionResult> EmailSend(long id, Guid eid, [FromServices] IConfiguration Config, [FromHeader]string Referer)
         {
             var user = DB.Users
                .Include(x => x.Emails)
@@ -650,13 +650,7 @@ namespace Mano.Controllers
                     <p><a href=""{url}"">点击继续绑定邮箱</a></p>
                     </body>
                 </html>");
-            return Prompt(x =>
-            {
-                x.Title = "绑定邮箱";
-                x.Details = $"我们已经向电子邮箱{email}中发送了一封带有验证链接的电子邮件，请您按照电子邮件中的提示进行下一步操作";
-                x.RedirectText = "进入邮箱";
-                x.RedirectUrl = "http://mail." + email.EmailAddress.Split('@')[1];
-            });
+            return Redirect(Referer);
         }
     }
 }
