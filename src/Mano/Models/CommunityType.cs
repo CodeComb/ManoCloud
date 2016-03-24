@@ -9,8 +9,10 @@ namespace Mano.Models
     {
         None,
         GitHub,
+        CodePlex,
         GitOSC,
         GitCSDN,
-        Git
+        CodingNet,
+        Git = 1000
     }
 }

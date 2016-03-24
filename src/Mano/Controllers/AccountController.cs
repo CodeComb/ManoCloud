@@ -343,7 +343,7 @@ namespace Mano.Controllers
                 .ThenInclude(x => x.Commit)
                 .SingleOrDefault(x => x.Id == id);
             if (user == null)
-                return Prompt(x => 
+                return Prompt(x =>
                 {
                     x.Title = "没有找到该用户";
                     x.Details = "没有找到指定的用户，或该用户设置了访问权限";
@@ -355,7 +355,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult Profile(long id, string city, string province,string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
+        public IActionResult Profile(long id, string city, string province, string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
         {
             var user = DB.Users
                 .Single(x => x.Id == id);
@@ -385,7 +385,7 @@ namespace Mano.Controllers
                 user.AvatarId = file.Id;
             }
             DB.SaveChanges();
-            return Prompt(x => 
+            return Prompt(x =>
             {
                 x.Title = "修改成功";
                 x.Details = "您的个人资料已经成功修改！";
@@ -739,6 +739,147 @@ namespace Mano.Controllers
                 x.Title = "修改成功";
                 x.Details = "自我介绍修改成功，新的自我介绍内容将展现在您的云简历中。";
             });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Project(long id)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .ThenInclude(x => x.Commits)
+               .ThenInclude(x => x.Changes)
+               .ThenInclude(x => x.Commit)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        private CommunityType GetCommunityType(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return CommunityType.None;
+            if (url.IndexOf("github.com") >= 0)
+                return CommunityType.GitHub;
+            if (url.IndexOf("oschina.net") >= 0)
+                return CommunityType.GitOSC;
+            if (url.IndexOf("csdn.net") >= 0)
+                return CommunityType.GitCSDN;
+            if (url.IndexOf("codeplex.com") >= 0)
+                return CommunityType.CodePlex;
+            if (url.IndexOf("coding.net") >= 0)
+                return CommunityType.CodingNet;
+            return CommunityType.Git;
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ProjectCreate(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
+        {
+            if (update == "自动更新")
+            {
+                if (DB.Projects.Where(x => x.UserId == id && x.ThirdPartyUrl == thirdpartyurl).Count() > 0)
+                {
+                    return Prompt(x =>
+                    {
+                        x.Title = "添加失败";
+                        x.Details = "您已经添加过这个项目了，请不要重复添加！";
+                        x.StatusCode = 400;
+                    });
+                }
+            }
+            var proj = new Project();
+            proj.Title = title;
+            proj.Position = position;
+            proj.ProjectUrl = projecturl;
+            proj.Size = 0;
+            proj.Begin = begin ?? DateTime.Now;
+            proj.End = end;
+            proj.Hint = hint;
+            proj.LastEditTime = DateTime.Now;
+            proj.UserId = id;
+            proj.ThirdPartyUrl = thirdpartyurl;
+            proj.Verified = false;
+            DB.Projects.Add(proj);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "创建成功";
+                x.Details = $"项目{proj.Title} 已经创建成功";
+                x.HideBack = true;
+                x.RedirectText = "返回项目列表";
+                x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ProjectDelete(long id, Guid pid)
+        {
+            var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
+            if (project == null)
+                return Prompt(x =>
+                {
+                    x.Title = "删除失败";
+                    x.Details = "没有找到相关的项目";
+                    x.StatusCode = 400;
+                });
+            DB.Projects.Remove(project);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "删除成功";
+                x.Details = $"您已成功将{project.Title}删除！";
+            });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ProjectEdit(long id, Guid pid)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .ThenInclude(x => x.Commits)
+               .ThenInclude(x => x.Changes)
+               .ThenInclude(x => x.Commit)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
+            if (project == null)
+                return Prompt(x =>
+                {
+                    x.Title = "删除失败";
+                    x.Details = "没有找到相关的项目";
+                    x.StatusCode = 400;
+                });
+            ViewBag.Project = project;
+            return View(user);
         }
     }
 }

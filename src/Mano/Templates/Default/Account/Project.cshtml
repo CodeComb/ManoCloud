@@ -1,0 +1,133 @@
+﻿@model User
+@{
+    ViewBag.Title = "我的项目";
+}
+
+@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">
+            <h2>我的项目</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>项目代码量</th>
+                        <th>参与人数</th>
+                        <th>贡献</th>
+                        <th>项目周期</th>
+                        <th>更新类型</th>
+                        <th>最后更新</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ ProjectStatistics s; }
+                    @foreach (var x in Model.Projects.Where(x => x.Commits.Count > 0))
+                    {
+                        { s = Html.ProjectStatistics(x); }
+                        <tr>
+                            <td>@x.Title</td>
+                            <td>@s.Count.ToString("C") 行</td>
+                            <td>@s.Contributors</td>
+                            <td>@s.Contributed.ToString("C") 行 (@((s.Contributed * 100 / s.Count).ToString("0.0"))%)</td>
+                            <td>
+                                @s.Begin.ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.End).TotalDays <= 7 ? "至今" : s.End.ToString("yyyy-MM-dd"))
+                            </td>
+                            <td>@(x.Type == CommunityType.None && x.Verified ? "自动更新" : "手动更新")</td>
+                            <td>@(x.Verified ? x.LastPullTime.ToString("yyyy-MM-dd") : x.LastEditTime.ToString("yyyy-MM-dd"))</td>
+                            <td>
+                                <a asp-action="ProjectEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑项目</a>
+                                <a href="javascript:deleteProject('@x.Id')">删除项目</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <h2>新建项目</h2>
+            <form asp-action="ProjectAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>
+                            <label>项目名称 *</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </p>
+                        <p>
+                            <label>担任角色 *</label>
+                            <input type="text" name="position" class="form-control" required>
+                        </p>
+                        <p>
+                            <label>项目链接</label>
+                            <input type="text" name="projecturl" class="form-control">
+                        </p>
+                        <p>
+                            <label>更新方式 *</label>
+                            <br />
+                            <select class="form-control" name="update" id="lstUpdate">
+                                <option>自动更新</option>
+                                <option>手动更新</option>
+                            </select>
+                        </p>
+                        <p class="auto-update">
+                            <label>Git 源 *</label>
+                            <input type="text" name="ThirdPartyUrl" class="form-control" required>
+                        </p>
+                        <p class="manual-update">
+                            <label>项目开始时间 *</label>
+                            <input type="text" name="begin" class="datetime form-control" required>
+                        </p>
+                        <p class="manual-update">
+                            <label>项目结束时间 (不填表示至今)</label>
+                            <input type="text" name="end" class="datetime form-control" required>
+                        </p>
+                    </div>
+                </div>
+                <div class="row manual-update">
+                    <div class="col-md-12">
+                        <label>项目简介</label>
+                        <br />
+                        <div class="markdown-editor-outer">
+                            <textarea class="textbox markdown-editor" name="hint">@Model.Introduction</textarea>
+                            <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <br />
+                    <div class="col-md-2">
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">创建项目</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
+        <form id="frmDelete" asp-action="ProjectDelete" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="pid" id="deleteId" /></form>
+        <script>
+            function deleteProject(id)
+            {
+                $('#deleteId').val(id);
+                $('#frmDelete').submit();
+            }
+
+            function updateChanged()
+            {
+                if ($('#lstUpdate').val() == "手动更新") {
+                    $('.auto-update').hide();
+                    $('.manual-update').show();
+                } else {
+                    $('.auto-update').show();
+                    $('.manual-update').hide();
+                }
+            }
+
+            $('#lstUpdate').change(function () {
+                updateChanged();
+            });
+
+            updateChanged();
+        </script>
+    </div>
+</div>
