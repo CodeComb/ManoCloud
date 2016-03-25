@@ -69,7 +69,7 @@
                         <tr>
                             <td>@x.Title</td>
                             <td>@x.Type</td>
-                            <td>@x.Count @x.Unit</td>
+                            <td>@x.Count.ToSplitedString() @x.Unit</td>
                             <td>@x.Display</td>
                             <td>
                                 <a asp-action="ExperinceEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑技能</a>

@@ -141,7 +141,7 @@ namespace Mano.Controllers
 
             // 发送激活信
             var aes_email = Aes.Encrypt(email);
-            var url = $"http://{Config["Host"]}/Account/RegisterDetail?key={WebUtility.UrlEncode(aes_email)}";
+            var url = $"http://{Config["Host"]}[controller]/RegisterDetail?key={WebUtility.UrlEncode(aes_email)}";
             await Mail.SendEmailAsync(email, "Mano Cloud 新用户注册验证信", $@"<html>
             <head></head>
             <body>
@@ -267,7 +267,7 @@ namespace Mano.Controllers
 
             // 发送激活信
             var aes_email = Aes.Encrypt(email);
-            var url = $"http://{Config["Host"]}/Account/ForgotDetail?key={WebUtility.UrlEncode(aes_email)}";
+            var url = $"http://{Config["Host"]}[controller]/ForgotDetail?key={WebUtility.UrlEncode(aes_email)}";
             await Mail.SendEmailAsync(email, "Mano Cloud  密码找回验证信", $@"<html>
             <head></head>
             <body>
@@ -638,7 +638,7 @@ namespace Mano.Controllers
             // 发送激活信
             var aes_email = Aes.Encrypt(email);
             var aes_uid = Aes.Encrypt(user.Id.ToString());
-            var url = $"http://{Config["Host"]}/Account/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={WebUtility.UrlEncode(aes_uid)}";
+            var url = $"http://{Config["Host"]}[controller]/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={WebUtility.UrlEncode(aes_uid)}";
             await Mail.SendEmailAsync(email, "Mano Cloud 绑定邮箱验证信", $@"<html>
                     <head></head>
                     <body>
@@ -698,7 +698,7 @@ namespace Mano.Controllers
             // 发送激活信
             var aes_email = Aes.Encrypt(email.EmailAddress);
             var aes_uid = Aes.Encrypt(user.Id.ToString());
-            var url = $"http://{Config["Host"]}/Account/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={WebUtility.UrlEncode(aes_uid)}";
+            var url = $"http://{Config["Host"]}[controller]/EmailVerify?key={WebUtility.UrlEncode(aes_email)}&uid={WebUtility.UrlEncode(aes_uid)}";
             await Mail.SendEmailAsync(email.EmailAddress, "Mano Cloud 绑定邮箱验证信", $@"<html>
                     <head></head>
                     <body>
@@ -820,7 +820,7 @@ namespace Mano.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Project/{id}/Add")]
+        [Route("[controller]/Project/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectAdd(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
@@ -885,7 +885,6 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Project/{id}/Delete/{pid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectDelete(long id, Guid pid)
         {
@@ -903,7 +902,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [Route("/Account/Project/{id}/Edit/{pid}")]
+        [Route("[controller]/Project/{id}/Edit/{pid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectEdit(long id, Guid pid)
         {
@@ -938,7 +937,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Project/{id}/Edit/{pid}")]
+        [Route("[controller]/Project/{id}/Edit/{pid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectEdit(long id, Guid pid, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
@@ -994,7 +993,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Experience/{id}/Add")]
+        [Route("[controller]/Experience/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceAdd(long id, Experience model)
         {
@@ -1013,7 +1012,6 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Experience/{id}/Delete/{eid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceDelete(long id, Guid eid, Experience model)
         {
@@ -1050,7 +1048,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Education/{id}/Add")]
+        [Route("[controller]/Education/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult EducationAdd(long id, Education model)
         {
@@ -1093,7 +1091,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Certification/{id}/Add")]
+        [Route("[controller]/Certification/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult CertificationAdd(long id, Certification model, IFormFile Certification)
         {
@@ -1130,7 +1128,6 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Certification/{id}/Delete/{cid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult CertificationDelete(long id, Guid cid)
         {
@@ -1168,7 +1165,6 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Skill/{id}/Delete/{sid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult SkillDelete(long id, Guid sid)
         {
@@ -1181,7 +1177,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Skill/{id}/Add")]
+        [Route("[controller]/Skill/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult SkillAdd(long id, Skill model)
         {
