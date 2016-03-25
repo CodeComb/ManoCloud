@@ -41,8 +41,7 @@ namespace Mano.Controllers
                     .Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式)
                     .ToDictionary(x => x.Id);
                 var statistics = DB.Commits
-                    .Where(x => x.ProjectId == id)
-                    .Where(x => tech.ContainsKey(x.Extension))
+                    .Where(x => emails.Contains(x.Email) && x.ProjectId == id && tech.ContainsKey(x.Extension))
                     .GroupBy(x => tech[x.Extension])
                     .Select(x => new { Key = x.Key, Count = x.Sum(y => y.Additions + y.Deletions), Begin = x.Min(y => y.Time) })
                     .ToList();
