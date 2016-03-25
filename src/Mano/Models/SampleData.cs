@@ -59,6 +59,7 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".html", Technology = "HTML", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".less", Technology = "LESS", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".sass", Technology = "SASS", Type = TechnologyType.编程语言 });
+                DB.Extensions.Add(new Extension { Id = ".scss", Technology = "SCSS", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".ts", Technology = "Type Script", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".as", Technology = "Action Script", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".c", Technology = "C", Type = TechnologyType.编程语言 });
@@ -97,6 +98,8 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".asp", Technology = "Active Server Page", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".aspx", Technology = "ASP.Net (Web Form)", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".jsp", Technology = "Java Server Page", Type = TechnologyType.编程语言 });
+                DB.Extensions.Add(new Extension { Id = ".xhtml", Technology = "HTML", Type = TechnologyType.编程语言 });
+                DB.Extensions.Add(new Extension { Id = ".erb", Technology = "HTML+ERB", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".cshtml", Technology = "ASP.Net C# (Razor)", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".vbhtml", Technology = "ASP.Net VB (Razor)", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".jshtml", Technology = "jFlick (Razor)", Type = TechnologyType.编程语言 });
@@ -147,6 +150,7 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".psd", Technology = "Photoshop", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".swf", Technology = "Adobe Flash", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".ai", Technology = "Adobe Illustrator", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".yml", Technology = "YAML", Type = TechnologyType.序列化格式 });
 
                 DB.Nodes.Add(new Node
                 {
