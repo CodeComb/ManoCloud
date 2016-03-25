@@ -26,11 +26,5 @@ namespace Mano.Models
         public long UserId { get; set; }
 
         public User User { get; set; }
-
-        public Guid? LaborContractId { get; set; }
-
-        public File LaborContract { get; set; }
-
-        public bool Verified { get; set; }
     }
 }

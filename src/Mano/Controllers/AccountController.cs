@@ -834,7 +834,7 @@ namespace Mano.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Project/{id}/Add/{pid}")]
+        [Route("/Account/Project/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectAdd(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
@@ -982,6 +982,64 @@ namespace Mano.Controllers
                 x.RedirectText = "返回项目列表";
                 x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
             });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Experience(long id)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .Include(x => x.Emails)
+              .Include(x => x.Skills)
+              .Include(x => x.Experiences)
+              .Include(x => x.Certifications)
+              .Include(x => x.Educations)
+              .Include(x => x.Projects)
+              .ThenInclude(x => x.Commits)
+              .ThenInclude(x => x.Changes)
+              .ThenInclude(x => x.Commit)
+              .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Experience/{id}/Add")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ExperienceAdd(long id, Experience model)
+        {
+            model.UserId = id;
+            DB.Experiences.Add(model);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "添加成功";
+                x.Details = $"您在{model.Company}的工作经历已经成功添加";
+                x.HideBack = true;
+                x.RedirectText = "返回工作经历";
+                x.RedirectUrl = Url.Action("Experience", "Account", new { id = id });
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Experience/{id}/Delete/{eid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ExperienceDelete(long id, Guid eid, Experience model)
+        {
+            var exp = DB.Experiences
+                .Single(x => x.Id == eid && x.UserId == id);
+            DB.Experiences.Remove(exp);
+            DB.SaveChanges();
+            return Redirect(Url.Action("Experience", "Account", new { id = id }));
         }
     }
 }

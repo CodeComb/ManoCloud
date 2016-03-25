@@ -22,6 +22,7 @@ namespace Mano.Models
             {
                 await RoleManager.CreateAsync(new IdentityRole<long> { Name = "Root" });
                 await RoleManager.CreateAsync(new IdentityRole<long> { Name = "Master" });
+                await RoleManager.CreateAsync(new IdentityRole<long> { Name = "Enterprise" });
                 await RoleManager.CreateAsync(new IdentityRole<long> { Name = "Member" });
                 await RoleManager.CreateAsync(new IdentityRole<long> { Name = "Banned" });
 
