@@ -20,8 +20,7 @@ namespace Mano.Helpers
                 .ToList();
             var radar = new RadarChart();
             var extensions = project.Commits
-                .SelectMany(x => x.Changes)
-                .Select(x => Path.GetExtension(x.Path))
+                .Select(x => x.Extension)
                 .Distinct()
                 .ToList();
             var DB = self.ViewContext.HttpContext.RequestServices.GetRequiredService<ManoContext>();
@@ -52,16 +51,14 @@ namespace Mano.Helpers
             foreach (var x in map)
             {
                 var cnt = project.Commits
-                    .SelectMany(y => y.Changes)
-                    .Where(y => dic.ContainsKey(Path.GetExtension(y.Path)) && x.Type == dic[Path.GetExtension(y.Path)]?.Value)
+                    .Where(y => dic.ContainsKey(y.Extension) && x.Type == dic[y.Extension]?.Value)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset1.data.Add(cnt);
             }
             if (radar.labels.Contains("其他"))
             {
                 var cnt = project.Commits
-                    .SelectMany(y => y.Changes)
-                    .Where(y => !map.Select(x => x.Id).Contains(Path.GetExtension(y.Path)))
+                    .Where(y => !dic.ContainsKey(y.Extension))
                     .Sum(y => y.Additions + y.Deletions);
                 dataset1.data.Add(cnt);
             }
@@ -75,9 +72,7 @@ namespace Mano.Helpers
             foreach (var x in map)
             {
                 var cnt = project.Commits
-                    .Where(y => emails.Contains(y.Email))
-                    .SelectMany(y => y.Changes)
-                    .Where(y => dic.ContainsKey(Path.GetExtension(y.Path)) && x.Type == dic[Path.GetExtension(y.Path)]?.Value)
+                    .Where(y => emails.Contains(y.Email) && dic.ContainsKey(y.Extension) && x.Type == dic[y.Extension]?.Value)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset2.data.Add(cnt);
             }
@@ -85,8 +80,7 @@ namespace Mano.Helpers
             {
                 var cnt = project.Commits
                     .Where(y => emails.Contains(y.Email))
-                    .SelectMany(y => y.Changes)
-                    .Where(y => !map.Select(x => x.Id).Contains(Path.GetExtension(y.Path)))
+                    .Where(y => !dic.ContainsKey(y.Extension))
                     .Sum(y => y.Additions + y.Deletions);
                 dataset2.data.Add(cnt);
             }
@@ -103,8 +97,7 @@ namespace Mano.Helpers
             var radar = new RadarChart();
             var extensions = projects
                 .SelectMany(x => x.Commits)
-                .SelectMany(x => x.Changes)
-                .Select(x => Path.GetExtension(x.Path))
+                .Select(x => x.Extension)
                 .Distinct()
                 .ToList();
             var DB = self.ViewContext.HttpContext.RequestServices.GetRequiredService<ManoContext>();
@@ -136,8 +129,7 @@ namespace Mano.Helpers
             {
                 var cnt = projects
                     .SelectMany(y => y.Commits)
-                    .SelectMany(y => y.Changes)
-                    .Where(y => dic.ContainsKey(Path.GetExtension(y.Path)) && x.Technology == dic[Path.GetExtension(y.Path)]?.Value)
+                    .Where(y => dic.ContainsKey(y.Extension) && x.Technology == dic[y.Extension]?.Value)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset1.data.Add(cnt);
             }
@@ -145,8 +137,8 @@ namespace Mano.Helpers
             {
                 var cnt = projects
                     .SelectMany(y => y.Commits)
-                    .SelectMany(y => y.Changes)
-                    .Where(y => !map.Select(x => x.Id).Contains(Path.GetExtension(y.Path)))
+                    .Where(y => !dic.ContainsKey(y.Extension))
+                    .OrderByDescending(y => y.Additions + y.Deletions)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset1.data.Add(cnt);
             }
@@ -161,9 +153,7 @@ namespace Mano.Helpers
             {
                 var cnt = projects
                     .SelectMany(y => y.Commits)
-                    .Where(y => emails.Contains(y.Email))
-                    .SelectMany(y => y.Changes)
-                    .Where(y => dic.ContainsKey(Path.GetExtension(y.Path)) && x.Technology == dic[Path.GetExtension(y.Path)].Value)
+                    .Where(y => emails.Contains(y.Email) && dic.ContainsKey(y.Extension) && x.Technology == dic[y.Extension].Value)
                     .Sum(y => y.Additions + y.Deletions);
                 dataset2.data.Add(cnt);
             }
@@ -172,8 +162,7 @@ namespace Mano.Helpers
                 var cnt = projects
                     .SelectMany(y => y.Commits)
                     .Where(y => emails.Contains(y.Email))
-                    .SelectMany(y => y.Changes)
-                    .Where(y => !map.Select(x => x.Id).Contains(Path.GetExtension(y.Path)))
+                    .Where(y => !dic.ContainsKey(y.Extension))
                     .Sum(y => y.Additions + y.Deletions);
                 dataset2.data.Add(cnt);
             }
@@ -190,7 +179,6 @@ namespace Mano.Helpers
             var changes = projects
                 .SelectMany(x => x.Commits)
                 .Where(x => emails.Contains(x.Email))
-                .SelectMany(x => x.Changes)
                 .ToList();
             var DB = self.ViewContext.HttpContext.RequestServices.GetRequiredService<ManoContext>();
             var dic = DB.Extensions
@@ -198,23 +186,23 @@ namespace Mano.Helpers
                 .Select(x => new { Key = x.Id, Value = x.Type, Technology = x.Technology })
                 .ToDictionary(x => x.Key);
             var ret = changes
-                .Where(x => dic.ContainsKey(Path.GetExtension(x.Path)))
-                .GroupBy(x =>dic[Path.GetExtension(x.Path)])
+                .Where(x => dic.ContainsKey(x.Extension))
+                .GroupBy(x =>dic[x.Extension])
                 .Select(x => new SkillStatistics
                 {
-                    Begin = x.Min(y => y.Commit.Time),
+                    Begin = x.Min(y => y.Time),
                     Skill = x.Key.Technology.ToString(),
                     Count = x.Sum(y => y.Additions + y.Deletions)
                 })
                 .ToList();
             var others = changes
-                .Where(x => !dic.ContainsKey(Path.GetExtension(x.Path)))
+                .Where(x => !dic.ContainsKey(x.Extension))
                 .ToList();
             if (others.Count > 0)
             {
                 ret.Add(new SkillStatistics
                 {
-                    Begin = others.Min(x => x.Commit.Time),
+                    Begin = others.Min(x => x.Time),
                     Count = others.Sum(x => x.Additions + x.Deletions),
                     Skill = "其他"
                 });
@@ -239,8 +227,8 @@ namespace Mano.Helpers
                 ret.Begin = DateTime.Now;
                 ret.End = DateTime.Now;
             }
-            ret.Count = project.Commits.Sum(x => x.Changes.Sum(y => y.Additions + y.Deletions));
-            ret.Contributed = project.Commits.Where(x => emails.Contains(x.Email)).Sum(x => x.Changes.Sum(y => y.Additions + y.Deletions));
+            ret.Count = project.Commits.Sum(x =>x.Additions + x.Deletions);
+            ret.Contributed = project.Commits.Where(x => emails.Contains(x.Email)).Sum(x => x.Additions + x.Deletions);
             ret.Contributors = project.Commits.Select(x => x.Email).Distinct().Count();
             return ret;
         }

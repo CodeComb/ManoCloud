@@ -27,8 +27,6 @@ namespace Mano.Models
 
         public DbSet<Commit> Commits { get; set; }
 
-        public DbSet<Change> Changes { get; set; }
-
         public DbSet<Node> Nodes { get; set; }
 
         public DbSet<Extension> Extensions { get; set; }
@@ -54,17 +52,13 @@ namespace Mano.Models
                 e.HasIndex(x => x.End);
             });
 
-            builder.Entity<Change>(e =>
-            {
-                e.HasIndex(x => x.Additions);
-                e.HasIndex(x => x.Deletions);
-            });
-
             builder.Entity<Commit>(e =>
             {
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.Email);
                 e.HasIndex(x => x.Author);
+                e.HasIndex(x => x.Additions);
+                e.HasIndex(x => x.Deletions);
             });
 
             builder.Entity<Email>(e =>

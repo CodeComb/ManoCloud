@@ -152,6 +152,7 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".swf", Technology = "Adobe Flash", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".ai", Technology = "Adobe Illustrator", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".yml", Technology = "YAML", Type = TechnologyType.序列化格式 });
+                DB.Extensions.Add(new Extension { Id = ".css", Technology = "CSS", Type = TechnologyType.编程语言 });
 
                 DB.Nodes.Add(new Node
                 {

@@ -59,13 +59,13 @@ namespace Mano.Controllers
                 if (!string.IsNullOrWhiteSpace(user.GitHub))
                     ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitHub));
                 if (!string.IsNullOrWhiteSpace(user.CodePlex))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodePlex));
+                    ret.AddRange(await Community.ProjectGetter.FromCodePlex(user.CodePlex));
                 if (!string.IsNullOrWhiteSpace(user.GitOSC))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitOSC));
+                    ret.AddRange(await Community.ProjectGetter.FromGitOSC(user.GitOSC));
                 if (!string.IsNullOrWhiteSpace(user.GitCSDN))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.GitCSDN));
+                    ret.AddRange(await Community.ProjectGetter.FromCsdnCode(user.GitCSDN));
                 if (!string.IsNullOrWhiteSpace(user.CodingNet))
-                    ret.AddRange(await Community.ProjectGetter.FromGitHub(user.CodingNet));
+                    ret.AddRange(await Community.ProjectGetter.FromCodingNet(user.CodingNet));
                 ret = ret.DistinctBy(x => x.Git).ToList();
                 var existed = user.Projects.Select(x => x.ThirdPartyUrl).ToList();
                 foreach (var x in ret)
@@ -376,8 +376,6 @@ namespace Mano.Controllers
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
                 .ThenInclude(x => x.Commits)
-                .ThenInclude(x => x.Changes)
-                .ThenInclude(x => x.Commit)
                 .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -402,8 +400,6 @@ namespace Mano.Controllers
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
                 .ThenInclude(x => x.Commits)
-                .ThenInclude(x => x.Changes)
-                .ThenInclude(x => x.Commit)
                 .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -470,8 +466,6 @@ namespace Mano.Controllers
                .Include(x => x.Educations)
                .Include(x => x.Projects)
                .ThenInclude(x => x.Commits)
-               .ThenInclude(x => x.Changes)
-               .ThenInclude(x => x.Commit)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -529,8 +523,6 @@ namespace Mano.Controllers
                .Include(x => x.Educations)
                .Include(x => x.Projects)
                .ThenInclude(x => x.Commits)
-               .ThenInclude(x => x.Changes)
-               .ThenInclude(x => x.Commit)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -729,8 +721,6 @@ namespace Mano.Controllers
                .Include(x => x.Educations)
                .Include(x => x.Projects)
                .ThenInclude(x => x.Commits)
-               .ThenInclude(x => x.Changes)
-               .ThenInclude(x => x.Commit)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -777,8 +767,6 @@ namespace Mano.Controllers
               .Include(x => x.Educations)
               .Include(x => x.Projects)
               .ThenInclude(x => x.Commits)
-              .ThenInclude(x => x.Changes)
-              .ThenInclude(x => x.Commit)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -819,8 +807,6 @@ namespace Mano.Controllers
                .Include(x => x.Educations)
                .Include(x => x.Projects)
                .ThenInclude(x => x.Commits)
-               .ThenInclude(x => x.Changes)
-               .ThenInclude(x => x.Commit)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -930,8 +916,6 @@ namespace Mano.Controllers
                .Include(x => x.Educations)
                .Include(x => x.Projects)
                .ThenInclude(x => x.Commits)
-               .ThenInclude(x => x.Changes)
-               .ThenInclude(x => x.Commit)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -997,8 +981,6 @@ namespace Mano.Controllers
               .Include(x => x.Educations)
               .Include(x => x.Projects)
               .ThenInclude(x => x.Commits)
-              .ThenInclude(x => x.Changes)
-              .ThenInclude(x => x.Commit)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1055,8 +1037,6 @@ namespace Mano.Controllers
               .Include(x => x.Educations)
               .Include(x => x.Projects)
               .ThenInclude(x => x.Commits)
-              .ThenInclude(x => x.Changes)
-              .ThenInclude(x => x.Commit)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1100,8 +1080,6 @@ namespace Mano.Controllers
               .Include(x => x.Educations)
               .Include(x => x.Projects)
               .ThenInclude(x => x.Commits)
-              .ThenInclude(x => x.Changes)
-              .ThenInclude(x => x.Commit)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1115,10 +1093,18 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Education/{id}/Add")]
+        [Route("/Account/Certification/{id}/Add")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult CertificationAdd(long id, Certification model, IFormFile Certification)
         {
+            if (Certification == null)
+            {
+                return Prompt(x =>
+                {
+                    x.Title = "添加失败";
+                    x.Details = "您必须上传证书的扫描件或照片，请返回重试！";
+                });
+            }
             var file = new CodeComb.AspNet.Upload.Models.File
             {
                 Bytes = Certification.ReadAllBytes(),
@@ -1137,14 +1123,14 @@ namespace Mano.Controllers
                 x.Title = "添加成功";
                 x.Details = $"{model.Title}已经成功添加！";
                 x.HideBack = true;
-                x.RedirectText = "返回教育经历";
-                x.RedirectUrl = Url.Action("Education", "Account", new { id = id });
+                x.RedirectText = "返回我的证书";
+                x.RedirectUrl = Url.Action("Certification", "Account", new { id = id });
             });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/Account/Education/{id}/Add")]
+        [Route("/Account/Certification/{id}/Delete/{cid}")]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult CertificationDelete(long id, Guid cid)
         {
@@ -1154,6 +1140,63 @@ namespace Mano.Controllers
             DB.Certifications.Remove(cert);
             DB.SaveChanges();
             return RedirectToAction("Certification", "Account", new { id = id });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Skill(long id)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .Include(x => x.Emails)
+              .Include(x => x.Skills)
+              .Include(x => x.Experiences)
+              .Include(x => x.Certifications)
+              .Include(x => x.Educations)
+              .Include(x => x.Projects)
+              .ThenInclude(x => x.Commits)
+              .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Skill/{id}/Delete/{sid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult SkillDelete(long id, Guid sid)
+        {
+            var skill = DB.Skills
+                .Single(x => x.Id == sid && x.UserId == id);
+            DB.Skills.Remove(skill);
+            DB.SaveChanges();
+            return RedirectToAction("Skill", "Account", new { id = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Skill/{id}/Add")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult SkillAdd(long id, Skill model)
+        {
+            model.UserId = id;
+            model.UpdateFromGit = false;
+            DB.Skills.Add(model);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "添加成功";
+                x.Details = $"{model.Title}已经成功添加！";
+                x.HideBack = true;
+                x.RedirectText = "返回我的技能";
+                x.RedirectUrl = Url.Action("Skill", "Account", new { id = id });
+            });
         }
     }
 }

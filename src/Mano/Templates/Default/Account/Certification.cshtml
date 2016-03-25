@@ -2,10 +2,10 @@
 @{
     ViewBag.Title = "我的证书";
 }
-<div class="modal fade" id="modalAddExperience" tabindex="-1" role="dialog">
+<div class="modal fade" id="modalAddCertification" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="ExperienceAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+            <form asp-action="CertificationAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">添加证书</h4>
@@ -24,7 +24,7 @@
                         <input type="text" name="AchieveTime" class="datetime form-control" required />
                     </p>
                     <p>
-                        <label>证书照片</label>
+                        <label>证书照片 *</label>
                         <input type="file" name="Certification" class="form-control" />
                     </p>
                 </div>
@@ -43,7 +43,7 @@
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
-            <h2>我的证书 <a class="button-adding" href="javascript:$('#modalAddExperience').modal();">添加</a></h2>
+            <h2>我的证书 <a class="button-adding" href="javascript:$('#modalAddCertification').modal();">添加</a></h2>
             <table class="table">
                 <thead>
                     <tr>
@@ -62,7 +62,7 @@
                             <td>@x.AchieveTime.ToString("yyyy-MM-dd")</td>
                             <td>
                                 <a target="_blank" href="/file/download/@x.CertId">查看证书</a>
-                                <a href="javascript:deleteExperience('@x.Id')">删除证书</a>
+                                <a href="javascript:deleteCertification('@x.Id')">删除证书</a>
                             </td>
                         </tr>
                     }
@@ -70,9 +70,9 @@
             </table>
         </div>
         @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
-        <form id="frmDelete" asp-action="ExperienceDelete" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="eid" id="deleteId" /></form>
+        <form id="frmDelete" asp-action="CertificationDelete" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="cid" id="deleteId" /></form>
         <script>
-            function deleteExperience(id) {
+            function deleteCertification(id) {
                 $('#deleteId').val(id);
                 $('#frmDelete').submit();
             }

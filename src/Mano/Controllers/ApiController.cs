@@ -41,13 +41,10 @@ namespace Mano.Controllers
                     .Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式)
                     .ToDictionary(x => x.Id);
                 var statistics = DB.Commits
-                    .Include(x => x.Changes)
-                    .ThenInclude(x => x.Commit)
                     .Where(x => x.ProjectId == id)
-                    .SelectMany(x => x.Changes)
-                    .Where(x => tech.ContainsKey(Path.GetExtension(x.Path)))
-                    .GroupBy(x => tech[Path.GetExtension(x.Path)])
-                    .Select(x => new { Key = x.Key, Count = x.Sum(y => y.Additions + y.Deletions), Begin = x.Min(y => y.Commit.Time) })
+                    .Where(x => tech.ContainsKey(x.Extension))
+                    .GroupBy(x => tech[x.Extension])
+                    .Select(x => new { Key = x.Key, Count = x.Sum(y => y.Additions + y.Deletions), Begin = x.Min(y => y.Time) })
                     .ToList();
                 foreach (var x in statistics)
                 {

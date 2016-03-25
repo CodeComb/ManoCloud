@@ -10,8 +10,7 @@ namespace Mano.Models
 
         [MaxLength(64)]
         public string Title { get; set; }
-
-        [MaxLength(64)]
+        
         public TechnologyType Type { get; set; }
 
         public bool UpdateFromGit { get; set; }

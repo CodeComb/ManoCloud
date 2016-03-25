@@ -33,9 +33,6 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
-                .ThenInclude(x => x.Commits)
-                .ThenInclude(x => x.Changes)
-                .ThenInclude(x => x.Commit)
                 .Single(x => x.Id == domain.UserId);
 
             Cookies["ASPNET_TEMPLATE"] = user.Template ?? "Metro";

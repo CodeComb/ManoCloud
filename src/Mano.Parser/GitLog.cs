@@ -14,6 +14,7 @@ namespace Mano.Parser
             var ret = new List<Commit>();
             src = src.Replace("\r\n", "\n");
             var tmp = src.Split('\n');
+            var info = new Info();
             for (var i =0; i < tmp.Count(); i++)
             {
                 if (string.IsNullOrWhiteSpace(tmp[i]))
@@ -21,23 +22,25 @@ namespace Mano.Parser
                 var splited = tmp[i].Split('\t');
                 if (splited.Count() == 1)
                 {
-                    var commit = new Commit();
-                    commit.Id = tmp[i];
-                    commit.Author = tmp[i + 1];
-                    commit.Email = tmp[i + 2];
+                    info.Hash = tmp[i];
+                    info.Author = tmp[i + 1];
+                    info.Email = tmp[i + 2];
                     var dt = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(Convert.ToInt64(tmp[i + 3]));
-                    commit.Time = dt.ToLocalTime();
-                    ret.Add(commit);
+                    info.Time = dt.ToLocalTime();
                     i = i + 3;
                 }
                 else
                 {
-                    ret.Last().Changes.Add(new Change
+                    ret.Add(new Commit
                     {
                         Additions = Convert.ToInt64(splited[0] == "-" ? "0" : splited[0]),
                         Deletions = Convert.ToInt64(splited[1] == "-" ? "0" : splited[1]),
                         Path = splited[2],
-                        CommitId = ret.Last().Id
+                        Author = info.Author,
+                        Email = info.Email,
+                        Hash = info.Hash,
+                        Time = info.Time,
+                        Extension = System.IO.Path.GetExtension(splited[2])
                     });
                 }
             }
