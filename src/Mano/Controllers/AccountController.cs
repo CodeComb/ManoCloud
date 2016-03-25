@@ -817,7 +817,7 @@ namespace Mano.Controllers
                 });
             return View(user);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Project/{id}/Add")]
@@ -1193,6 +1193,111 @@ namespace Mano.Controllers
                 x.RedirectText = "返回我的技能";
                 x.RedirectUrl = Url.Action("Skill", "Account", new { id = id });
             });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Domain(long id, [FromServices] IConfiguration Config)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .Include(x => x.Emails)
+              .Include(x => x.Skills)
+              .Include(x => x.Experiences)
+              .Include(x => x.Certifications)
+              .Include(x => x.Educations)
+              .Include(x => x.Projects)
+              .ThenInclude(x => x.Commits)
+              .SingleOrDefault(x => x.Id == id);
+            ViewBag.Regex = new Regex(Config["Host"].Replace("*.", "([a-zA-Z0-9-_]{0,}.|)"));
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("[controller]/Domain/{id}/Add")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult DomainAdd(long id, string domain, [FromServices] IConfiguration Config)
+        {
+            var regex = new Regex(Config["Host"].Replace("*.", "([a-zA-Z0-9-_]{0,}.|)"));
+            if (regex.IsMatch(domain))
+                return Prompt(x =>
+                {
+                    x.Title = "绑定失败";
+                    x.Details = $"域名{domain}不合法，请检查后重试";
+                });
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .SingleOrDefault(x => x.Id == id);
+            lock (this)
+            {
+                if (user.Domains.Where(x => x.DomainName == domain).Count() > 0)
+                {
+                    return Prompt(x =>
+                    {
+                        x.Title = "绑定失败";
+                        x.Details = $"你已经绑定过域名{domain}，请勿重复绑定！";
+                    });
+                }
+                if (DB.Domains.Where(x => x.DomainName == domain).Count() > 0)
+                {
+                    return Prompt(x =>
+                    {
+                        x.Title = "绑定失败";
+                        x.Details = $"域名{domain}已经被其他人绑定！";
+                    });
+                }
+                DB.Domains.Add(new Domain
+                {
+                    Default = false,
+                    DomainName = domain,
+                    UserId = id
+                });
+                DB.SaveChanges();
+            }
+
+            return Prompt(x =>
+            {
+                x.Title = "绑定成功";
+                x.Details = $"您已经成功绑定了域名{domain}";
+                x.HideBack = true;
+                x.RedirectText = "返回域名列表";
+                x.RedirectUrl = Url.Action("Domain", "Account", new { id = id });
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult DomainDelete(long id, Guid did)
+        {
+            var domain = DB.Domains.Single(x => x.Id == did && x.UserId == id);
+            DB.Domains.Remove(domain);
+            DB.SaveChanges();
+            return RedirectToAction("Domain", "Account", new { id = id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult DomainDefault(long id, Guid did)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .SingleOrDefault(x => x.Id == id);
+            foreach (var x in user.Domains)
+                x.Default = false;
+            var domain = DB.Domains.Single(x => x.Id == did && x.UserId == id);
+            domain.Default = true;
+            DB.SaveChanges();
+            return RedirectToAction("Domain", "Account", new { id = id });
         }
     }
 }
