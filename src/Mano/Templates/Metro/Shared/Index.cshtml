@@ -28,7 +28,6 @@
     <link rel="stylesheet" href="~/assets/metro/styles/style.css">
     <link rel="stylesheet" href="~/assets/metro/styles/responsive.css">
     <link rel="stylesheet" href="~/assets/metro/styles/prettyPhoto.css">
-    <link rel="stylesheet" href="~/assets/metro/styles/colorpicker.css">
     <script src="~/assets/metro/scripts/jquery-1.10.2.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.tools.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.easing.js"></script>
@@ -97,7 +96,7 @@
                 <div id="resume" class="tab_content">
                     <!-- Resume Section -->
                     <div class="section-header opened">
-                        <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
+                        <a href="#" class="section_toggle"><span><img src="~/assets/metro/images/section_toggle.png" height="78" width="48" alt=""></span></a>
                         <h2 class="section-title icon2">
                             <span class="icon category1"></span>
                             工作经历
@@ -108,8 +107,8 @@
                         {
                             <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
                                 <div class="resume_period category1">
-                                    <span class="period_from">@Experiences.ElementAt(i).Begin.ToString("YYYY/MM")</span>
-                                    <div class="period_to">@(Experiences.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
+                                    <span class="period_from">@Experiences.ElementAt(i).Begin.ToString("yyyy/MM")</span>
+                                    <div class="period_to">@(Experiences.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("yyyy/MM") : "至今")</div>
                                 </div>
                                 <div class="extra_wrap">
                                     <div class="resume_header">
@@ -130,7 +129,7 @@
                         }
                     </div>
                     <div class="section-header opened">
-                        <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
+                        <a href="#" class="section_toggle"><span><img src="~/assets/metro/images/section_toggle.png" height="78" width="48" alt=""></span></a>
                         <h2 class="section-title icon2">
                             <span class="icon category2"></span>
                             教育经历
@@ -142,8 +141,8 @@
                         {
                             <article class="post resume_post @(i%2 == 0 ? "odd":"even")">
                                 <div class="resume_period category2">
-                                    <span class="period_from">@Educations.ElementAt(i).Begin.ToString("YYYY/MM")</span>
-                                    <div class="period_to">@(Educations.ElementAt(i).End.HasValue? Educations.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
+                                    <span class="period_from">@Educations.ElementAt(i).Begin.ToString("yyyy/MM")</span>
+                                    <div class="period_to">@(Educations.ElementAt(i).End.HasValue? Educations.ElementAt(i).End.Value.ToString("yyyy/MM") : "至今")</div>
                                 </div>
                                 <div class="extra_wrap">
                                     <div class="resume_header">
@@ -167,10 +166,10 @@
                         }
                     </div>
                     <div class="section-header widgets_section opened">
-                        <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
+                        <a href="#" class="section_toggle"><span><img src="~/assets/metro/images/section_toggle.png" height="78" width="48" alt=""></span></a>
                         <h2 class="section-title icon2">
                             <span class="icon"></span>
-                            Skills
+                            我的技能
                         </h2>
                     </div>
                     <div class="skills_sidebar_section">
@@ -178,18 +177,20 @@
                         <aside class="widget-even widget widget_skills">
                             <h3 class="widget_title">编程语言技能</h3>
                             <div class="widget_inner">
-                                @for (var i = 0; i < ProgrammingSkills.Count; i++)
+                                @{ var j = 0; }
+                                @foreach (var x in ProgrammingSkills.Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式).OrderByDescending(x => x.TotalDays))
                                 {
-                                    <div class="skills_row @(i == 0 ? "odd first" : "even")">
+                                    <div class="skills_row @(j == 0 ? "odd first" : "even")">
                                         <span class="progressbar">
-                                            <span class="progress" style="background-color: @Colors[i % Colors.Length]">
+                                            <span class="progress" style="background-color: @Colors[j % Colors.Length]">
                                                 <span class="caption_wrap">
-                                                    <span class="caption">@Model.Skills.ElementAt(i).Title / @Model.Skills.ElementAt(i).Display / @Model.Skills.ElementAt(i).Count.ToSplitedString() 行</span>
-                                                    <span class="value hidden">@Html.PercentP(Model.Skills.ElementAt(i).TotalDays)</span>
+                                                    <span class="caption">@x.Title / @x.Display / @x.Count.ToSplitedString() 行</span>
+                                                    <span class="value percent-hidden">@Html.PercentP(x.TotalDays)</span>
                                                 </span>
                                             </span>
                                         </span>
                                     </div>
+                                    { j++; }
                                 }
                             </div>
                         </aside>
@@ -198,19 +199,21 @@
                         <aside class="widget-odd widget widget_skills">
                             <h3 class="widget_title">其他技能</h3>
                             <div class="widget_inner">
-                                @for (var i = 0; i < ProgrammingSkills.Count; i++)
+                                @{ j = 0; }
+                                @foreach (var x in ProgrammingSkills.Where(x => x.Type != TechnologyType.编程语言 && x.Type != TechnologyType.序列化格式).OrderByDescending(x => x.TotalDays))
                                 {
-                                    <div class="skills_row @(i == 0 ? "odd first" : "even")">
+                                    <div class="skills_row @(j == 0 ? "odd first" : "even")">
                                         <span class="progressbar">
-                                            <span class="progress" style="background-color: @Colors[i % Colors.Length]">
+                                            <span class="progress" style="background-color: @Colors[j % Colors.Length]">
                                                 <span class="caption_wrap">
-                                                    <span class="caption">@Model.Skills.ElementAt(i).Title / @Model.Skills.ElementAt(i).Display</span>
-                                                    <span class="value hidden">@Html.PercentF(Model.Skills.ElementAt(i).TotalDays)</span>
+                                                    <span class="caption">@x.Title / @x.Display / @x.Count.ToSplitedString() 行</span>
+                                                    <span class="value percent-hidden">@Html.PercentP(x.TotalDays)</span>
                                                 </span>
                                             </span>
                                         </span>
                                     </div>
-                                }
+                                    { j++; }
+                                }                            
                             </div>
                         </aside>
                         <!-- /Skills widget -->
@@ -223,7 +226,7 @@
 
                 <div id="portfolio" class="tab_content">
                     <div class="section-header opened">
-                        <a href="#" class="section_toggle"><span><img src="images/section_toggle.png" height="78" width="48" alt="Title Example"></span></a>
+                        <a href="#" class="section_toggle"><span><img src="~/assets/metro/images/section_toggle.png" height="78" width="48" alt=""></span></a>
                         <h2 class="section-title icon2">
                             <span class="icon category1"></span>
                             我的项目
@@ -234,8 +237,8 @@
                         {
                             <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
                                 <div class="resume_period category1">
-                                    <span class="period_from">@Projects.ElementAt(i).Begin.ToString("YYYY/MM")</span>
-                                    <div class="period_to">@(Projects.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("YYYY/MM") : "至今")</div>
+                                    <span class="period_from">@Projects.ElementAt(i).Begin.ToString("yyyy/MM")</span>
+                                    <div class="period_to">@(Projects.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("yyyy/MM") : "至今")</div>
                                 </div>
                                 <div class="extra_wrap">
                                     <div class="resume_header">
@@ -296,7 +299,7 @@
                                 <div class="vcard_inner">
                                     <div class="qrcode">
                                         <!-- To generate your own QR-code, you can use http://goqr.me/ -->
-                                        <img src="images/qr.png" height="150" width="150" alt="">
+                                        <img src="~/assets/metro/images/qr.png" height="150" width="150" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -325,81 +328,6 @@
                                         <div class="result"></div>
                                     </form>
                                 </div>
-                                <script type="text/javascript">
-											jQuery(document).ready(function() {
-												jQuery(".contact_form .enter").click(function(e){
-													userSubmitForm();
-													e.preventDefault();
-													return false;
-												});
-											});
-											function userSubmitForm(){
-
-    											/* Contact form messages */
-    											empt = 'Name field can not be empty';
-    											to_lng = 'Too long name field';
-    											to_lng = 'Too long name field';
-    											empt_mail = 'Too short (or empty) email address';
-    											to_lng_mail = 'Too long email address';
-    											incor = 'Incorrect email address';
-    											mes_empt = 'Message can not be empty';
-    											to_lng_mes = 'Too long message';
-
-												var error = formValidate(jQuery(".contact_form form"), {
-													error_message_show: true,
-													error_message_time: 5000,
-													error_message_class: "sc_infobox sc_infobox_style_error",
-													error_fields_class: "error_fields_class",
-													exit_after_first_error: false,
-													rules: [
-														{
-															field: "username",
-															min_length: { value: 1,	 message: empt },
-															max_length: { value: 160, message: to_lng}
-														},
-														{
-															field: "email",
-															min_length: { value: 7,	 message: empt_mail },
-															max_length: { value: 60, message: to_lng_mail},
-															mask: { value: "^([a-z0-9_\\-]+\\\.)*[a-z0-9_\\\-]+@@[a-z0-9_\\-]+(\\\.[a-z0-9_\\-]+)*\\\.[a-z]{2,6}$", message: incor}
-														},
-														{
-															field: "message",
-															min_length: { value: 1,  message: mes_empt },
-															max_length: { value: 200, message: to_lng_mes}
-														}
-													]
-												});
-												if (!error) {
-													var user_name  = jQuery(".contact_form #contact_form_username").val();
-													var user_email = jQuery(".contact_form #contact_form_email").val();
-													var user_site  = jQuery(".contact_form #contact_form_site").val();
-													var user_msg   = jQuery(".contact_form #contact_form_message").val();
-													var data = {
-														action: "submit_contact_form",
-														user_name: user_name,
-														user_email: user_email,
-														user_site: user_site,
-														user_msg: user_msg
-													};
-													jQuery.post("~/styles/sendmail.php", data, userSubmitFormResponse, "text");
-												}
-											}
-
-											function userSubmitFormResponse(response) {
-												var rez = JSON.parse(response);
-												jQuery(".contact_form .result")
-													.toggleClass("sc_infobox_style_error", false)
-													.toggleClass("sc_infobox_style_success", false);
-												if (rez.error == "") {
-													jQuery(".contact_form .result").addClass("sc_infobox_style_success").html("Your message sent!");
-													setTimeout("jQuery(\'.contact_form .result\').fadeOut(); jQuery(\'.contact_form form\').get(0).reset();", 3000);
-												} else {
-													jQuery(".contact_form .result").addClass("sc_infobox_style_error").html("Transmit failed!" + rez.error);
-												}
-												jQuery(".contact_form .result").fadeIn();
-											}
-                                </script>
                             </div>
                         </div>
                     </div>
@@ -410,41 +338,9 @@
         <footer id="footer">
             <a href="#" id="toTop"></a>
             <div class="footer_copyright">
-                Copyright &copy; 2013 - John Johnson. All rights reserved.
+                Copyright &copy; 2016 Mano Cloud - Harbin Code Comb Technology Co., Ltd.
             </div>
         </footer>
-        <script>
-				jQuery(document).ready(function(){
-				  	setColorPicker('bg_col');
-				});
-        </script>
-        <div id="opt_block">
-            <div class="opt_header">
-                <span></span>
-            </div>
-            <div class="opt_row bg_color">
-                <h3>background color:</h3>
-                <div id="bg_col" class="colorSelector"></div>
-            </div>
-            <div class="opt_row bg_pat">
-                <h3>Background Pattern:</h3>
-                <ul class="patterns_select">
-                    <li><a href="#"><img src="~/assets/metro/styles/patterns/pattern1.png" alt=""></a></li>
-                    <li><a href="#"><img src="~/assets/metro/styles/patterns/pattern2.png" alt=""></a></li>
-                    <li><a href="#"><img src="~/assets/metro/styles/patterns/pattern3.jpg" alt=""></a></li>
-                    <li><a href="#"><img src="~/assets/metro/styles/patterns/pattern4.png" alt=""></a></li>
-                    <li><a href="#"><img src="~/assets/metro/styles/patterns/pattern5.png" alt=""></a></li>
-                </ul>
-            </div>
-            <div class="opt_row bg_img">
-                <h3>Background Image:</h3>
-                <ul class="bg_select">
-                    <li><a href="#"><img src="~/assets/metro/styles/bg1.jpg" alt=""></a></li>
-                    <li><a href="#"><img src="~/assets/metro/styles/bg2.jpg" alt=""></a></li>
-                    <li><a href="#"><img src="~/assets/metro/styles/bg3.jpg" alt=""></a></li>
-                </ul>
-            </div>
-        </div>
     </div><!--/Page-->
 </body>
 </html>

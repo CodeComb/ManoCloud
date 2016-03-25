@@ -18,6 +18,8 @@ namespace Mano.Controllers
                 Cookies["ASPNET_TEMPLATE"] = "Default";
                 return View();
             }
+            if (host.IndexOf(':') > 0)
+                host = host.Split(':')[0];
             var domain = DB.Domains
                 .Include(x => x.User)
                 .ThenInclude(x => x.Domains)

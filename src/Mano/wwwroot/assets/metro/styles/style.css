@@ -22,12 +22,12 @@ table, caption, tbody, tfoot, thead, tr, th, td {
 	vertical-align: baseline;
 }
  @font-face {
-    font-family: 'FlatCV'; 
-    src: url('../fonts/FlatCV.eot');
-    src: url('../fonts/FlatCV.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/FlatCV.woff') format('woff'),
-         url('../fonts/FlatCV.ttf') format('truetype'),
-         url('../fonts/FlatCV.svg#flatcvregular') format('svg');
+    font-family: 'Metro'; 
+    src: url('../fonts/Metro.eot');
+    src: url('../fonts/Metro.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/Metro.woff') format('woff'),
+         url('../fonts/Metro.ttf') format('truetype'),
+         url('../fonts/Metro.svg#Metroregular') format('svg');
     font-weight: normal;
     font-style: normal;
 }		
@@ -39,7 +39,7 @@ html {
 body {
 	height: 100%;
 	background: #09193f;
-	font-family: 'Cabin', sans-serif;
+	font-family: 'Microsoft YaHei', 'Cabin', sans-serif;
 	font-size: 16px;
 	line-height: 20px;
 	color: #666;
@@ -247,8 +247,8 @@ a img {
 #profile_name .pos {
 	text-transform: uppercase;
 }
-.icon {
-    font-family: "FlatCV";
+.icon, .social_links span {
+    font-family: "Metro"!important;
 }
 
 
@@ -344,7 +344,7 @@ a img {
 	width: 150px;
 	height: 150px;
 	overflow:hidden;
-	font-family: "FlatCV";
+	font-family: "Metro";
 	text-decoration: none;
 	color: #fff;
 	font-size: 100px;
@@ -385,12 +385,12 @@ a img {
 
 /**Resume**/
 
-#resume .section-header {
+.section-header {
 	background: url("../images/line_hor.gif") repeat-x scroll 0 bottom #FFFFFF;
     cursor: pointer;
     padding: 50px 50px 40px;
 }
-#resume .section-header .section_toggle {
+.section-header .section_toggle {
 	background: none repeat scroll 0 0 #FFFFFF;
     border-radius: 50px 50px 50px 50px;
     display: block;
@@ -404,13 +404,13 @@ a img {
 	transition: all ease .5s;
     width: 50px;
 }
-#resume .section-header .section_toggle span {
+.section-header .section_toggle span {
 	display: block;
     height: 24px;
     margin-top: 13px;
     overflow: hidden;
 }
-#resume .section-header .section_toggle span img {
+.section-header .section_toggle span img {
 	height: auto;
 	-webkit-transition: all ease .2s;
 	-moz-transition: all ease .2s;
@@ -420,13 +420,13 @@ a img {
     vertical-align: top;
     width: 24px;
 }
-#resume .section-header:hover .section_toggle {
+.section-header:hover .section_toggle {
 	background: #eee;
 }
-#resume .section-header.opened {
+.section-header.opened {
 	background-image: none;
 }
-#resume .section-header h2 {
+.section-header h2 {
 	color: #999999;
     font-size: 23px;
     font-weight: 700;
@@ -436,7 +436,7 @@ a img {
     position: relative;
     text-transform: uppercase;	
 }
-#resume .section-header h2 .icon {
+.section-header h2 .icon {
 	border-radius: 50px 50px 50px 50px;
     display: block;
     height: 50px;
@@ -446,11 +446,11 @@ a img {
     top: 0;
     width: 50px;
 }
-#resume .section-header h2 .icon:after {
+.section-header h2 .icon:after {
 	color: #FFFFFF;
     content: "e"; /*Available labels: e, h, j*/
     display: block;
-    font-family: "FlatCV";
+    font-family: "Metro";
     font-size: 80px;
     font-weight: normal;
     padding-top: 12px;
@@ -463,7 +463,7 @@ a img {
 .section-header .section-title .icon.category2 {
 	background: #a8d324;
 }
-#resume .section-header h2 .icon.category2:after {
+.section-header h2 .icon.category2:after {
 	padding-top: 8px;
 	content: "h";
 }
@@ -508,15 +508,15 @@ a img {
 	padding-right: 32px;
 	margin-bottom: 10px;
 }
-#resume .section-header {
+.section-header {
 	cursor: pointer;
 	padding: 50px 50px 40px;
 	background: url(../images/line_hor.gif) 0 bottom repeat-x #fff;
 }
-#resume .section-header.widgets_section {
+.section-header.widgets_section {
 	background: #fff;
 }
-#resume .section-header.opened .section_toggle span img {
+.section-header.opened .section_toggle span img {
 	margin-top: -24px;
 }
 .resume_post .resume_header .post_title {
@@ -543,7 +543,7 @@ a img {
 	font-weight: normal;
 	text-transform: lowercase;
 	color: #fff;
-	font-family: "FlatCV";
+	font-family: "Metro";
 	text-align: center;
 	font-size: 50px;
 	padding-top: 7px;
@@ -612,10 +612,10 @@ a img {
 .resume_header .resume_position.category2 .icon {
 	background: #a8d324;
 }
-#resume .section-header.widgets_section h2 .icon {
+.section-header.widgets_section h2 .icon {
 	background: #497CF0;
 }
-#resume .section-header.widgets_section h2 .icon:after {
+.section-header.widgets_section h2 .icon:after {
 	content: "i";
 }
 .skills_sidebar_section {
@@ -1394,3 +1394,7 @@ div.sc_infobox_style_success {
 	height: 24px;
 }
 /******************/
+
+.percent-hidden {
+    display: none;
+}
