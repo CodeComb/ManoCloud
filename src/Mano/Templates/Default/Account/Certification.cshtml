@@ -1,6 +1,6 @@
 ﻿@model User
 @{
-    ViewBag.Title = "工作经历";
+    ViewBag.Title = "我的证书";
 }
 <div class="modal fade" id="modalAddExperience" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -8,31 +8,24 @@
             <form asp-action="ExperienceAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">添加工作经历</h4>
+                    <h4 class="modal-title" id="myModalLabel">添加证书</h4>
                 </div>
                 <div class="modal-body">
                     <p>
-                        <label>工作单位 *</label>
-                        <input type="text" name="Company" class="form-control" required />
+                        <label>证书名称 *</label>
+                        <input type="text" name="Title" class="form-control" required />
                     </p>
                     <p>
-                        <label>职务 *</label>
-                        <input type="text" name="Position" class="form-control" required />
+                        <label>证书编号</label>
+                        <input type="text" name="Number" class="form-control" />
                     </p>
                     <p>
-                        <label>就职时间 *</label>
-                        <input type="text" name="Begin" class="datetime form-control" required />
+                        <label>获得时间 *</label>
+                        <input type="text" name="AchieveTime" class="datetime form-control" required />
                     </p>
                     <p>
-                        <label>离职时间 (未离职请留空)</label>
-                        <input type="text" name="End" class="datetime form-control" />
-                    </p>
-                    <p>
-                        <label>工作简介</label>
-                        <div class="markdown-editor-outer">
-                            <textarea class="textbox markdown-editor" name="Hint"></textarea>
-                            <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
-                        </div>
+                        <label>证书照片</label>
+                        <input type="file" name="Certification" class="form-control" />
                     </p>
                 </div>
                 <div class="modal-footer">
@@ -50,26 +43,26 @@
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
-            <h2>工作经历 <a class="button-adding" href="javascript:$('#modalAddExperience').modal();">添加</a></h2>
+            <h2>我的证书 <a class="button-adding" href="javascript:$('#modalAddExperience').modal();">添加</a></h2>
             <table class="table">
                 <thead>
                     <tr>
-                        <th>工作单位</th>
-                        <th>职务</th>
-                        <th>时间</th>
+                        <th>证书名称</th>
+                        <th>证书编号</th>
+                        <th>获得时间</th>
                         <th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var x in Model.Experiences.OrderByDescending(x => x.Begin))
+                    @foreach (var x in Model.Certifications.OrderByDescending(x => x.AchieveTime))
                     {
                         <tr>
-                            <td>@x.Company</td>
-                            <td>@x.Position</td>
-                            <td>@x.Begin.ToString("yyyy-MM-dd") ~ @(x.End.HasValue ? x.End.Value.ToString("yyyy-MM-dd") : "至今")</td>
+                            <td>@x.Title</td>
+                            <td>@x.Number</td>
+                            <td>@x.AchieveTime.ToString("yyyy-MM-dd")</td>
                             <td>
-                                <a asp-action="ExperinceEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑工作经历</a>
-                                <a href="javascript:deleteExperience('@x.Id')">删除工作经历</a>
+                                <a target="_blank" href="/file/download/@x.CertId">查看证书</a>
+                                <a href="javascript:deleteExperience('@x.Id')">删除证书</a>
                             </td>
                         </tr>
                     }

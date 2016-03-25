@@ -9,9 +9,10 @@ namespace Mano.Models
     {
         public Guid Id { get; set; }
 
+        [MaxLength(128)]
         public string Title { get; set; }
 
-        [MaxLength(128)]
+        [MaxLength(64)]
         public string Number { get; set; }
 
         [ForeignKey("Cert")]
@@ -19,11 +20,7 @@ namespace Mano.Models
 
         public File Cert { get; set; }
 
-        public DateTime Begin { get; set; }
-
-        public DateTime? End { get; set; }
-
-        public bool Verified { get; set; }
+        public DateTime AchieveTime { get; set; }
 
         [ForeignKey("User")]
         public long UserId { get; set; }

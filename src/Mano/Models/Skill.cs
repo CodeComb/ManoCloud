@@ -16,8 +16,6 @@ namespace Mano.Models
 
         public bool UpdateFromGit { get; set; }
 
-        public bool Verified { get; set; }
-
         public long Count { get; set; }
 
         [MaxLength(32)]

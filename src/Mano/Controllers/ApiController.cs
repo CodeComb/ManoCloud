@@ -51,9 +51,9 @@ namespace Mano.Controllers
                     .ToList();
                 foreach (var x in statistics)
                 {
-                    if (DB.Skills.Where(y => y.UserId == project.UserId && y.Verified && y.Title == x.Key.Technology).Count() > 0)
+                    if (DB.Skills.Where(y => y.UserId == project.UserId && y.UpdateFromGit && y.Title == x.Key.Technology).Count() > 0)
                     {
-                        var skill = DB.Skills.Where(y => y.UserId == project.UserId && y.Verified && y.Title == x.Key.Technology).Single();
+                        var skill = DB.Skills.Where(y => y.UserId == project.UserId && y.UpdateFromGit && y.Title == x.Key.Technology).Single();
                         skill.Count = x.Count;
                         skill.Begin = x.Begin;
                     }
@@ -67,7 +67,6 @@ namespace Mano.Controllers
                             Unit = "行",
                             Type = x.Key.Type,
                             UserId = project.UserId,
-                            Verified = true,
                             UpdateFromGit = true
                         });
                     }

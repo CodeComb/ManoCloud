@@ -27,13 +27,6 @@ namespace Mano.Models
 
         public User User { get; set; }
 
-        [ForeignKey("Certificate")]
-        public Guid? CertificateId { get; set; }
-
-        public File Certificate { get; set; }
-
-        public bool Verified { get; set; }
-
         public string Hint { get; set; }
     }
 }

@@ -1041,5 +1041,119 @@ namespace Mano.Controllers
             DB.SaveChanges();
             return Redirect(Url.Action("Experience", "Account", new { id = id }));
         }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Education(long id)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .Include(x => x.Emails)
+              .Include(x => x.Skills)
+              .Include(x => x.Experiences)
+              .Include(x => x.Certifications)
+              .Include(x => x.Educations)
+              .Include(x => x.Projects)
+              .ThenInclude(x => x.Commits)
+              .ThenInclude(x => x.Changes)
+              .ThenInclude(x => x.Commit)
+              .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Education/{id}/Add")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult EducationAdd(long id, Education model)
+        {
+            model.UserId = id;
+            DB.Educations.Add(model);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "添加成功";
+                x.Details = $"您在{model.School}的学习经历已经成功添加";
+                x.HideBack = true;
+                x.RedirectText = "返回教育经历";
+                x.RedirectUrl = Url.Action("Education", "Account", new { id = id });
+            });
+        }
+
+        [HttpGet]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult Certification(long id)
+        {
+            var user = DB.Users
+              .Include(x => x.Domains)
+              .Include(x => x.Emails)
+              .Include(x => x.Skills)
+              .Include(x => x.Experiences)
+              .Include(x => x.Certifications)
+              .Include(x => x.Educations)
+              .Include(x => x.Projects)
+              .ThenInclude(x => x.Commits)
+              .ThenInclude(x => x.Changes)
+              .ThenInclude(x => x.Commit)
+              .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Prompt(x =>
+                {
+                    x.Title = "没有找到该用户";
+                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
+                    x.StatusCode = 404;
+                });
+            return View(user);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Education/{id}/Add")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult CertificationAdd(long id, Certification model, IFormFile Certification)
+        {
+            var file = new CodeComb.AspNet.Upload.Models.File
+            {
+                Bytes = Certification.ReadAllBytes(),
+                ContentLength = Certification.Length,
+                FileName = Certification.GetFileName(),
+                Time = DateTime.Now,
+                ContentType = Certification.ContentType
+            };
+            DB.Files.Add(file);
+            model.UserId = id;
+            model.CertId = file.Id;
+            DB.Certifications.Add(model);
+            DB.SaveChanges();
+            return Prompt(x =>
+            {
+                x.Title = "添加成功";
+                x.Details = $"{model.Title}已经成功添加！";
+                x.HideBack = true;
+                x.RedirectText = "返回教育经历";
+                x.RedirectUrl = Url.Action("Education", "Account", new { id = id });
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/Account/Education/{id}/Add")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult CertificationDelete(long id, Guid cid)
+        {
+            var cert = DB.Certifications
+                .Where(x => x.UserId == id && x.Id == cid)
+                .Single();
+            DB.Certifications.Remove(cert);
+            DB.SaveChanges();
+            return RedirectToAction("Certification", "Account", new { id = id });
+        }
     }
 }
