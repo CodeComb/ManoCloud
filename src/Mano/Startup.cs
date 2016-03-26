@@ -145,7 +145,8 @@ namespace Mano
 
             this.ProjectTimer = new Timer((t) =>
             {
-                using (var db = app.ApplicationServices.GetRequiredService<ManoContext>())
+                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+                using (var db = serviceScope.ServiceProvider.GetService<ManoContext>())
                 {
                     var time = DateTime.Now.AddDays(-1);
                     var users = db.Users

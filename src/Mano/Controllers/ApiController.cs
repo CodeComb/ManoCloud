@@ -30,7 +30,13 @@ namespace Mano.Controllers
                     DB.Commits.Add(x);
                 }
             }
+            if (commits.Count > 0)
+            {
+                project.Begin = commits.Min(x => x.Time);
+                project.End = commits.Max(x => x.Time);
+            }
             DB.SaveChanges();
+
             lock(this)
             {
                 var emails = DB.Emails

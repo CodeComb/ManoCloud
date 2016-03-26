@@ -253,9 +253,9 @@
                                         </h5>
                                     </div>
                                     <div class="resume_content">
-                                        @if (Projects.ElementAt(i).Verified)
+                                        @if (Projects.ElementAt(i).Verified && Projects.ElementAt(i).Commits.Count > 0)
                                         {
-                                            <canvas id="radar-@Projects.ElementAt(i).Id" width="450" height="300"></canvas>
+                                            <canvas id="radar-@Projects.ElementAt(i).Id" width="450" height="350"></canvas>
                                             <script>
                                                 new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.ProjectRadar(Projects.ElementAt(i)), { animation: Modernizr.canvas });
                                             </script>

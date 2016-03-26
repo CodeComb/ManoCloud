@@ -39,6 +39,7 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
+                .ThenInclude(x => x.Commits)
                 .SingleOrDefault(x => x.Id == domain.UserId);
 
             if (user == null)
