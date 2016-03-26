@@ -463,6 +463,12 @@ a img {
 .section-header .section-title .icon.category2 {
 	background: #a8d324;
 }
+.category3 {
+	background: #a8d324;
+}
+.category4 {
+	background: #50C0E9;
+}
 .section-header h2 .icon.category2:after {
 	padding-top: 8px;
 	content: "h";
@@ -1402,4 +1408,28 @@ div.sc_infobox_style_success {
 .position {
     font-size: 22px;
     line-height: 45px;
+}
+
+.certification {
+    max-width: 100%;
+}
+
+.social {
+    font-size: 50px;
+}
+
+.header-icon {
+    font-size: 30px;
+    line-height: 50px;
+    width: 50px;
+    text-align: center;
+    color: #fff;
+}
+
+.subtitle-icon {
+    font-size: 20px;
+    line-height: 35px;
+    width: 35px;
+    text-align: center;
+    color: #fff;
 }

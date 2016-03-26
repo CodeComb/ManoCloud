@@ -18,6 +18,7 @@
     var Experiences = Model.Experiences.OrderByDescending(x => x.End).ToList();
     var Educations = Model.Educations.OrderByDescending(x => x.End).ToList();
     var Projects = Model.Projects.Where(x => x.Verified && x.Commits.Count > 0 || !x.Verified).OrderByDescending(x => x.Begin).ToList();
+    var Certifications = Model.Certifications.OrderByDescending(x => x.AchieveTime).ToList();
 }
 <!DOCTYPE html>
 <html>
@@ -25,9 +26,10 @@
     <title>@ViewBag.Title - 个人简历</title>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
-    <link rel="stylesheet" href="~/assets/metro/styles/style.css">
+    <link href="~/assets/metro/styles/font-awesome.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/assets/metro/styles/responsive.css">
     <link rel="stylesheet" href="~/assets/metro/styles/prettyPhoto.css">
+    <link rel="stylesheet" href="~/assets/metro/styles/style.css">
     <script src="~/assets/metro/scripts/jquery-1.10.2.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.tools.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.easing.js"></script>
@@ -87,10 +89,10 @@
                     </div>
                     <div class="social_links">
                         <ul>
-                            <li><a href="#" class="icon1"><span>0</span></a></li>
-                            <li><a href="#" class="icon2"><span>1</span></a></li>
-                            <li><a href="#" class="icon3"><span>3</span></a></li>
-                            <li><a href="#" class="icon4"><span>p</span></a></li>
+                            <li><a href="#" class="icon1"><span><i class="social fa fa-qq"></i></span></a></li>
+                            <li><a href="#" class="icon2"><span><i class="social fa fa-wechat"></i></span></a></li>
+                            <li><a href="#" class="icon3"><span><i class="social fa fa-github"></i></span></a></li>
+                            <li><a href="#" class="icon4"><span><i class="social fa fa-linkedin-square"></i></span></a></li>
                         </ul>
                     </div>
                 </div><!-- /Main Page -->
@@ -229,7 +231,7 @@
                     <div class="section-header opened">
                         <a href="#" class="section_toggle"><span><img src="~/assets/metro/images/section_toggle.png" height="78" width="48" alt=""></span></a>
                         <h2 class="section-title icon2">
-                            <span class="icon category1"></span>
+                            <span class="icon category4"><i class="header-icon fa fa-cube"></i></span>
                             我的项目
                         </h2>
                     </div>
@@ -253,6 +255,7 @@
                                         </h5>
                                     </div>
                                     <div class="resume_content">
+                                        @Html.Sanitize(Html.Marked(Projects.ElementAt(i).Hint).ToString())
                                         @if (Projects.ElementAt(i).Verified && Projects.ElementAt(i).Commits.Count > 0)
                                         {
                                             <canvas id="radar-@Projects.ElementAt(i).Id" width="450" height="350"></canvas>
@@ -260,7 +263,35 @@
                                                 new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.ProjectRadar(Projects.ElementAt(i)), { animation: Modernizr.canvas });
                                             </script>
                                         }
-                                        @Html.Sanitize(Html.Marked(Projects.ElementAt(i).Hint).ToString())
+                                    </div>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                    <div class="section-header opened">
+                        <a href="#" class="section_toggle"><span><img src="~/assets/metro/images/section_toggle.png" height="78" width="48" alt=""></span></a>
+                        <h2 class="section-title icon2">
+                            <span class="icon category3"><i class="header-icon fa fa-certificate"></i></span>
+                            我的证书
+                        </h2>
+                    </div>
+                    <div class="section-content">
+                        @for (var i = 0; i < Certifications.Count; i++)
+                        {
+                            <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
+                                <div class="resume_period category1">
+                                    <span class="period_to">@Certifications.ElementAt(i).AchieveTime.ToString("dd")</span>
+                                    <div class="period_from">@Certifications.ElementAt(i).AchieveTime.ToString("yyyy/MM")</div>
+                                </div>
+                                <div class="extra_wrap">
+                                    <div class="resume_header">
+                                        <h4 class="post_title">
+                                            <span class="post_title_icon category1"><i class="subtitle-icon fa fa-star"></i></span>
+                                            @Certifications.ElementAt(i).Title
+                                        </h4>
+                                    </div>
+                                    <div class="resume_content">
+                                        <img class="certification" src="/file/download/@Certifications.ElementAt(i).CertId" />
                                     </div>
                                 </div>
                             </article>
