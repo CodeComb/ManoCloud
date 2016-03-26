@@ -55,7 +55,7 @@
                                 <div class="profile_inner">
                                     <!-- You can edit name and lastname -->
                                     <div class="name">@Model.Name</div>
-                                    <div class="pos">@Model.Position</div>
+                                    <div class="position">@Model.Position</div>
                                     <div class="pos">@(DateTime.Now.Year - Model.Birthday.Year)岁 @Model.Province @Model.City</div>
                                 </div>
                             </div>
@@ -288,9 +288,11 @@
                                 <span class="phone">@Model.PhoneNumber</span>
                             </div>
                             <div class="addition">
-                                <span class="email"><a class="__cf_email__" href="/cdn-cgi/l/email-protection" data-cfemail="53197d393c3b3d203c3d13343e323a3f7d303c3e">[email&#160;protected]</a>
-                                <script data-cfhash='f9e31' type="text/javascript">/* <![CDATA[ */!function(t,e,r,n,c,a,p){try{t=document.currentScript||function(){for(t=document.getElementsByTagName('script'),e=t.length;e--;)if(t[e].getAttribute('data-cfhash'))return t[e]}();if(t&&(c=t.previousSibling)){p=t.parentNode;if(a=c.getAttribute('data-cfemail')){for(e='',r='0x'+a.substr(0,2)|0,n=2;a.length-n;n+=2)e+='%'+('0'+('0x'+a.substr(n,2)^r).toString(16)).slice(-2);p.replaceChild(document.createTextNode(decodeURIComponent(e)),c)}p.removeChild(t)}}catch(u){}}()/* ]]> */</script></span>
-                                <span class="website"><a href="#">http://www.jjohnson.com</a></span>
+                                <span class="email"><a class="__cf_email__" href="mailto:@Model.Email">@Model.Email</a></span>
+                                @if (!string.IsNullOrWhiteSpace(Model.BlogUrl))
+                                {
+                                    <span class="website"><a href="@Model.BlogUrl">@Model.BlogUrl</a></span>
+                                }
                             </div>
                             <div class="qrcode_vcard">
                                 <h3 class="vcard_title">Vcard</h3>
@@ -305,23 +307,23 @@
                         <div class="col2">
                             <div class="inner">
                                 <div class="contact_form">
-                                    <h3 class="title">Let's keep in touch</h3>
+                                    <h3 class="title">与我联系</h3>
                                     <form id="contact_form" mathod="post">
                                         <div class="field">
-                                            <label class="required" for="contact_form_username">Name</label>
+                                            <label class="required" for="contact_form_username">姓名</label>
                                             <input id="contact_form_username" type="text" name="username">
                                         </div>
                                         <div class="field">
-                                            <label class="required" for="contact_form_email">Email</label>
+                                            <label class="required" for="contact_form_email">电子邮箱</label>
                                             <input id="contact_form_email" type="text" name="email">
                                         </div>
                                         <div class="field message">
-                                            <label class="required" for="contact_form_message">Message</label>
+                                            <label class="required" for="contact_form_message">内容</label>
                                             <textarea id="contact_form_message" name="message"></textarea>
                                         </div>
                                         <div class="button">
-                                            <a href="#" class="enter"><span>Submit</span></a>
-                                            <div class="req">Remember to fill out all the fields.</div>
+                                            <a href="#" class="enter"><span>发送</span></a>
+                                            <div class="req"></div>
                                         </div>
                                         <div class="result"></div>
                                     </form>
@@ -348,10 +350,10 @@
             var pt = new BMap.Point(@Model.Lon, @Model.Lat);
             setTimeout(function(){
                 map.centerAndZoom(new BMap.Point(@Model.Lon, @Model.Lat), 16);
-                var icon = new BMap.Icon('/assets/metro/images/spotlight-poi_hdpi.png', new BMap.Size(44, 80), { imageSize: new BMap.Size(16.5,30),anchor: new BMap.Size(8.25, 30) });
+                var icon = new BMap.Icon('/assets/metro/images/spotlight-poi_hdpi.png', new BMap.Size(44, 80), { imageSize: new BMap.Size(22,40),anchor: new BMap.Size(11, 40) });
                 var marker = new BMap.Marker(pt, { icon: icon });
                 map.addOverlay(marker);
-            }, 2000);
+            }, 4000);
         });
     </script>
 </body>

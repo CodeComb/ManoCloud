@@ -414,7 +414,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public async Task<IActionResult> Profile(long id, string phonenumber, string city, string province, string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
+        public async Task<IActionResult> Profile(long id, string position, string phonenumber, string city, string province, string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
         {
             var user = DB.Users
                 .Single(x => x.Id == id);
@@ -436,6 +436,7 @@ namespace Mano.Controllers
             user.QQ = qq;
             user.WeChat = wechat;
             user.Name = name;
+            user.Position = position;
             if (birthday.HasValue)
                 user.Birthday = birthday.Value;
             if (avatar != null)

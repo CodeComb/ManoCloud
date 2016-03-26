@@ -470,7 +470,7 @@ a img {
 .resume_post {
 	overflow: hidden;	
 }
-#resume .resume_post.even {
+.resume_post.even {
 	background: #f7f7f7;
 }
 .resume_post .resume_period {
@@ -1397,4 +1397,9 @@ div.sc_infobox_style_success {
 
 .percent-hidden {
     display: none;
+}
+
+.position {
+    font-size: 22px;
+    line-height: 45px;
 }
