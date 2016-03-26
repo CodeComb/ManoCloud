@@ -54,14 +54,14 @@ namespace Mano.Controllers
             ViewBag.TotalP = 0;
             ViewBag.TotalF = 0;
 
-            if (user.Skills.Where(x => x.Type == Models.TechnologyType.编程语言).Count() > 0)
+            if (user.Skills.Where(x => x.Type == Models.TechnologyType.编程语言 || x.Type == Models.TechnologyType.序列化格式).Count() > 0)
                 ViewBag.TotalP = user.Skills
-                    .Where(x => x.Type == Models.TechnologyType.编程语言)
+                    .Where(x => x.Type == Models.TechnologyType.编程语言 || x.Type == Models.TechnologyType.序列化格式)
                     .Max(x => x.TotalDays);
-            if (user.Skills.Where(x => x.Type != Models.TechnologyType.编程语言).Count() > 0)
+            if (user.Skills.Where(x => x.Type != Models.TechnologyType.编程语言 && x.Type != Models.TechnologyType.序列化格式).Count() > 0)
                 ViewBag.TotalF = user.Skills
-                .Where(x => x.Type != Models.TechnologyType.编程语言)
-                .Max(x => x.TotalDays);
+                    .Where(x => x.Type != Models.TechnologyType.编程语言 && x.Type != Models.TechnologyType.序列化格式)
+                    .Max(x => x.TotalDays);
 
             return View(user);
         }

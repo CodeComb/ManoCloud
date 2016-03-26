@@ -13,8 +13,8 @@
         "rgb(255, 143, 69)",
         "rgb(249, 196, 54)"
     };
-    var ProgrammingSkills = Model.Skills.Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式).ToList();
-    var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言 && x.Type != TechnologyType.序列化格式).ToList();
+    var ProgrammingSkills = Model.Skills.Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式).OrderBy(x => x.Begin).ToList();
+    var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言 && x.Type != TechnologyType.序列化格式).OrderBy(x => x.Begin).ToList();
     var Experiences = Model.Experiences.OrderByDescending(x => x.End).ToList();
     var Educations = Model.Educations.OrderByDescending(x => x.End).ToList();
     var Projects = Model.Projects.Where(x => x.Verified && x.Commits.Count > 0 || !x.Verified).OrderByDescending(x => x.Begin).ToList();
@@ -181,9 +181,9 @@
                             <h3 class="widget_title">编程语言技能</h3>
                             <div class="widget_inner">
                                 @{ var j = 0; }
-                                @foreach (var x in ProgrammingSkills.OrderByDescending(x => x.TotalDays))
+                                @foreach (var x in ProgrammingSkills)
                                 {
-                                    <div class="skills_row @(j == 0 ? "odd first" : "even")">
+                                    <div class="skills_row @(j % 2 == 0 ? "odd first" : "even")">
                                         <span class="progressbar">
                                             <span class="progress" style="background-color: @Colors[j % Colors.Length]">
                                                 <span class="caption_wrap">
@@ -203,14 +203,14 @@
                             <h3 class="widget_title">其他技能</h3>
                             <div class="widget_inner">
                                 @{ j = 0; }
-                                @foreach (var x in FrameworkSkills.OrderByDescending(x => x.TotalDays))
+                                @foreach (var x in FrameworkSkills)
                                 {
-                                    <div class="skills_row @(j == 0 ? "odd first" : "even")">
+                                    <div class="skills_row @(j % 2== 0 ? "odd first" : "even")">
                                         <span class="progressbar">
                                             <span class="progress" style="background-color: @Colors[j % Colors.Length]">
                                                 <span class="caption_wrap">
-                                                    <span class="caption">@x.Title / @x.Display / @x.Count.ToSplitedString() 行</span>
-                                                    <span class="value percent-hidden">@Html.PercentP(x.TotalDays)</span>
+                                                    <span class="caption">@x.Title / @x.Display / @x.Count.ToSplitedString() @x.Unit</span>
+                                                    <span class="value percent-hidden">@Html.PercentF(x.TotalDays)</span>
                                                 </span>
                                             </span>
                                         </span>
