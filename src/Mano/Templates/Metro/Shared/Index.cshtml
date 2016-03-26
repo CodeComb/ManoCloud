@@ -13,8 +13,8 @@
         "rgb(255, 143, 69)",
         "rgb(249, 196, 54)"
     };
-    var ProgrammingSkills = Model.Skills.Where(x => x.Type == TechnologyType.编程语言).ToList();
-    var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言).ToList();
+    var ProgrammingSkills = Model.Skills.Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式).ToList();
+    var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言 && x.Type != TechnologyType.序列化格式).ToList();
     var Experiences = Model.Experiences.OrderByDescending(x => x.End).ToList();
     var Educations = Model.Educations.OrderByDescending(x => x.End).ToList();
     var Projects = Model.Projects.Where(x => x.Verified && x.Commits.Count > 0 || !x.Verified).OrderByDescending(x => x.Begin).ToList();
@@ -89,10 +89,10 @@
                     </div>
                     <div class="social_links">
                         <ul>
-                            <li><a href="#" class="icon1"><span><i class="social fa fa-qq"></i></span></a></li>
-                            <li><a href="#" class="icon2"><span><i class="social fa fa-wechat"></i></span></a></li>
-                            <li><a href="#" class="icon3"><span><i class="social fa fa-github"></i></span></a></li>
-                            <li><a href="#" class="icon4"><span><i class="social fa fa-linkedin-square"></i></span></a></li>
+                            <li><a href="tencent://message/?uin=@Model.QQ&Site=ManoCloud&Menu=yes" class="icon1"><span><i class="social fa fa-qq"></i></span></a></li>
+                            <li><a href="weixin://contacts/profile/@Model.WeChat" class="icon2"><span><i class="social fa fa-wechat"></i></span></a></li>
+                            <li><a href="https://github.com/@Model.GitHub" class="icon3"><span><i class="social fa fa-github"></i></span></a></li>
+                            <li><a href="@Model.LinkedIn" class="icon4"><span><i class="social fa fa-linkedin-square"></i></span></a></li>
                         </ul>
                     </div>
                 </div><!-- /Main Page -->
@@ -181,7 +181,7 @@
                             <h3 class="widget_title">编程语言技能</h3>
                             <div class="widget_inner">
                                 @{ var j = 0; }
-                                @foreach (var x in ProgrammingSkills.Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式).OrderByDescending(x => x.TotalDays))
+                                @foreach (var x in ProgrammingSkills.OrderByDescending(x => x.TotalDays))
                                 {
                                     <div class="skills_row @(j == 0 ? "odd first" : "even")">
                                         <span class="progressbar">
@@ -203,7 +203,7 @@
                             <h3 class="widget_title">其他技能</h3>
                             <div class="widget_inner">
                                 @{ j = 0; }
-                                @foreach (var x in ProgrammingSkills.Where(x => x.Type != TechnologyType.编程语言 && x.Type != TechnologyType.序列化格式).OrderByDescending(x => x.TotalDays))
+                                @foreach (var x in FrameworkSkills.OrderByDescending(x => x.TotalDays))
                                 {
                                     <div class="skills_row @(j == 0 ? "odd first" : "even")">
                                         <span class="progressbar">
@@ -241,7 +241,7 @@
                             <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
                                 <div class="resume_period category1">
                                     <span class="period_from">@Projects.ElementAt(i).Begin.ToString("yyyy/MM")</span>
-                                    <div class="period_to">@(Projects.ElementAt(i).End.HasValue ? Experiences.ElementAt(i).End.Value.ToString("yyyy/MM") : "至今")</div>
+                                    <div class="period_to">@(Projects.ElementAt(i).End.HasValue ? Projects.ElementAt(i).End.Value.ToString("yyyy/MM") : "至今")</div>
                                 </div>
                                 <div class="extra_wrap">
                                     <div class="resume_header">

@@ -65,6 +65,8 @@ namespace Mano.Models
 
         public File Avatar { get; set; }
 
+        public string LinkedIn { get; set; }
+
         public double Lon { get; set; }
 
         public double Lat { get; set; }
