@@ -34,10 +34,9 @@
     <script src="~/assets/metro/scripts/jquery.isotope.min.js"></script>
     <script src="~/assets/metro/scripts/main.js"></script>
     <script src="~/assets/metro/scripts/jquery.prettyPhoto.js"></script>
-    <script src="~/assets/metro/scripts/colorpicker.js"></script>
     <script src="~/assets/metro/scripts/modernizr.min.js"></script>
     <script src="~/assets/metro/scripts/chart.js"></script>
-    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=g6DcirKK7FlGGGoiLwslU9kL"></script>
+    <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=lrMh687iqexo2F4V9bMYLmbX"></script>
     <!--[if lt IE 9]>
         <script src="/assets/metro/scripts/html5shiv.js"></script>
     <![endif]-->
@@ -79,9 +78,11 @@
                             <span class="phone">@Model.PhoneNumber</span>
                         </div>
                         <div class="addition">
-                            <span class="email"><a class="__cf_email__" href="/cdn-cgi/l/email-protection" data-cfemail="9fd5b1f5f0f7f1ecf0f1dff8f2fef6f3b1fcf0f2">[email&#160;protected]</a>
-                            <script data-cfhash='f9e31' type="text/javascript">/* <![CDATA[ */!function(t,e,r,n,c,a,p){try{t=document.currentScript||function(){for(t=document.getElementsByTagName('script'),e=t.length;e--;)if(t[e].getAttribute('data-cfhash'))return t[e]}();if(t&&(c=t.previousSibling)){p=t.parentNode;if(a=c.getAttribute('data-cfemail')){for(e='',r='0x'+a.substr(0,2)|0,n=2;a.length-n;n+=2)e+='%'+('0'+('0x'+a.substr(n,2)^r).toString(16)).slice(-2);p.replaceChild(document.createTextNode(decodeURIComponent(e)),c)}p.removeChild(t)}}catch(u){}}()/* ]]> */</script></span>
-                            <span class="website"><a href="#">http://www.jjohnson.com</a></span>
+                            <span class="email"><a class="__cf_email__" href="mailto:@Model.Email">@Model.Email</a></span>
+                            @if (!string.IsNullOrWhiteSpace(Model.BlogUrl))
+                            {
+                                <span class="website"><a href="@Model.BlogUrl">@Model.BlogUrl</a></span>
+                            }
                         </div>
                     </div>
                     <div class="social_links">
@@ -273,15 +274,12 @@
 
                 <div id="contacts" class="tab_content">
                     <!-- Contacts Section -->
-                    <script type="text/javascript">
-                        var map = new BMap.Map("allmap", "@(Model.Province)@(Model.City)@(Model.Address)");
-                    </script>
                     <div class="map_wrap">
                         <div class="map_overlay"></div>
                         <div class="address_block">
                             @(Model.Province)@(Model.City)@(Model.Address)
                         </div>
-                        <div id="bmap" class="sc_googlemap" style="width:100%; height:300px;"></div>
+                        <div id="bmap" style="width:100%; height:300px;"></div>
                     </div>
                     <div class="contacts_wrapper">
                         <div class="col1">
@@ -342,5 +340,19 @@
             </div>
         </footer>
     </div><!--/Page-->
+
+    <script type="text/javascript">
+        var map;
+        $(document).ready(function(){
+            map = new BMap.Map("bmap");
+            var pt = new BMap.Point(@Model.Lon, @Model.Lat);
+            setTimeout(function(){
+                map.centerAndZoom(new BMap.Point(@Model.Lon, @Model.Lat), 16);
+                var icon = new BMap.Icon('/assets/metro/images/spotlight-poi_hdpi.png', new BMap.Size(44, 80), { imageSize: new BMap.Size(16.5,30),anchor: new BMap.Size(8.25, 30) });
+                var marker = new BMap.Marker(pt, { icon: icon });
+                map.addOverlay(marker);
+            }, 2000);
+        });
+    </script>
 </body>
 </html>

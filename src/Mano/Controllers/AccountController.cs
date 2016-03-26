@@ -414,13 +414,23 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult Profile(long id, string city, string province, string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
+        public async Task<IActionResult> Profile(long id, string phonenumber, string city, string province, string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
         {
             var user = DB.Users
                 .Single(x => x.Id == id);
+            user.PhoneNumber = phonenumber;
             user.City = city;
             user.Province = province;
             user.Address = address;
+            try
+            {
+                var client = new System.Net.Http.HttpClient();
+                var bmapJson = await client.GetAsync($"http://api.map.baidu.com/geocoder/v2/?city={city}&address={address}&output=json&ak=lrMh687iqexo2F4V9bMYLmbX");
+                var bmap = Newtonsoft.Json.JsonConvert.DeserializeObject<dynamic>(await bmapJson.Content.ReadAsStringAsync());
+                user.Lon = bmap.result.location.lng;
+                user.Lat = bmap.result.location.lat;
+            }
+            catch { }
             user.Sex = sex;
             user.PRCID = prcid;
             user.QQ = qq;

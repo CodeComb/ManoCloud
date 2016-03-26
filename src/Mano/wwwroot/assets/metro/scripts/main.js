@@ -105,8 +105,8 @@ jQuery(document).ready(function () {
                     jQuery('.map_wrap .map_overlay').fadeOut();
                 }
                 setTimeout(hider_over, 1000);
-                if (window.googlemap_refresh) { googlemap_refresh(); }
-                googlemap_refreshed = true;
+                //if (window.googlemap_refresh) { googlemap_refresh(); }
+                //googlemap_refreshed = true;
             }
             if (tab.attr('href') === '#profile') {
                 skills_anim();

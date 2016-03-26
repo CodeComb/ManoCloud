@@ -15,7 +15,11 @@ namespace Mano.Controllers
             var host = Request.Host.ToString();
             if (host == Config["Host"])
             {
-                Cookies["ASPNET_TEMPLATE"] = "Default";
+                if (Cookies["ASPNET_TEMPLATE"] != "Default")
+                {
+                    Cookies["ASPNET_TEMPLATE"] = "Default";
+                    return RedirectToAction("Index", "Home");
+                }
                 return View();
             }
             if (host.IndexOf(':') > 0)
@@ -35,14 +39,26 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
-                .Single(x => x.Id == domain.UserId);
+                .SingleOrDefault(x => x.Id == domain.UserId);
 
-            Cookies["ASPNET_TEMPLATE"] = user.Template ?? "Metro";
+            if (user == null)
+                return Redirect(Config["Home"]);
 
-            ViewBag.TotalP = user.Skills
-                .Where(x => x.Type == Models.TechnologyType.编程语言)
-                .Max(x => x.TotalDays);
-            ViewBag.TotalF = user.Skills
+            if (Cookies["ASPNET_TEMPLATE"] != (user.Template ?? "Metro"))
+            {
+                Cookies["ASPNET_TEMPLATE"] = user.Template ?? "Metro";
+                return RedirectToAction("Index", "Home");
+            }
+
+            ViewBag.TotalP = 0;
+            ViewBag.TotalF = 0;
+
+            if (user.Skills.Where(x => x.Type == Models.TechnologyType.编程语言).Count() > 0)
+                ViewBag.TotalP = user.Skills
+                    .Where(x => x.Type == Models.TechnologyType.编程语言)
+                    .Max(x => x.TotalDays);
+            if (user.Skills.Where(x => x.Type != Models.TechnologyType.编程语言).Count() > 0)
+                ViewBag.TotalF = user.Skills
                 .Where(x => x.Type != Models.TechnologyType.编程语言)
                 .Max(x => x.TotalDays);
 
