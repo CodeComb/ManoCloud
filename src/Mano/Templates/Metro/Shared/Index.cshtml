@@ -17,7 +17,7 @@
     var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言).ToList();
     var Experiences = Model.Experiences.OrderByDescending(x => x.End).ToList();
     var Educations = Model.Educations.OrderByDescending(x => x.End).ToList();
-    var Projects = Model.Projects.OrderByDescending(x => x.Begin).ToList();
+    var Projects = Model.Projects.Where(x => x.Verified && x.Commits.Count > 0 || !x.Verified).OrderByDescending(x => x.Begin).ToList();
 }
 <!DOCTYPE html>
 <html>
@@ -234,7 +234,7 @@
                         </h2>
                     </div>
                     <div class="section-content">
-                        @for (var i = 0; i < Model.Projects.Count; i++)
+                        @for (var i = 0; i < Projects.Count; i++)
                         {
                             <article class="post resume_post first @(i % 2 == 0 ?"odd":"even")">
                                 <div class="resume_period category1">
