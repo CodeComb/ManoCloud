@@ -34,6 +34,7 @@
     <script src="~/assets/metro/scripts/jquery.tools.min.js"></script>
     <script src="~/assets/metro/scripts/jquery.easing.js"></script>
     <script src="~/assets/metro/scripts/jquery.isotope.min.js"></script>
+    <script src="~/assets/metro/scripts/jquery.qrcode.min.js"></script>
     <script src="~/assets/metro/scripts/main.js"></script>
     <script src="~/assets/metro/scripts/jquery.prettyPhoto.js"></script>
     <script src="~/assets/metro/scripts/modernizr.min.js"></script>
@@ -50,13 +51,20 @@
                 <li class="splash">
                     <a href="#splash">
                         <div id="profile_photo">
-                            <img src="/file/download/@Model.AvatarId" height="150" width="150" alt="Title Example">
+                            @if (Model.AvatarId.HasValue)
+                            {
+                                <img src="/file/download/@Model.AvatarId.Value" height="150" width="150" alt="">
+                            }
+                            else
+                            {
+                                <img src="~/assets/metro/images/non-avatar.png" height="150" width="150" alt="">
+                            }
                         </div>
                         <div id="profile_name">
                             <div id="author_name">
                                 <div class="profile_inner">
                                     <!-- You can edit name and lastname -->
-                                    <div class="name">@Model.Name</div>
+                                    <div class="name">@(Model.Name ?? Model.UserName)</div>
                                     <div class="position">@Model.Position</div>
                                     <div class="pos">@(DateTime.Now.Year - Model.Birthday.Year)岁 @Model.Province @Model.City</div>
                                 </div>
@@ -326,11 +334,10 @@
                                 }
                             </div>
                             <div class="qrcode_vcard">
-                                <h3 class="vcard_title">Vcard</h3>
+                                <h3 class="vcard_title">云简历二维码</h3>
                                 <div class="vcard_inner">
                                     <div class="qrcode">
-                                        <!-- To generate your own QR-code, you can use http://goqr.me/ -->
-                                        <img src="~/assets/metro/images/qr.png" height="150" width="150" alt="">
+                                        <div id="qrcode"></div>
                                     </div>
                                 </div>
                             </div>
@@ -385,6 +392,11 @@
                 var marker = new BMap.Marker(pt, { icon: icon });
                 map.addOverlay(marker);
             }, 4000);
+            $("#qrcode").qrcode({ 
+                width: 150, //宽度 
+                height: 150, //高度 
+                text: "@Context.Request.Scheme://@Context.Request.Host" //任意内容 
+            }); 
         });
     </script>
 </body>
