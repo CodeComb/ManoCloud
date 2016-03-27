@@ -24,7 +24,8 @@
     },
     "dnxcore50": {
       "dependencies": {
-        "System.Net.Http": "4.0.1-beta-23516"
+        "System.Net.Http": "4.0.1-beta-23516",
+        "System.Threading.Timer": "4.0.1-beta-23516"
       }
     }
   },

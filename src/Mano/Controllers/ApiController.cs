@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Text;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Data.Entity;
 using Newtonsoft.Json;
 using Mano.Models;
+using Mano.Parser.Models;
 
 namespace Mano.Controllers
 {
@@ -18,63 +22,57 @@ namespace Mano.Controllers
         {
             if (DB.Nodes.SingleOrDefault(x => x.Key == key) == null)
                 return Content("no");
-            var project = DB.Projects.Single(x => x.Id == id);
+            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] Receiving: {id}");
+            var project = DB.Projects
+                .Include(x => x.User)
+                .Single(x => x.Id == id);
             project.Size = size;
             var Json = Encoding.UTF8.GetString(json.ReadAllBytes());
             var commits = JsonConvert.DeserializeObject<List<Commit>>(Json);
-            foreach (var x in commits)
+
+            var ps = Helpers.Statistic.ProjectRaw(DB, project.Id, commits);
+            project.Statistics = JsonConvert.SerializeObject(ps);
+            if (ps.All(x => x.Mine == 0))
             {
-                if (DB.Commits.SingleOrDefault(y => y.Id == x.Id) == null)
+                project.IsContributed = false;
+                project.Begin = DateTime.Now;
+            }
+            else
+            {
+                project.IsContributed = true;
+                project.Begin = ps.Min(x => x.Begin);
+                project.End = ps.Max(x => x.End);
+            }
+
+            var us = Helpers.Statistic.UserRaw(DB, project.UserId);
+            project.User.Statistics = JsonConvert.SerializeObject(us);
+
+            foreach (var x in us)
+            {
+                if (DB.Skills.Where(y => y.UserId == project.UserId && y.UpdateFromGit && y.Title == x.Technology).Count() > 0)
                 {
-                    x.ProjectId = id;
-                    DB.Commits.Add(x);
+                    var skill = DB.Skills.Where(y => y.UserId == project.UserId && y.UpdateFromGit && y.Title == x.Technology).Single();
+                    skill.Count = x.Mine;
+                    skill.Begin = x.Begin;
+                }
+                else
+                {
+                    DB.Skills.Add(new Skill
+                    {
+                        Begin = x.Begin,
+                        Title = x.Technology,
+                        Count = x.Mine,
+                        Unit = "行",
+                        Type = x.Type,
+                        UserId = project.UserId,
+                        UpdateFromGit = true
+                    });
                 }
             }
-            if (commits.Count > 0)
-            {
-                project.Begin = commits.Min(x => x.Time);
-                project.End = commits.Max(x => x.Time);
-            }
+
             DB.SaveChanges();
 
-            lock(this)
-            {
-                var emails = DB.Emails
-                    .Where(x => x.Verified && x.UserId == project.UserId)
-                    .Select(x => x.EmailAddress)
-                    .ToList();
-                var tech = DB.Extensions
-                    .Where(x => x.Type == TechnologyType.编程语言 || x.Type == TechnologyType.序列化格式)
-                    .ToDictionary(x => x.Id);
-                var statistics = DB.Commits
-                    .Where(x => emails.Contains(x.Email) && x.ProjectId == id && tech.ContainsKey(x.Extension))
-                    .GroupBy(x => tech[x.Extension])
-                    .Select(x => new { Key = x.Key, Count = x.Sum(y => y.Additions + y.Deletions), Begin = x.Min(y => y.Time) })
-                    .ToList();
-                foreach (var x in statistics)
-                {
-                    if (DB.Skills.Where(y => y.UserId == project.UserId && y.UpdateFromGit && y.Title == x.Key.Technology).Count() > 0)
-                    {
-                        var skill = DB.Skills.Where(y => y.UserId == project.UserId && y.UpdateFromGit && y.Title == x.Key.Technology).Single();
-                        skill.Count = x.Count;
-                        skill.Begin = x.Begin;
-                    }
-                    else
-                    {
-                        DB.Skills.Add(new Skill
-                        {
-                            Begin = x.Begin,
-                            Title = x.Key.Technology,
-                            Count = x.Count,
-                            Unit = "行",
-                            Type = x.Key.Type,
-                            UserId = project.UserId,
-                            UpdateFromGit = true
-                        });
-                    }
-                }
-                DB.SaveChanges();
-            }
+            GC.Collect();
             return Content("ok");
         }
     }

@@ -78,6 +78,8 @@ namespace Mano.Models
 
         public DateTime LastPullTime { get; set; }
 
+        public string Statistics { get; set; } = "[]";
+
         public virtual ICollection<Domain> Domains { get; set; } = new List<Domain>();
 
         public virtual ICollection<Project> Projects { get; set; } = new List<Project>();

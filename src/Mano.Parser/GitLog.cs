@@ -31,17 +31,21 @@ namespace Mano.Parser
                 }
                 else
                 {
-                    ret.Add(new Commit
+                    try
                     {
-                        Additions = Convert.ToInt64(splited[0] == "-" ? "0" : splited[0]),
-                        Deletions = Convert.ToInt64(splited[1] == "-" ? "0" : splited[1]),
-                        Path = splited[2],
-                        Author = info.Author,
-                        Email = info.Email,
-                        Hash = info.Hash,
-                        Time = info.Time,
-                        Extension = System.IO.Path.GetExtension(splited[2])
-                    });
+                        ret.Add(new Commit
+                        {
+                            Additions = Convert.ToInt64(splited[0] == "-" ? "0" : splited[0]),
+                            Deletions = Convert.ToInt64(splited[1] == "-" ? "0" : splited[1]),
+                            Path = splited[2],
+                            Author = info.Author,
+                            Email = info.Email,
+                            Hash = info.Hash,
+                            Time = info.Time,
+                            Extension = System.IO.Path.GetExtension(splited[2])
+                        });
+                    }
+                    catch { }
                 }
             }
             return ret;

@@ -117,7 +117,7 @@ namespace Mano
                     {
                         if (!x.NodeId.HasValue || x.Node.Status == NodeStatus.Offline)
                         {
-                            var node = db.Nodes.FirstOrDefault(y => y.Status == NodeStatus.Online);
+                            var node = db.Nodes.Where(y => y.Status == NodeStatus.Online).OrderByDescending(a => a.MaxSize - (db.Projects.Where(y => y.NodeId == a.Id).Count() > 0 ? db.Projects.Where(y => y.NodeId == a.Id).Sum(z => z.Size) : 0)).FirstOrDefault();
                             if (node == null)
                             {
                                 Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] No node is able to use for project {x.Title}.");

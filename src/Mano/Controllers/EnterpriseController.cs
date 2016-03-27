@@ -15,8 +15,11 @@ namespace Mano.Controllers
             base.Prepare();
             Cookies["ASPNET_TEMPLATE"] = "Default";
             var Config = Resolver.GetRequiredService<IConfiguration>();
-            if (Request.Host.ToString() != Config["Host"])
+            if (Request.Cookies["ASPNET_TEMPLATE"] != "Default")
+            {
+                Response.Cookies.Append("ASPNET_TEMPLATE", "Default");
                 Response.Redirect("//" + Config["Host"]);
+            }
         }
 
         public IActionResult Index()

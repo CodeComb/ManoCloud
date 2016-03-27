@@ -23,8 +23,11 @@ namespace Mano.Controllers
             base.Prepare();
             Cookies["ASPNET_TEMPLATE"] = "Default";
             var Config = Resolver.GetRequiredService<IConfiguration>();
-            if (Request.Host.ToString() != Config["Host"])
+            if (Request.Cookies["ASPNET_TEMPLATE"] != "Default")
+            {
+                Response.Cookies.Append("ASPNET_TEMPLATE", "Default");
                 Response.Redirect("//" + Config["Host"]);
+            }
         }
 
         public static CommunityType GetCommunityType(string url)
@@ -375,7 +378,6 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
-                .ThenInclude(x => x.Commits)
                 .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -399,7 +401,6 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
-                .ThenInclude(x => x.Commits)
                 .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -476,7 +477,6 @@ namespace Mano.Controllers
                .Include(x => x.Certifications)
                .Include(x => x.Educations)
                .Include(x => x.Projects)
-               .ThenInclude(x => x.Commits)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -533,7 +533,6 @@ namespace Mano.Controllers
                .Include(x => x.Certifications)
                .Include(x => x.Educations)
                .Include(x => x.Projects)
-               .ThenInclude(x => x.Commits)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -731,7 +730,6 @@ namespace Mano.Controllers
                .Include(x => x.Certifications)
                .Include(x => x.Educations)
                .Include(x => x.Projects)
-               .ThenInclude(x => x.Commits)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -777,7 +775,6 @@ namespace Mano.Controllers
               .Include(x => x.Certifications)
               .Include(x => x.Educations)
               .Include(x => x.Projects)
-              .ThenInclude(x => x.Commits)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -817,7 +814,6 @@ namespace Mano.Controllers
                .Include(x => x.Certifications)
                .Include(x => x.Educations)
                .Include(x => x.Projects)
-               .ThenInclude(x => x.Commits)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -925,7 +921,6 @@ namespace Mano.Controllers
                .Include(x => x.Certifications)
                .Include(x => x.Educations)
                .Include(x => x.Projects)
-               .ThenInclude(x => x.Commits)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -990,7 +985,6 @@ namespace Mano.Controllers
               .Include(x => x.Certifications)
               .Include(x => x.Educations)
               .Include(x => x.Projects)
-              .ThenInclude(x => x.Commits)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1045,7 +1039,6 @@ namespace Mano.Controllers
               .Include(x => x.Certifications)
               .Include(x => x.Educations)
               .Include(x => x.Projects)
-              .ThenInclude(x => x.Commits)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1088,7 +1081,6 @@ namespace Mano.Controllers
               .Include(x => x.Certifications)
               .Include(x => x.Educations)
               .Include(x => x.Projects)
-              .ThenInclude(x => x.Commits)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1162,7 +1154,6 @@ namespace Mano.Controllers
               .Include(x => x.Certifications)
               .Include(x => x.Educations)
               .Include(x => x.Projects)
-              .ThenInclude(x => x.Commits)
               .SingleOrDefault(x => x.Id == id);
             if (user == null)
                 return Prompt(x =>
@@ -1218,7 +1209,6 @@ namespace Mano.Controllers
               .Include(x => x.Certifications)
               .Include(x => x.Educations)
               .Include(x => x.Projects)
-              .ThenInclude(x => x.Commits)
               .SingleOrDefault(x => x.Id == id);
             ViewBag.Regex = new Regex(Config["Host"].Replace("*.", "([a-zA-Z0-9-_]{0,}.|)"));
             if (user == null)

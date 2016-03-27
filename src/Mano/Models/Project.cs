@@ -48,6 +48,8 @@ namespace Mano.Models
 
         public bool Verified { get; set; }
 
-        public virtual ICollection<Commit> Commits { get; set; } = new List<Commit>();
+        public string Statistics { get; set; } = "[]";
+
+        public bool IsContributed { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace Mano.Models
                     UserName = "admin",
                     Email = "1@1234.sh",
                     RegisteryTime = DateTime.Now,
-                    GitHub = "Cream2015"
+                    GitHub = "Kagamine"
                 };
 
                 await UserManager.CreateAsync(user, "123456");
@@ -46,6 +46,12 @@ namespace Mano.Models
                 {
                     Verified = true,
                     EmailAddress = user.Email,
+                    UserId = user.Id
+                });
+                DB.Emails.Add(new Email
+                {
+                    Verified = true,
+                    EmailAddress = "1@4321.io",
                     UserId = user.Id
                 });
 
@@ -127,11 +133,11 @@ namespace Mano.Models
                 DB.Extensions.Add(new Extension { Id = ".vbproj", Technology = "Visual Studio", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".csproj", Technology = "Visual Studio", Type = TechnologyType.工具或框架 });
                 DB.Extensions.Add(new Extension { Id = ".xproj", Technology = "ASP.Net Core 1.0", Type = TechnologyType.编程语言 });
-                DB.Extensions.Add(new Extension { Id = ".xaml", Technology = "Windows Presentation Foundation", Type = TechnologyType.工具或框架 });
-                DB.Extensions.Add(new Extension { Id = ".axml", Technology = "Android Layout", Type = TechnologyType.工具或框架 });
-                DB.Extensions.Add(new Extension { Id = ".storyboard", Technology = "Apple Storyboard", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".xaml", Technology = "Windows Presentation Foundation", Type = TechnologyType.编程语言 });
+                DB.Extensions.Add(new Extension { Id = ".axml", Technology = "Android Layout", Type = TechnologyType.编程语言 });
+                DB.Extensions.Add(new Extension { Id = ".storyboard", Technology = "Apple Storyboard", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".jsproj", Technology = "Cordova", Type = TechnologyType.工具或框架 });
-                DB.Extensions.Add(new Extension { Id = ".frm", Technology = "Windows Form", Type = TechnologyType.工具或框架 });
+                DB.Extensions.Add(new Extension { Id = ".frm", Technology = "Windows Form", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".coffee", Technology = "Coffee Script", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".f", Technology = "Fortran", Type = TechnologyType.编程语言 });
                 DB.Extensions.Add(new Extension { Id = ".for", Technology = "Fortran", Type = TechnologyType.编程语言 });

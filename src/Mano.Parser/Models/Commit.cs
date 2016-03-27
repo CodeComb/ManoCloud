@@ -25,7 +25,7 @@ namespace Mano.Parser.Models
         public long Additions { get; set; }
 
         public long Deletions { get; set; }
-
+        [MaxLength(16)]
         public string Extension { get; set; }
     }
 }

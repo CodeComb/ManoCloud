@@ -17,7 +17,7 @@
     var FrameworkSkills = Model.Skills.Where(x => x.Type != TechnologyType.编程语言 && x.Type != TechnologyType.序列化格式).OrderBy(x => x.Begin).ToList();
     var Experiences = Model.Experiences.OrderByDescending(x => x.End).ToList();
     var Educations = Model.Educations.OrderByDescending(x => x.End).ToList();
-    var Projects = Model.Projects.Where(x => x.Verified && x.Commits.Count > 0 || !x.Verified).OrderByDescending(x => x.Begin).ToList();
+    var Projects = Model.Projects.Where(x => x.Verified && x.IsContributed || !x.Verified).OrderByDescending(x => x.Begin).ToList();
     var Certifications = Model.Certifications.OrderByDescending(x => x.AchieveTime).ToList();
 }
 <!DOCTYPE html>
@@ -264,11 +264,11 @@
                                     </div>
                                     <div class="resume_content">
                                         @Html.Sanitize(Html.Marked(Projects.ElementAt(i).Hint).ToString())
-                                        @if (Projects.ElementAt(i).Verified && Projects.ElementAt(i).Commits.Count > 0)
+                                        @if (Projects.ElementAt(i).Verified)
                                         {
                                             <canvas id="radar-@Projects.ElementAt(i).Id" width="450" height="350"></canvas>
                                             <script>
-                                                new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.ProjectRadar(Projects.ElementAt(i)), { animation: Modernizr.canvas });
+                                                new Chart(document.getElementById("radar-@Projects.ElementAt(i).Id").getContext("2d")).Radar(@Html.Radar(Projects.ElementAt(i).Statistics), { animation: Modernizr.canvas });
                                             </script>
                                         }
                                     </div>

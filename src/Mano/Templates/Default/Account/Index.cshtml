@@ -14,23 +14,21 @@
                     <tr>
                         <th>项目名称</th>
                         <th>项目代码量</th>
-                        <th>参与人数</th>
                         <th>贡献</th>
                         <th>项目周期</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @{ ProjectStatistics s; }
-                    @foreach (var x in Model.Projects.Where(x => x.Commits.Count > 0))
+                    @{ List<StatisticsRaw> s; }
+                    @foreach (var x in Model.Projects.Where(x => x.IsContributed))
                     {
-                        { s = Html.ProjectStatistics(x); }
+                        { s = Newtonsoft.Json.JsonConvert.DeserializeObject<List<StatisticsRaw>>(x.Statistics); }
                         <tr>
                             <td>@x.Title</td>
-                            <td>@s.Count.ToSplitedString() 行</td>
-                            <td>@s.Contributors</td>
-                            <td>@s.Contributed.ToSplitedString() 行 (@((s.Contributed * 100 / s.Count).ToString("0.0"))%)</td>
+                            <td>@s.Sum(y => y.Total).ToSplitedString() 行</td>
+                            <td>@s.Sum(y => y.Mine).ToSplitedString() 行 (@((s.Sum(y => y.Mine) * 100 / (s.Sum(y => y.Total) == 0 ? 1 : s.Sum(y => y.Total))).ToString("0.0"))%)</td>
                             <td>
-                                @s.Begin.ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.End).TotalDays <= 7 ? "至今" : s.End.ToString("yyyy-MM-dd"))
+                                @s.Min(y => y.Begin).ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.Max(y => y.End)).TotalDays <= 7 ? "至今" : s.Max(y => y.End).ToString("yyyy-MM-dd"))
                             </td>
                         </tr>
                     }
@@ -42,7 +40,7 @@
                 <canvas id="chartRadar" height="600" width="700" style="max-width:100%;"></canvas>
             </div>
             <script>
-                new Chart(document.getElementById("chartRadar").getContext("2d")).Radar(@Html.UserRadar(Model.Projects), { animation: Modernizr.canvas });
+                new Chart(document.getElementById("chartRadar").getContext("2d")).Radar(@Html.Radar(Model.Statistics, true), { animation: Modernizr.canvas });
             </script>
             <br />
             <h2>代码统计</h2>
@@ -55,11 +53,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var x in Html.UserSkill(Model.Projects))
+                    @foreach (var x in Newtonsoft.Json.JsonConvert.DeserializeObject<List<StatisticsRaw>>(Model.Statistics).OrderByDescending(x => x.TotalDays))
                     { 
                         <tr>
-                            <td>@x.Skill</td>
-                            <td>@x.Count.ToSplitedString() 行</td>
+                            <td>@x.Technology</td>
+                            <td>@x.Mine.ToSplitedString() 行</td>
                             <td>@x.Display</td>
                         </tr>
                     }

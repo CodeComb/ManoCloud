@@ -56,9 +56,9 @@ namespace Mano.Models
             {
                 e.HasIndex(x => x.Time);
                 e.HasIndex(x => x.Email);
-                e.HasIndex(x => x.Author);
                 e.HasIndex(x => x.Additions);
                 e.HasIndex(x => x.Deletions);
+                e.HasIndex(x => x.Extension);
             });
 
             builder.Entity<Email>(e =>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Microsoft.Data.Entity;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +16,9 @@ namespace Mano.Controllers
             var host = Request.Host.ToString();
             if (host == Config["Host"])
             {
-                if (Cookies["ASPNET_TEMPLATE"] != "Default")
+                if (Request.Cookies["ASPNET_TEMPLATE"] != "Default")
                 {
-                    Cookies["ASPNET_TEMPLATE"] = "Default";
+                    Response.Cookies.Append("ASPNET_TEMPLATE", "Default");
                     return RedirectToAction("Index", "Home");
                 }
                 return View();
@@ -39,15 +40,15 @@ namespace Mano.Controllers
                 .Include(x => x.Certifications)
                 .Include(x => x.Educations)
                 .Include(x => x.Projects)
-                .ThenInclude(x => x.Commits)
                 .SingleOrDefault(x => x.Id == domain.UserId);
 
             if (user == null)
                 return Redirect(Config["Home"]);
 
-            if (Cookies["ASPNET_TEMPLATE"] != (user.Template ?? "Metro"))
+            if (Request.Cookies["ASPNET_TEMPLATE"] != (user.Template ?? "Metro"))
             {
-                Cookies["ASPNET_TEMPLATE"] = user.Template ?? "Metro";
+                Response.Cookies.Delete("ASPNET_TEMPLATE");
+                Response.Cookies.Append("ASPNET_TEMPLATE", user.Template ?? "Metro");
                 return RedirectToAction("Index", "Home");
             }
 
