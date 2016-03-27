@@ -62,9 +62,9 @@ namespace Mano.Helpers
         {
             var charts = JsonConvert.DeserializeObject<List<StatisticsRaw>>(json);
             var radar = new RadarChart();
-            radar.labels = charts.Select(x => x.Technology).ToList();
             if (!mine)
             {
+                radar.labels = charts.Select(x => x.Technology).ToList();
                 radar.datasets.Add(new RadarChartDataSet
                 {
                     fillColor = "rgba(220,220,220,0.5)",
@@ -73,15 +73,27 @@ namespace Mano.Helpers
                     pointStrokeColor = "#fff",
                     data = charts.Select(x => x.Total).ToList()
                 });
+                radar.datasets.Add(new RadarChartDataSet
+                {
+                    fillColor = "rgba(151,187,205,0.5)",
+                    strokeColor = "rgba(151,187,205,1)",
+                    pointColor = "rgba(151,187,205,1)",
+                    pointStrokeColor = "#fff",
+                    data = charts.Select(x => x.Mine).ToList()
+                });
             }
-            radar.datasets.Add(new RadarChartDataSet
+            else
             {
-                fillColor = "rgba(151,187,205,0.5)",
-                strokeColor = "rgba(151,187,205,1)",
-                pointColor = "rgba(151,187,205,1)",
-                pointStrokeColor = "#fff",
-                data = charts.Select(x => x.Mine).ToList()
-            });
+                radar.labels = charts.Where(x => x.Mine > 0).Select(x => x.Technology).ToList();
+                radar.datasets.Add(new RadarChartDataSet
+                {
+                    fillColor = "rgba(151,187,205,0.5)",
+                    strokeColor = "rgba(151,187,205,1)",
+                    pointColor = "rgba(151,187,205,1)",
+                    pointStrokeColor = "#fff",
+                    data = charts.Where(x => x.Mine > 0).Select(x => x.Mine).ToList()
+                });
+            }
             return new HtmlString(JsonConvert.SerializeObject(radar));
         }
     }
