@@ -1,0 +1,26 @@
+.submit-tip{
+    width: 180px;
+    height: 60px;
+    background-color:#4876FF; 
+    position: fixed;
+    margin: 0 auto;
+    left:0px;
+    right:0px;
+    margin-left:auto;
+    margin-right:auto;
+    z-index: 9999;
+    top:50%;
+    margin-top:-30px; 
+    border-radius: 3px;
+    display: none;
+}
+.submit-tip span{
+    color:white;
+    font-size: 20px;
+    line-height:20px;
+    text-align:center; 
+    float:left;
+   padding-top:20px; 
+    width: 180px;
+    height: 60px;
+}

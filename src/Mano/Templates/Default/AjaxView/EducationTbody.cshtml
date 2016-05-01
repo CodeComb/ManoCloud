@@ -1,0 +1,17 @@
+@model User
+@{
+    Layout=null;
+}
+ @foreach (var x in Model.Educations.OrderByDescending(x => x.Begin))
+                    {
+                        <tr id="@x.Id">
+                            <td>@x.School</td>
+                            <td>@x.Profession</td>
+                            <td>@x.Begin.ToString("yyyy-MM-dd") ~ @(x.End.HasValue ? x.End.Value.ToString("yyyy-MM-dd") : "至今")</td>
+                            <td>
+                                 <a href="javascript:void(0)" class="ajax-edit" editUrl="/Account/Education/@Model.Id/Edit/@x.Id" modalId="modalEditEducation">编辑教育经历</a>
+                                <a href="javascript:deleteDialog('/Account/EducationDelete','@Model.Id','@x.Id')">删除教育经历</a>
+                            </td>
+                        </tr>
+                    }
+<script src="~/assets/default/scripts/ajax.js"></script>

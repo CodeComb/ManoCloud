@@ -5,7 +5,8 @@
 <div class="modal fade" id="modalAddCertification" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="CertificationAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+            <form id="ajax-add-form" asp-action="CertificationAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data">
+                <!--<input postUrl="/Account/Certification/@Model.Id/Add" getUrl="/AjaxView/CertificationTbody" modalId="modalAddCertification" name="id" type="hidden" value="@Model.Id"/>-->
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">添加证书</h4>
@@ -27,6 +28,7 @@
                         <label>证书照片 *</label>
                         <input type="file" name="Certification" class="form-control" />
                     </p>
+                    <span id="ajax-error-message"></span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
@@ -40,6 +42,7 @@
 @Html.Partial("~/Templates/Default/Account/Header.cshtml")
 <link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
 <script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<script src="~/assets/default/scripts/ajax.js"></script>
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
@@ -53,16 +56,16 @@
                         <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ajaxTbody">
                     @foreach (var x in Model.Certifications.OrderByDescending(x => x.AchieveTime))
                     {
-                        <tr>
+                        <tr id="@x.Id">
                             <td>@x.Title</td>
                             <td>@x.Number</td>
                             <td>@x.AchieveTime.ToString("yyyy-MM-dd")</td>
                             <td>
                                 <a target="_blank" href="/file/download/@x.CertId">查看证书</a>
-                                <a href="javascript:deleteCertification('@x.Id')">删除证书</a>
+                                <a href="javascript:deleteDialog('/Account/CertificationDelete','@Model.Id','@x.Id')" >删除证书</a>
                             </td>
                         </tr>
                     }

@@ -545,7 +545,7 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult EmailDelete(long id, Guid eid)
         {
@@ -795,11 +795,12 @@ namespace Mano.Controllers
                .SingleOrDefault(x => x.Id == id);
             user.Introduction = Introduction;
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "修改成功";
-                x.Details = "自我介绍修改成功，新的自我介绍内容将展现在您的云简历中。";
-            });
+            return Content("修改成功");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "修改成功";
+            //     x.Details = "自我介绍修改成功，新的自我介绍内容将展现在您的云简历中。";
+            // });
         }
 
         [HttpGet]
@@ -835,21 +836,23 @@ namespace Mano.Controllers
             {
                 if (DB.Projects.Where(x => x.UserId == id && x.ThirdPartyUrl == thirdpartyurl).Count() > 0)
                 {
-                    return Prompt(x =>
-                    {
-                        x.Title = "添加失败";
-                        x.Details = "您已经添加过这个项目了，请不要重复添加！";
-                        x.StatusCode = 400;
-                    });
+                    return Content("您已经添加过这个项目了，请不要重复添加！");
+                    // return Prompt(x =>
+                    // {
+                        // x.Title = "添加失败";
+                        // x.Details = "您已经添加过这个项目了，请不要重复添加！";
+                        // x.StatusCode = 400;
+                    // });
                 }
                 if (string.IsNullOrEmpty(thirdpartyurl))
                 {
-                    return Prompt(x =>
-                    {
-                        x.Title = "添加失败";
-                        x.Details = "请您填写Git源，Mano Cloud将根据此源Clone您项目的代码，以分析您所用技术及代码量。";
-                        x.StatusCode = 400;
-                    });
+                    return Content("请您填写Git源，Mano Cloud将根据此源Clone您项目的代码，以分析您所用技术及代码量。");
+                    // return Prompt(x =>
+                    // {
+                    //     x.Title = "添加失败";
+                    //     x.Details = "请您填写Git源，Mano Cloud将根据此源Clone您项目的代码，以分析您所用技术及代码量。";
+                    //     x.StatusCode = 400;
+                    // });
                 }
             }
             else
@@ -857,12 +860,13 @@ namespace Mano.Controllers
 
                 if (!begin.HasValue)
                 {
-                    return Prompt(x =>
-                    {
-                        x.Title = "添加失败";
-                        x.Details = "当您选择手动更新项目时，您必须填写项目开始时间。";
-                        x.StatusCode = 400;
-                    });
+                    return Content("当您选择手动更新项目时，您必须填写项目开始时间。");
+                    // return Prompt(x =>
+                    // {
+                    //     x.Title = "添加失败";
+                    //     x.Details = "当您选择手动更新项目时，您必须填写项目开始时间。";
+                    //     x.StatusCode = 400;
+                    // });
                 }
             }
             var proj = new Project();
@@ -880,32 +884,28 @@ namespace Mano.Controllers
             proj.Verified = false;
             DB.Projects.Add(proj);
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "创建成功";
-                x.Details = $"项目{proj.Title} 已经创建成功";
-                x.HideBack = true;
-                x.RedirectText = "返回项目列表";
-                x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "创建成功";
+            //     x.Details = $"项目{proj.Title} 已经创建成功";
+            //     x.HideBack = true;
+            //     x.RedirectText = "返回项目列表";
+            //     x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
+            // });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectDelete(long id, Guid pid)
         {
             var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
             if (project == null)
-                return Prompt(x =>
-                {
-                    x.Title = "删除失败";
-                    x.Details = "没有找到相关的项目";
-                    x.StatusCode = 400;
-                });
+                 return Content("未找到该行");
             DB.Projects.Remove(project);
             DB.SaveChanges();
-            return RedirectToAction("Project", "Account", new { id = id });
+            return Content("ok");
         }
 
         [HttpGet]
@@ -923,20 +923,10 @@ namespace Mano.Controllers
                .Include(x => x.Projects)
                .SingleOrDefault(x => x.Id == id);
             if (user == null)
-                return Prompt(x =>
-                {
-                    x.Title = "没有找到该用户";
-                    x.Details = "没有找到指定的用户，或该用户设置了访问权限";
-                    x.StatusCode = 404;
-                });
+                return Content("error");
             var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
             if (project == null)
-                return Prompt(x =>
-                {
-                    x.Title = "删除失败";
-                    x.Details = "没有找到相关的项目";
-                    x.StatusCode = 400;
-                });
+                return Content("error");
             ViewBag.Project = project;
             return View(user);
         }
@@ -947,6 +937,20 @@ namespace Mano.Controllers
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult ProjectEdit(long id, Guid pid, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
+            if (update == "自动更新")
+            {
+                if (string.IsNullOrEmpty(thirdpartyurl))
+                {
+                    return Content("请您填写Git源，Mano Cloud将根据此源Clone您项目的代码，以分析您所用技术及代码量。");
+                }
+            }
+            else
+            {
+                if (!begin.HasValue)
+                {
+                    return Content("当您选择手动更新项目时，您必须填写项目开始时间。");
+                }
+            }
             var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).Single();
             project.Title = title;
             project.ProjectUrl = projecturl;
@@ -964,13 +968,14 @@ namespace Mano.Controllers
                 project.End = end;
             }
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "修改成功";
-                x.Details = "项目信息修改成功！";
-                x.RedirectText = "返回项目列表";
-                x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "修改成功";
+            //     x.Details = "项目信息修改成功！";
+            //     x.RedirectText = "返回项目列表";
+            //     x.RedirectUrl = Url.Action("Project", "Account", new { id = id });
+            // });
         }
 
         [HttpGet]
@@ -1005,26 +1010,27 @@ namespace Mano.Controllers
             model.UserId = id;
             DB.Experiences.Add(model);
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "添加成功";
-                x.Details = $"您在{model.Company}的工作经历已经成功添加";
-                x.HideBack = true;
-                x.RedirectText = "返回工作经历";
-                x.RedirectUrl = Url.Action("Experience", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "添加成功";
+            //     x.Details = $"您在{model.Company}的工作经历已经成功添加";
+            //     x.HideBack = true;
+            //     x.RedirectText = "返回工作经历";
+            //     x.RedirectUrl = Url.Action("Experience", "Account", new { id = id });
+            // });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult ExperienceDelete(long id, Guid eid, Experience model)
+        public IActionResult ExperienceDelete(long id, Guid pid)
         {
             var exp = DB.Experiences
-                .Single(x => x.Id == eid && x.UserId == id);
+                .Single(x => x.Id == pid && x.UserId == id);
             DB.Experiences.Remove(exp);
             DB.SaveChanges();
-            return Redirect(Url.Action("Experience", "Account", new { id = id }));
+            return Content("ok");
         }
 
         [HttpGet]
@@ -1049,7 +1055,8 @@ namespace Mano.Controllers
                 });
             return View(user);
         }
-
+        
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Education/{id}/Add")]
@@ -1059,16 +1066,146 @@ namespace Mano.Controllers
             model.UserId = id;
             DB.Educations.Add(model);
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "添加成功";
-                x.Details = $"您在{model.School}的学习经历已经成功添加";
-                x.HideBack = true;
-                x.RedirectText = "返回教育经历";
-                x.RedirectUrl = Url.Action("Education", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "添加成功";
+            //     x.Details = $"您在{model.School}的学习经历已经成功添加";
+            //     x.HideBack = true;
+            //     x.RedirectText = "返回教育经历";
+            //     x.RedirectUrl = Url.Action("Education", "Account", new { id = id });
+            // });
         }
-
+        //edit Get --begin
+        [HttpGet]
+        [Route("[controller]/Experience/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ExperienceEdit(long id, Guid pid)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Content("error");
+            var experience = DB.Experiences.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
+            if (experience == null)
+                return Content("error");
+            ViewBag.Experience = experience;
+            return View(user);
+        }
+        
+        [HttpGet]
+        [Route("[controller]/Education/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult EducationEdit(long id, Guid pid)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Content("error");
+            var education = DB.Educations.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
+            if (education == null)
+                return Content("error");
+            ViewBag.Education = education;
+            return View(user);
+        }
+        [HttpPost]
+        // [ValidateAntiForgeryToken]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult EducationDelete(long id, Guid pid)
+        {
+            var education = DB.Educations.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
+            if (education == null)
+                return Content("未找到该行");
+            DB.Educations.Remove(education);
+            DB.SaveChanges();
+            return Content("ok");
+        }
+        [HttpGet]
+        [Route("[controller]/Skill/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult SkillEdit(long id, Guid pid)
+        {
+            var user = DB.Users
+               .Include(x => x.Domains)
+               .Include(x => x.Emails)
+               .Include(x => x.Skills)
+               .Include(x => x.Experiences)
+               .Include(x => x.Certifications)
+               .Include(x => x.Educations)
+               .Include(x => x.Projects)
+               .SingleOrDefault(x => x.Id == id);
+            if (user == null)
+                return Content("error");
+            var skill = DB.Skills.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
+            if (skill == null)
+                return Content("error");
+            ViewBag.Skill = skill;
+            return View(user);
+        }
+        //edit get --end
+        
+        //edit post --begin
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("[controller]/Experience/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult ExperienceEdit(long id, Guid pid, string company, string position,DateTime? begin, DateTime? end, string hint)
+        {
+            var experience = DB.Experiences.Where(x => x.Id == pid && x.UserId == id).Single();
+            experience.Company = company;
+            experience.Position = position;
+            experience.Hint = hint;
+            experience.Begin = begin.Value;
+            experience.End = end;
+            DB.SaveChanges();
+            return Content("ok");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("[controller]/Education/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult EducationEdit(long id, Guid pid, string school, string profession,DateTime? begin, DateTime? end, string hint)
+        {
+            var education = DB.Educations.Where(x => x.Id == pid && x.UserId == id).Single();
+            education.School = school;
+            education.Profession = profession;
+            education.Hint = hint;
+            education.Begin = begin.Value;
+            education.End = end;
+            DB.SaveChanges();
+            return Content("ok");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("[controller]/Skill/{id}/Edit/{pid}")]
+        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        public IActionResult SkillEdit(long id, Guid pid, string title,TechnologyType type, long count,string unit,DateTime? begin)
+        {
+            var skill = DB.Skills.Where(x => x.Id == pid && x.UserId == id).Single();
+            skill.Title = title;
+            skill.Type = type;
+            skill.Count = count;
+            skill.Unit = unit;
+            skill.Begin = begin.Value;
+            DB.SaveChanges();
+            return Content("ok");
+        }
+        //edit post --end
+        
         [HttpGet]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
         public IActionResult Certification(long id)
@@ -1100,11 +1237,12 @@ namespace Mano.Controllers
         {
             if (Certification == null)
             {
-                return Prompt(x =>
-                {
-                    x.Title = "添加失败";
-                    x.Details = "您必须上传证书的扫描件或照片，请返回重试！";
-                });
+                return Content("您必须上传证书的扫描件或照片，请返回重试！");
+                // return Prompt(x =>
+                // {
+                //     x.Title = "添加失败";
+                //     x.Details = "您必须上传证书的扫描件或照片，请返回重试！";
+                // });
             }
             var file = new CodeComb.AspNet.Upload.Models.File
             {
@@ -1119,27 +1257,28 @@ namespace Mano.Controllers
             model.CertId = file.Id;
             DB.Certifications.Add(model);
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "添加成功";
-                x.Details = $"{model.Title}已经成功添加！";
-                x.HideBack = true;
-                x.RedirectText = "返回我的证书";
-                x.RedirectUrl = Url.Action("Certification", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "添加成功";
+            //     x.Details = $"{model.Title}已经成功添加！";
+            //     x.HideBack = true;
+            //     x.RedirectText = "返回我的证书";
+            //     x.RedirectUrl = Url.Action("Certification", "Account", new { id = id });
+            // });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult CertificationDelete(long id, Guid cid)
+        public IActionResult CertificationDelete(long id, Guid pid)
         {
             var cert = DB.Certifications
-                .Where(x => x.UserId == id && x.Id == cid)
+                .Where(x => x.UserId == id && x.Id == pid)
                 .Single();
             DB.Certifications.Remove(cert);
             DB.SaveChanges();
-            return RedirectToAction("Certification", "Account", new { id = id });
+            return Content("ok");
         }
 
         [HttpGet]
@@ -1166,15 +1305,15 @@ namespace Mano.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult SkillDelete(long id, Guid sid)
+        public IActionResult SkillDelete(long id, Guid pid)
         {
             var skill = DB.Skills
-                .Single(x => x.Id == sid && x.UserId == id);
+                .Single(x => x.Id == pid && x.UserId == id);
             DB.Skills.Remove(skill);
             DB.SaveChanges();
-            return RedirectToAction("Skill", "Account", new { id = id });
+           return Content("ok");
         }
 
         [HttpPost]
@@ -1187,14 +1326,15 @@ namespace Mano.Controllers
             model.UpdateFromGit = false;
             DB.Skills.Add(model);
             DB.SaveChanges();
-            return Prompt(x =>
-            {
-                x.Title = "添加成功";
-                x.Details = $"{model.Title}已经成功添加！";
-                x.HideBack = true;
-                x.RedirectText = "返回我的技能";
-                x.RedirectUrl = Url.Action("Skill", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "添加成功";
+            //     x.Details = $"{model.Title}已经成功添加！";
+            //     x.HideBack = true;
+            //     x.RedirectText = "返回我的技能";
+            //     x.RedirectUrl = Url.Action("Skill", "Account", new { id = id });
+            // });
         }
 
         [HttpGet]
@@ -1241,19 +1381,21 @@ namespace Mano.Controllers
             {
                 if (user.Domains.Where(x => x.DomainName == domain).Count() > 0)
                 {
-                    return Prompt(x =>
-                    {
-                        x.Title = "绑定失败";
-                        x.Details = $"你已经绑定过域名{domain}，请勿重复绑定！";
-                    });
+                    return Content($"你已经绑定过域名{domain}，请勿重复绑定！");
+                    // return Prompt(x =>
+                    // {
+                    //     x.Title = "绑定失败";
+                    //     x.Details = $"你已经绑定过域名{domain}，请勿重复绑定！";
+                    // });
                 }
                 if (DB.Domains.Where(x => x.DomainName == domain).Count() > 0)
                 {
-                    return Prompt(x =>
-                    {
-                        x.Title = "绑定失败";
-                        x.Details = $"域名{domain}已经被其他人绑定！";
-                    });
+                    return Content($"域名{domain}已经被其他人绑定！");
+                    // return Prompt(x =>
+                    // {
+                    //     x.Title = "绑定失败";
+                    //     x.Details = $"域名{domain}已经被其他人绑定！";
+                    // });
                 }
                 DB.Domains.Add(new Domain
                 {
@@ -1263,26 +1405,26 @@ namespace Mano.Controllers
                 });
                 DB.SaveChanges();
             }
-
-            return Prompt(x =>
-            {
-                x.Title = "绑定成功";
-                x.Details = $"您已经成功绑定了域名{domain}";
-                x.HideBack = true;
-                x.RedirectText = "返回域名列表";
-                x.RedirectUrl = Url.Action("Domain", "Account", new { id = id });
-            });
+            return Content("ok");
+            // return Prompt(x =>
+            // {
+            //     x.Title = "绑定成功";
+            //     x.Details = $"您已经成功绑定了域名{domain}";
+            //     x.HideBack = true;
+            //     x.RedirectText = "返回域名列表";
+            //     x.RedirectUrl = Url.Action("Domain", "Account", new { id = id });
+            // });
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        // [ValidateAntiForgeryToken]
         [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
-        public IActionResult DomainDelete(long id, Guid did)
+        public IActionResult DomainDelete(long id, Guid pid)
         {
-            var domain = DB.Domains.Single(x => x.Id == did && x.UserId == id);
+            var domain = DB.Domains.Single(x => x.Id == pid && x.UserId == id);
             DB.Domains.Remove(domain);
             DB.SaveChanges();
-            return RedirectToAction("Domain", "Account", new { id = id });
+            return Content("ok");
         }
 
         [HttpPost]

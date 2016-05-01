@@ -1,0 +1,18 @@
+@model User
+@{
+    Layout=null;
+}
+@foreach (var x in Model.Skills.OrderBy(x => x.Begin))
+                    {
+                        <tr id="@x.Id">
+                            <td>@x.Title</td>
+                            <td>@x.Type</td>
+                            <td>@x.Count.ToSplitedString() @x.Unit</td>
+                            <td>@x.Display</td>
+                            <td>
+                                <a href="javascript:void(0)" class="ajax-edit" editUrl="/Account/Skill/@Model.Id/Edit/@x.Id" modalId="modalEditSkill">编辑技能</a>
+                                <a href="javascript:deleteDialog('/Account/SkillDelete','@Model.Id','@x.Id')">删除技能</a>
+                            </td>
+                        </tr>
+                    }
+<script src="~/assets/default/scripts/ajax.js"></script>

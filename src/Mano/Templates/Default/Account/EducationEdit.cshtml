@@ -1,0 +1,53 @@
+@model User
+@{
+    Layout=null;
+    ViewBag.Title = "编辑项目";
+}
+<!--@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">-->
+            <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">编辑教育经历</h4>
+                </div>
+           <form id="ajax-edit-form" asp-action="EducationEdit" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+               <input name="id" type="hidden" value="@Model.Id" getUrl="/AjaxView/EducationTbody"/>
+               <input name="gid" type="hidden" value="@ViewBag.Education.Id"/>
+                <div class="modal-body">
+                    <p>
+                        <label>学校 *</label>
+                        <input type="text" name="School" class="form-control" value="@ViewBag.Education.School" required />
+                    </p>
+                    <p>
+                        <label>专业</label>
+                        <input type="text" name="Profession" class="form-control" value="@ViewBag.Education.Profession" required />
+                    </p>
+                    <p>
+                        <label>入学时间 *</label>
+                        <input type="text" name="Begin" class="datetime form-control" value="@ViewBag.Education.Begin" required />
+                    </p>
+                    <p>
+                        <label>毕业时间 (未毕业请留空)</label>
+                        <input type="text" name="End" class="datetime form-control" value="@ViewBag.Education.End" />
+                    </p>
+                    <p>
+                        <label>学习内容</label>
+                        <div class="markdown-editor-outer">
+                            <textarea class="textbox markdown-editor" name="Hint" value="@ViewBag.Education.Hint"></textarea>
+                            <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
+                        </div>
+                    </p>
+                    <span id="ajax-error-message"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:editSubmit()">编辑</button>
+                </div>
+            </form>
+    </div>
+</div>
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>

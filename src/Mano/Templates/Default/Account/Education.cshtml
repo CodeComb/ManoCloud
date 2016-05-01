@@ -5,7 +5,8 @@
 <div class="modal fade" id="modalAddEducation" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="EducationAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+            <form id="ajax-add-form" asp-action="EducationAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                <input postUrl="/Account/Education/@Model.Id/Add" getUrl="/AjaxView/EducationTbody" modalId="modalAddEducation" name="id" type="hidden" value="@Model.Id"/>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">添加教育经历</h4>
@@ -34,19 +35,28 @@
                             <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
                         </div>
                     </p>
+                    <span id="ajax-error-message"></span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary">添加</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:ajaxSubmit()">添加</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="modalEditEducation" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            
+        </div>
+    </div>
+</div>
 @Html.Partial("~/Templates/Default/Account/Header.cshtml")
 <link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
 <script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<script src="~/assets/default/scripts/ajax.js"></script>
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
@@ -60,16 +70,16 @@
                         <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ajaxTbody">
                     @foreach (var x in Model.Educations.OrderByDescending(x => x.Begin))
                     {
-                        <tr>
+                        <tr id="@x.Id">
                             <td>@x.School</td>
                             <td>@x.Profession</td>
                             <td>@x.Begin.ToString("yyyy-MM-dd") ~ @(x.End.HasValue ? x.End.Value.ToString("yyyy-MM-dd") : "至今")</td>
-                            <td>
-                                <a asp-action="EducationEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑教育经历</a>
-                                <a href="javascript:deleteEducation('@x.Id')">删除教育经历</a>
+                            <td >
+                                <a href="javascript:void(0)" class="ajax-edit" editUrl="/Account/Education/@Model.Id/Edit/@x.Id" modalId="modalEditEducation">编辑教育经历</a>
+                                <a href="javascript:deleteDialog('/Account/EducationDelete','@Model.Id','@x.Id')">删除教育经历</a>
                             </td>
                         </tr>
                     }

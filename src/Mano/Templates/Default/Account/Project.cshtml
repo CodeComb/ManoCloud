@@ -6,7 +6,8 @@
 <div class="modal fade" id="modalAddProject" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="ProjectAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+            <form id="ajax-add-form" asp-action="ProjectAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                <input postUrl="/Account/Project/@Model.Id/Add" getUrl="/AjaxView/ProjectTbody" modalId="modalAddProject" name="id" type="hidden" value="@Model.Id"/>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">添加项目</h4>
@@ -52,20 +53,29 @@
                             <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
                         </div>
                     </div>
+                    <span id="ajax-error-message"></span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary">添加</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:ajaxSubmit()">添加</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<div class="modal fade" id="modalEditProject" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            
+        </div>
+    </div>
+</div>
 
 @Html.Partial("~/Templates/Default/Account/Header.cshtml")
 <link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
 <script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<script src="~/assets/default/scripts/ajax.js"></script>
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
@@ -79,10 +89,10 @@
                         <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ajaxTbody">
                     @foreach (var x in Model.Projects)
                     {
-                        <tr>
+                        <tr id="@x.Id">
                             <td>@x.Title</td>
                             <td>
                                 @if (x.Type == CommunityType.None)
@@ -96,8 +106,8 @@
                             </td>
                             <td>@(x.Verified ? x.LastPullTime.ToString("yyyy-MM-dd") : x.LastEditTime.ToString("yyyy-MM-dd"))</td>
                             <td>
-                                <a asp-action="ProjectEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑项目</a>
-                                <a href="javascript:deleteProject('@x.Id')">删除项目</a>
+                                <a href="javascript:void(0)" class="ajax-edit" editUrl="/Account/Project/@Model.Id/Edit/@x.Id" modalId="modalEditProject">编辑项目</a>
+                                <a href="javascript:deleteDialog('/Account/ProjectDelete','@Model.Id','@x.Id')" >删除项目</a>
                             </td>
                         </tr>
                     }

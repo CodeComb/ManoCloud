@@ -1,0 +1,31 @@
+ @model User
+ @{
+    Layout=null;
+}
+ @foreach (var x in Model.Domains.OrderByDescending(x => x.Default))
+                    {
+                        <tr id="@x.Id">
+                            <td>
+                                <a target="_blank" href="//@x.DomainName">@x.DomainName</a>
+                                @if (x.Default)
+                                {
+                                    <span class="label label-info">主要的</span>
+                                }
+                                else if (ViewBag.Regex.IsMatch(x.DomainName))
+                                {
+                                    <span class="label label-warning">不可删除</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!x.Default)
+                                {
+                                    <a href="javascript:defaultDomain('@x.Id')">设为默认</a>
+                                    @if (!ViewBag.Regex.IsMatch(x.DomainName))
+                                    {
+                                        <a href="javascript:deleteDialog('/Account/DomainDelete','@Model.Id','@x.Id')">取消绑定</a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+<script src="~/assets/default/scripts/ajax.js"></script>

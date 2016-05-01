@@ -5,7 +5,8 @@
 <div class="modal fade" id="modalAddSkill" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="SkillAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+            <form id="ajax-add-form" asp-action="SkillAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                <input postUrl="/Account/Skill/@Model.Id/Add" getUrl="/AjaxView/SkillTbody" modalId="modalAddSkill" name="id" type="hidden" value="@Model.Id"/>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">添加技能</h4>
@@ -36,19 +37,27 @@
                         <label>单位 *</label>
                         <input type="text" name="Unit" class="form-control" required />
                     </p>
+                    <span id="ajax-error-message"></span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary">添加</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:ajaxSubmit()">添加</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
+<div class="modal fade" id="modalEditSkill" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" >
+            
+        </div>
+    </div>
+</div>
 @Html.Partial("~/Templates/Default/Account/Header.cshtml")
 <link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
 <script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<script src="~/assets/default/scripts/ajax.js"></script>
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
@@ -63,17 +72,17 @@
                         <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ajaxTbody">
                     @foreach (var x in Model.Skills.OrderBy(x => x.Begin))
                     {
-                        <tr>
+                        <tr id="@x.Id">
                             <td>@x.Title</td>
                             <td>@x.Type</td>
                             <td>@x.Count.ToSplitedString() @x.Unit</td>
                             <td>@x.Display</td>
                             <td>
-                                <a asp-action="ExperinceEdit" asp-controller="Account" asp-route-id="@Model.Id" asp-route-pid="@x.Id">编辑技能</a>
-                                <a href="javascript:deleteSkill('@x.Id')">删除技能</a>
+                                <a href="javascript:void(0)" class="ajax-edit" editUrl="/Account/Skill/@Model.Id/Edit/@x.Id" modalId="modalEditSkill">编辑技能</a>
+                                <a href="javascript:deleteDialog('/Account/SkillDelete','@Model.Id','@x.Id')" >删除技能</a>
                             </td>
                         </tr>
                     }

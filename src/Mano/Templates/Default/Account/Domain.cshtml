@@ -5,7 +5,8 @@
 <div class="modal fade" id="modalAddDomain" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="DomainAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+            <form id="ajax-add-form" asp-action="DomainAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                 <input postUrl="/Account/Domain/@Model.Id/Add" getUrl="/AjaxView/DomainTbody" modalId="modalAddDomain" name="id" type="hidden" value="@Model.Id"/>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="myModalLabel">绑定域名</h4>
@@ -15,10 +16,11 @@
                         <label>域名 *</label>
                         <input type="text" name="domain" class="form-control" required />
                     </p>
+                    <span id="ajax-error-message"></span>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-                    <button type="submit" class="btn btn-primary">添加</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:ajaxSubmit()">添加</button>
                 </div>
             </form>
         </div>
@@ -28,6 +30,7 @@
 @Html.Partial("~/Templates/Default/Account/Header.cshtml")
 <link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
 <script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<script src="~/assets/default/scripts/ajax.js"></script>
 <div class="container page-container vertical-center">
     <div class="row">
         <div class="col-md-9">
@@ -39,10 +42,10 @@
                         <th>操作</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="ajaxTbody">
                     @foreach (var x in Model.Domains.OrderByDescending(x => x.Default))
                     {
-                        <tr>
+                       <tr id="@x.Id">
                             <td>
                                 <a target="_blank" href="//@x.DomainName">@x.DomainName</a>
                                 @if (x.Default)
@@ -60,7 +63,7 @@
                                     <a href="javascript:defaultDomain('@x.Id')">设为默认</a>
                                     @if (!ViewBag.Regex.IsMatch(x.DomainName))
                                     {
-                                        <a href="javascript:deleteDomain('@x.Id')">取消绑定</a>
+                                        <a href="javascript:deleteDialog('/Account/DomainDelete','@Model.Id','@x.Id')" >取消绑定</a>
                                     }
                                 }
                             </td>
