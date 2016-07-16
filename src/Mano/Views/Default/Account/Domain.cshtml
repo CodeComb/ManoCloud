@@ -27,7 +27,7 @@
     </div>
 </div>
 
-@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+@Html.Partial("~/Views/Default/Account/Header.cshtml")
 <link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
 <script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
 <script src="~/assets/default/scripts/ajax.js"></script>
@@ -72,7 +72,7 @@
                 </tbody>
             </table>
         </div>
-        @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
+        @Html.Partial("~/Views/Default/Account/Sidebar.cshtml")
         <form id="frmDelete" asp-action="DomainDelete" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="did" id="deleteId" /></form>
         <form id="frmDefault" asp-action="DomainDefault" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="did" id="defaultId" /></form>
         <script>

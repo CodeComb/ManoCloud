@@ -13,35 +13,41 @@ namespace Mano.Jobs
     public class ManoJob : Job
     {
         [Invoke(Interval = 5000, SkipWhileExecuting = true)]
-        public void HeartBeat(ManoContext DB)
+        public void HeartBeat(IServiceProvider services)
         {
-            var nodes = DB.Nodes.ToList();
-            foreach (var node in nodes)
+            using (var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var DB = serviceScope.ServiceProvider.GetRequiredService<ManoContext>())
             {
-                using (var client = new HttpClient())
+                var nodes = DB.Nodes.ToList();
+                foreach (var node in nodes)
                 {
-                    try
+                    using (var client = new HttpClient())
                     {
-                        var task = client.GetAsync(node.Url + "/");
-                        task.Wait();
-                        var result = task.Result;
-                        if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                            node.Status = NodeStatus.Online;
-                        else
+                        try
+                        {
+                            var task = client.GetAsync(node.Url + "/");
+                            task.Wait();
+                            var result = task.Result;
+                            if (result.StatusCode == System.Net.HttpStatusCode.OK)
+                                node.Status = NodeStatus.Online;
+                            else
+                                node.Status = NodeStatus.Offline;
+                        }
+                        catch
+                        {
                             node.Status = NodeStatus.Offline;
+                        }
+                        DB.SaveChanges();
                     }
-                    catch
-                    {
-                        node.Status = NodeStatus.Offline;
-                    }
-                    DB.SaveChanges();
                 }
             }
         }
 
         [Invoke(Interval = 1000 * 60 * 10, SkipWhileExecuting = true)]
-        public async void SyncRepositories(ManoContext DB)
+        public async void SyncRepositories(IServiceProvider services)
         {
+            using (var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var DB = serviceScope.ServiceProvider.GetRequiredService<ManoContext>())
             using (var client = new HttpClient())
             {
                 var time = DateTime.Now.AddDays(-1);
@@ -80,18 +86,22 @@ namespace Mano.Jobs
         }
 
         [Invoke(Interval = 1000 * 60 * 60, SkipWhileExecuting = true)]
-        public void ProjectPulling(ManoContext DB, IServiceProvider services)
+        public void ProjectPulling(IServiceProvider services)
         {
-            var time = DateTime.Now.AddDays(-1);
-            var users = DB.Users
-                .Where(x => time > x.LastPullTime)
-                .ToList();
-            foreach (var x in users)
+            using (var serviceScope = services.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var DB = serviceScope.ServiceProvider.GetRequiredService<ManoContext>())
             {
-                x.LastPullTime = DateTime.Now;
-                Controllers.AccountController.Sync(services, x);
+                var time = DateTime.Now.AddDays(-1);
+                var users = DB.Users
+                    .Where(x => time > x.LastPullTime)
+                    .ToList();
+                foreach (var x in users)
+                {
+                    x.LastPullTime = DateTime.Now;
+                    Controllers.AccountController.Sync(services, x);
+                }
+                DB.SaveChanges();
             }
-            DB.SaveChanges();
         }
     }
 }
