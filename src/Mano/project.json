@@ -1,7 +1,8 @@
 {
   "version": "1.0.0-*",
-  "compilationOptions": {
-    "emitEntryPoint": true
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "preserveCompilationContext": true
   },
 
   "dependencies": {
@@ -23,20 +24,44 @@
   },
 
   "frameworks": {
-    "net451": { },
+    "net451": {},
     "netcoreapp1.0": {
       "dependencies": {
-        "Microsoft.NETCore.App": "1.0.0"
-      }
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        }
+      },
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
     }
   },
 
-  "exclude": [
-    "wwwroot",
-    "node_modules"
-  ],
-  "publishExclude": [
-    "**.user",
-    "**.vspscc"
-  ]
+  "runtimeOptions": {
+    "gcServer": true
+  },
+
+  "publishOptions": {
+    "include": [
+      "wwwroot",
+      "web.config",
+      "Views",
+      "Areas/**/Views",
+      "config.json",
+      "Localization"
+    ]
+  },
+
+  "runtimes": {
+    "win7-x64": {},
+    "win7-x86": {},
+    "osx.10.11-x64": {},
+    "ubuntu.14.04-x64": {},
+    "centos.7-x64": {},
+    "rhel.7.2-x64": {},
+    "debian.8-x64": {}
+  }
 }

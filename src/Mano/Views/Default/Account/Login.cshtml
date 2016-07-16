@@ -1,0 +1,32 @@
+﻿@{ 
+    ViewBag.Title = "登录";
+}
+<div class="jumbotron masthead jumbopurple jumbotron-compact">
+    <div class="container main_container">
+        <h1 class="main_header">
+            <a href="javascript:;">用户登录</a>
+        </h1>
+        <h3>使用您的码农云账户登录</h3>
+    </div>
+</div>
+<div class="container page-container vertical-center">
+       <div class="row">
+           <form class="form col-md-6 col-md-offset-3" asp-controller="Account" asp-action="Login" method="post">
+               <p>
+                   <label>用户名 / 电子邮箱</label>
+                   <input type="text" id="inputEmail" class="form-control" placeholder="用户名 / 电子邮箱" name="username" required autofocus>
+               </p>
+               <p>
+                   <label>密码</label>
+                   <input type="password" id="inputPassword" class="form-control" placeholder="密码" name="password" required>
+               </p>
+               <div class="checkbox">
+                   <label>
+                       <input type="checkbox" value="remember-me"> 记住我
+                   </label>
+                   <a asp-action="Forgot" asp-controller="Account">忘记密码?</a>
+               </div>
+               <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+           </form>
+       </div>
+</div>

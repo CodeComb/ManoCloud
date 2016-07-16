@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Pomelo.Net.Smtp;
-using Pomelo.Security.Aes;
 using Mano.Models;
 
 namespace Mano.Controllers

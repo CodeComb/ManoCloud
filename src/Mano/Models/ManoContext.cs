@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 using Mano.Parser.Models;
@@ -11,6 +7,11 @@ namespace Mano.Models
 {
     public class ManoContext : IdentityDbContext<User, IdentityRole<long>, long>, IBlobStorageDbContext
     {
+        public ManoContext(DbContextOptions opt) 
+            : base(opt)
+        {
+        }
+
         public DbSet<Blob> Blobs { get; set; }
 
         public DbSet<Domain> Domains { get; set; }

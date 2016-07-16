@@ -1,0 +1,89 @@
+﻿@model User
+@{
+    ViewBag.Title = "我的技能";
+}
+<div class="modal fade" id="modalAddDomain" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="ajax-add-form" asp-action="DomainAdd" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                 <input postUrl="/Account/Domain/@Model.Id/Add" getUrl="/AjaxView/DomainTbody" modalId="modalAddDomain" name="id" type="hidden" value="@Model.Id"/>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">绑定域名</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        <label>域名 *</label>
+                        <input type="text" name="domain" class="form-control" required />
+                    </p>
+                    <span id="ajax-error-message"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:ajaxSubmit()">添加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<script src="~/assets/default/scripts/ajax.js"></script>
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">
+            <h2>域名绑定 <a class="button-adding" href="javascript:$('#modalAddDomain').modal();">添加</a></h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>域名</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="ajaxTbody">
+                    @foreach (var x in Model.Domains.OrderByDescending(x => x.Default))
+                    {
+                       <tr id="@x.Id">
+                            <td>
+                                <a target="_blank" href="//@x.DomainName">@x.DomainName</a>
+                                @if (x.Default)
+                                {
+                                    <span class="label label-info">主要的</span>
+                                }
+                                else if (ViewBag.Regex.IsMatch(x.DomainName))
+                                {
+                                    <span class="label label-warning">不可删除</span>
+                                }
+                            </td>
+                            <td>
+                                @if (!x.Default)
+                                {
+                                    <a href="javascript:defaultDomain('@x.Id')">设为默认</a>
+                                    @if (!ViewBag.Regex.IsMatch(x.DomainName))
+                                    {
+                                        <a href="javascript:deleteDialog('/Account/DomainDelete','@Model.Id','@x.Id')" >取消绑定</a>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
+        <form id="frmDelete" asp-action="DomainDelete" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="did" id="deleteId" /></form>
+        <form id="frmDefault" asp-action="DomainDefault" asp-controller="Account" asp-route-id="@Model.Id"><input type="hidden" name="did" id="defaultId" /></form>
+        <script>
+            function deleteDomain(id) {
+                $('#deleteId').val(id);
+                $('#frmDelete').submit();
+            }
+            function defaultDomain(id) {
+                $('#defaultId').val(id);
+                $('#frmDefault').submit();
+            }
+        </script>
+    </div>
+</div>

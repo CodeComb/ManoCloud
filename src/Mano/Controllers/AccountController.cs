@@ -444,7 +444,7 @@ namespace Mano.Controllers
             {
                 if (user.AvatarId.HasValue)
                     DB.Blobs.Remove(user.Avatar);
-                var file = new Pomelo.AspNetCore.Extensions.BlobStorage.Models.File
+                var file = new Pomelo.AspNetCore.Extensions.BlobStorage.Models.Blob
                 {
                     Bytes = avatar.ReadAllBytes(),
                     ContentLength = avatar.Length,

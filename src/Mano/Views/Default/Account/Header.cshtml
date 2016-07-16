@@ -1,0 +1,19 @@
+﻿@model User
+<div class="jumbotron masthead jumbopurple jumbotron-compact">
+    <div class="container main_container">
+        @if (Model.AvatarId.HasValue)
+        {
+            <img class="avatar" src="/file/download/@Model.AvatarId.Value" />
+        }
+        else
+        {
+            <img class="avatar" src="~/assets/default/images/non-avatar.png" />
+        }
+        <div>
+            <h1 class="main_header">
+                <a href="javascript:;">@(Model.Name ?? Model.UserName)</a>
+            </h1>
+            <h3>@(DateTime.Now.Year - Model.Birthday.Year) 岁 @Model.Province @Model.City</h3>
+        </div>
+    </div>
+</div>

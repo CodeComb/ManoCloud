@@ -15,7 +15,6 @@ namespace Mano.Models
             var DB = services.GetRequiredService<ManoContext>();
             var UserManager = services.GetRequiredService<UserManager<User>>();
             var RoleManager = services.GetRequiredService<RoleManager<IdentityRole<long>>>();
-            var Env = services.GetRequiredService<IApplicationEnvironment>();
             var Config = services.GetRequiredService<IConfiguration>();
 
             if (DB.Database.EnsureCreated())
@@ -164,7 +163,7 @@ namespace Mano.Models
                 {
                     Key = "6385e6812567439cb3389fb9d1cbc15b",
                     MaxSize = 10240,
-                    Url = "http://localhost:5008",
+                    Url = "http://localhost:5050",
                     Status = NodeStatus.Offline
                 });
 

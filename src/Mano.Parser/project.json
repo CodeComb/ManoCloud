@@ -19,7 +19,12 @@
         "NETStandard.Library": "1.6.0",
         "System.ComponentModel": "4.0.1",
         "System.ComponentModel.Annotations": "4.1.0"
-      }
+      },
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "portable-net45+win8"
+      ]
     }
   }
 }

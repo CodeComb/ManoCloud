@@ -1,0 +1,85 @@
+﻿@model User
+@{
+    ViewBag.Title = "编辑个人资料";
+}
+
+@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">
+            <h2>编辑个人资料</h2>
+            <form class="form col-md-8" asp-controller="Account" asp-action="Profile" method="post" asp-route-id="@Model.Id" enctype="multipart/form-data">
+                <p>
+                    <label>真实姓名</label>
+                    <input type="text" asp-for="Name" class="form-control">
+                </p>
+                <p>
+                    <label>手机号码</label>
+                    <input type="text" asp-for="PhoneNumber" class="form-control">
+                </p>
+                <p>
+                    <label>期望职务</label>
+                    <input type="text" asp-for="Position" class="form-control">
+                </p>
+                <p>
+                    <label>省份</label>
+                    <input type="text" asp-for="Province" class="form-control">
+                </p>
+                <p>
+                    <label>城市</label>
+                    <input type="text" asp-for="City" class="form-control">
+                </p>
+                <p>
+                    <label>住址</label>
+                    <input type="text" asp-for="Address" class="form-control">
+                </p>
+                <p>
+                    <label>性别</label>
+                    <br />
+                    <select name="sex" class="form-control">
+                        <!option @(Model.Sex == Sex.Male ? "selected":"")>男</!option>
+                        <!option @(Model.Sex == Sex.Female ? "selected":"")>女</!option>
+                    </select>
+                </p>
+                <p>
+                    <label>出生日期</label>
+                    <input type="text" name="Birthday" value="@Model.Birthday.ToString("yyyy-MM-dd")" class="datetime form-control">
+                </p>
+                <p>
+                    <label>身份证号码</label>
+                    <input type="text" asp-for="PRCID" class="form-control">
+                </p>
+                <p>
+                    <label>QQ号码</label>
+                    <input type="text" asp-for="QQ" class="form-control">
+                </p>
+                <p>
+                    <label>微信号码</label>
+                    <input type="text" asp-for="WeChat" class="form-control">
+                </p>
+                <p>
+                    <label><a target="_blank" href="https://linkedin.com">领英主页</a></label>
+                    <input type="text" asp-for="LinkedIn" class="form-control">
+                </p>
+                <p>
+                    <label>头像</label><br />
+                    @if (Model.AvatarId.HasValue)
+                    {
+                        <img class="profile-avatar" src="/file/download/@Model.AvatarId.Value" />
+                    }
+                    else
+                    {
+                        <img class="profile-avatar" src="~/assets/default/images/non-avatar.png" />
+                    }
+                    <br />
+                    <br />
+                    <input type="file" name="avatar" />  建议上传200×200尺寸的图片
+                </p>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">保存资料</button>
+            </form>
+        </div>
+        @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
+    </div>
+</div>

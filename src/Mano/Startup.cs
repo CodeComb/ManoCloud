@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
+using System.IO;
 using System.Net.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,16 +22,14 @@ namespace Mano
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFramework()
-                .AddDbContext<ManoContext>(x => x.UseNpgsql("User ID=postgres;Password=123456;Host=localhost;Port=5432;Database=mano;"))
-                .AddNpgsql();
+            services.AddDbContext<ManoContext>(x => x.UseMySql("server=localhost;database=mano;uid=root;pwd=19931101;"));
 
             services.AddIdentity<User, IdentityRole<long>>(x =>
             {
                 x.Password.RequireDigit = false;
                 x.Password.RequiredLength = 0;
                 x.Password.RequireLowercase = false;
-                x.Password.RequireNonLetterOrDigit = false;
+                x.Password.RequireNonAlphanumeric = false;
                 x.Password.RequireUppercase = false;
                 x.User.AllowedUserNameCharacters = null;
             })
@@ -40,10 +37,10 @@ namespace Mano
                       .AddDefaultTokenProviders();
 
             services.AddMvc()
-                .AddTemplate()
+                .AddMultiTemplateEngine()
                 .AddCookieTemplateProvider();
             
-            services.AddFileUpload()
+            services.AddBlobStorage()
                 .AddEntityFrameworkStorage<ManoContext>();
 
             services.AddSmartUser<User, long>();
@@ -58,9 +55,8 @@ namespace Mano
         public async void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
             logger.AddConsole();
-            logger.MinimumLevel = LogLevel.Warning;
 
-            app.UseFileUpload("/assets/shared/scripts/jquery.codecomb.fileupload.js");
+            app.UseBlobStorage("/assets/shared/scripts/jquery.codecomb.fileupload.js");
             app.UseAutoAjax();
             app.UseIdentity();
             app.UseStaticFiles();
@@ -163,6 +159,16 @@ namespace Mano
             #endregion
         }
 
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseUrls("http://*:80")
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
+        }
     }
 }

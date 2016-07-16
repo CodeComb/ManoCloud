@@ -1,0 +1,98 @@
+﻿@model User
+@{
+    Layout=null;
+    ViewBag.Title = "编辑项目";
+}
+<!--@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">-->
+            <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">编辑项目</h4>
+                </div>
+            <form id="ajax-edit-form" asp-action="ProjectEdit" asp-controller="Account" asp-route-id="@Model.Id" method="post">
+                        <input name="id" type="hidden" value="@Model.Id" getUrl="/AjaxView/ProjectTbody"/>
+                        <input name="gid" type="hidden" value="@ViewBag.Project.Id"/>
+                        <div class="modal-body">
+                        <p>
+                            <label>项目名称 *</label>
+                            <input type="text" name="title" value="@ViewBag.Project.Title" class="form-control" required>
+                        </p>
+                        <p>
+                            <label>担任角色 *</label>
+                            <input type="text" name="position" value="@ViewBag.Project.Position" class="form-control" required>
+                        </p>
+                        <p>
+                            <label>项目链接</label>
+                            <input type="text" name="projecturl" value="@ViewBag.Project.ProjectUrl" class="form-control">
+                        </p>
+                        <p>
+                            <label>更新方式 *</label>
+                            <br />
+                            <select class="form-control" name="update" id="lstUpdateEdit">
+                                <!option @(ViewBag.Project.Type == CommunityType.None ? "" : "selected")>自动更新</!option>
+                                <!option @(ViewBag.Project.Type != CommunityType.None ? "" : "selected")>手动更新</!option>
+                            </select>
+                        </p>
+                        <p class="auto-update">
+                            <label>Git 源 *</label>
+                            <input type="text" name="ThirdPartyUrl" value="@ViewBag.Project.ThirdPartyUrl" class="form-control">
+                        </p>
+                        <p class="manual-update">
+                            <label>项目开始时间 *</label>
+                            <input type="text" name="begin" value="@ViewBag.Project.Begin" class="datetime form-control">
+                        </p>
+                        <p class="manual-update">
+                            <label>项目结束时间 (不填表示至今)</label>
+                            <input type="text" name="end" value="@ViewBag.Project.End" class="datetime form-control">
+                        </p>
+                <div class="row manual-update">
+                    <div class="col-md-12">
+                        <label>项目简介</label>
+                        <br />
+                        <div class="markdown-editor-outer">
+                            <textarea class="textbox markdown-editor" name="hint">@ViewBag.Project.Hint</textarea>
+                            <div class="markdown-editor-bottom">支持Markdown语法、拖拽图片文件至编辑区或直接从剪贴板粘贴可上传图片文件。</div>
+                        </div>
+                    </div>
+                </div>
+                <span id="ajax-error-message"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="javascript:editSubmit()">编辑</button>
+                </div>
+            </form>
+        
+        <form id="frmDelete" asp-action="ProjectDelete" asp-controller="Account" asp-route-id="@Model.Id">
+            <input type="hidden" name="pid" id="deleteId" />
+        </form>
+        <script>
+            function deleteProject(id)
+            {
+                $('#deleteId').val(id);
+                $('#frmDelete').submit();
+            }
+
+            function updateChanged()
+            {
+                if ($('#lstUpdateEdit').val() == "手动更新") {
+                    $('.auto-update').hide();
+                    $('.manual-update').show();
+                } else {
+                    $('.auto-update').show();
+                    $('.manual-update').hide();
+                }
+            }
+            $('#lstUpdateEdit').change(function () {
+                updateChanged();
+            });
+            updateChanged();
+        </script>
+    </div>
+</div>
+<link href="~/assets/default/styles/datetimepicker.css" rel="stylesheet" />
+<script src="~/assets/default/scripts/jquery.datetimepicker.js"></script>

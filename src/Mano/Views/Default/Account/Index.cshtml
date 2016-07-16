@@ -1,0 +1,69 @@
+﻿@model User
+@{ 
+    ViewBag.Title = Model.Name ?? Model.UserName;
+}
+<script src="~/assets/default/scripts/modernizr.min.js"></script>
+<script src="~/assets/default/scripts/chart.js"></script>
+@Html.Partial("~/Templates/Default/Account/Header.cshtml")
+<div class="container page-container vertical-center">
+    <div class="row">
+        <div class="col-md-9">
+            <h2>项目概况</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>项目代码量</th>
+                        <th>贡献</th>
+                        <th>项目周期</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ List<StatisticsRaw> s; }
+                    @foreach (var x in Model.Projects.Where(x => x.IsContributed))
+                    {
+                        { s = Newtonsoft.Json.JsonConvert.DeserializeObject<List<StatisticsRaw>>(x.Statistics); }
+                        <tr>
+                            <td>@x.Title</td>
+                            <td>@s.Sum(y => y.Total).ToSplitedString() 行</td>
+                            <td>@s.Sum(y => y.Mine).ToSplitedString() 行 (@((s.Sum(y => y.Mine) * 100 / (s.Sum(y => y.Total) == 0 ? 1 : s.Sum(y => y.Total))).ToString("0.0"))%)</td>
+                            <td>
+                                @s.Min(y => y.Begin).ToString("yyyy-MM-dd") ~ @((DateTime.Now - s.Max(y => y.End)).TotalDays <= 7 ? "至今" : s.Max(y => y.End).ToString("yyyy-MM-dd"))
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <br />
+            <h2>技能雷达图</h2>
+            <div>
+                <canvas id="chartRadar" height="600" width="700" style="max-width:100%;"></canvas>
+            </div>
+            <script>
+                new Chart(document.getElementById("chartRadar").getContext("2d")).Radar(@Html.Radar(Model.Statistics, true), { animation: Modernizr.canvas });
+            </script>
+            <br />
+            <h2>代码统计</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>技能</th>
+                        <th>代码量</th>
+                        <th>使用时长</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var x in Newtonsoft.Json.JsonConvert.DeserializeObject<List<StatisticsRaw>>(Model.Statistics).OrderByDescending(x => x.TotalDays))
+                    { 
+                        <tr>
+                            <td>@x.Technology</td>
+                            <td>@x.Mine.ToSplitedString() 行</td>
+                            <td>@x.Display</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @Html.Partial("~/Templates/Default/Account/Sidebar.cshtml")
+    </div>
+</div>

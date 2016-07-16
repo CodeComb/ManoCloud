@@ -1,5 +1,5 @@
 ﻿{
-  "Host": "localhost:5000",
-  "Home": "http://localhost:5000",
+  "Host": "localhost",
+  "Home": "http://localhost",
   "SLD": "*.mano.cloud"
 }

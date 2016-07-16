@@ -1,0 +1,71 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mano Cloud - 属于码农的云端简历平台。">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <title>@ViewBag.Title - Mano Cloud</title>
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel="stylesheet" type="text/css">
+    <link href="~/assets/default/styles/bootstrap.min.css" rel="stylesheet">
+    <link href="~/assets/default/styles/site.css" rel="stylesheet">
+    <link href="~/assets/default/styles/tip.css" rel="stylesheet" />
+    <link href="~/assets/default/styles/style.css" rel="stylesheet" />
+    <script src="~/assets/default/scripts/jquery.min.js"></script>
+    <script src="~/assets/default/scripts/bootstrap.min.js"></script>
+    <script src="~/assets/default/scripts/jquery.fancybox.pack.js?v=2.1.5"></script>
+    <script src="~/assets/default/scripts/jquery.fileupload.js"></script>
+    <script src="~/assets/default/scripts/mano.js"></script>
+    <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+          <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+</head>
+<body>
+    <div class="submit-tip"><span></span></div>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse navbar-ex1-collapse navbar-features">
+                <ul class="nav navbar-nav  navbar-features">
+                    <li><a asp-action="Index" asp-controller="Home">首页</a></li>
+                    <li><a asp-action="Index" asp-controller="Enterprise">企业</a></li>
+                    <li><a asp-action="Index" asp-controller="Coder">码农</a></li>
+                    <li><a asp-action="Index" asp-controller="FAQ">FAQ</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right  navbar-features">
+                    @if (User.IsSignedIn())
+                    {
+                        <li><a asp-action="Index" asp-controller="Account">@(User.Current.Name ?? User.Current.UserName)</a></li>
+                        <li><a href="javascript:$('#frmLogout').submit()">注销</a></li>
+                    }
+                    else
+                    {
+                        <li><a asp-action="Login" asp-controller="Account">登录</a></li>
+                        <li><a asp-action="Register" asp-controller="Account">注册</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+    @RenderBody()
+    <footer>
+        <div class="container">
+            <p>Copyright &copy; 2016 Mano Cloud - Harbin Code Comb Technology Co., Ltd.</p>
+        </div>
+    </footer>
+    @if (User.IsSignedIn())
+    {
+        <form id="frmLogout" asp-action="Logout" asp-controller="Account" method="post"></form>
+    }
+</body>
+</html>
