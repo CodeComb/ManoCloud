@@ -14,6 +14,7 @@
     "Microsoft.AspNetCore.SignalR.Server": "0.1.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Pomelo.AspNetCore.Extensions": "1.0.0",
+    "Pomelo.AspNetCore.TimedJob": "1.0.0",
     "Pomelo.EntityFrameworkCore.MySql": "1.0.0",
     "Mano.Parser": "1.0.0-*",
     "Mano.Community": "1.0.0-*"

@@ -16,10 +16,6 @@ namespace Mano
 {
     public class Startup
     {
-        private Timer SyncTimer { get; set; }
-        private Timer NodeTimer { get; set; }
-        private Timer ProjectTimer { get; set; }
-
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ManoContext>(x => x.UseMySql("server=localhost;database=mano;uid=root;pwd=19931101;"));
@@ -48,6 +44,7 @@ namespace Mano
             services.AddSignalR();
             services.AddAntiXss();
             services.AddConfiguration();
+            services.AddTimedJob();
             services.AddSmtpEmailSender("smtp.exmail.qq.com", 25, "Mano Cloud", "noreply@mano.cloud", "noreply@mano.cloud", "ManoCloud123456");
             services.AddAesCrypto();
         }
@@ -64,99 +61,8 @@ namespace Mano
             app.UseMvcWithDefaultRoute();
 
             await SampleData.InitDB(app.ApplicationServices);
-            #region Timers
-            this.NodeTimer = new Timer((t) =>
-            {
-                lock(this)
-                {
-                    using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                    using (var db = serviceScope.ServiceProvider.GetService<ManoContext>())
-                    {
-                        var nodes = db.Nodes.ToList();
-                        foreach (var node in nodes)
-                        {
-                            using (var client = new HttpClient())
-                            {
-                                try
-                                {
-                                    var task = client.GetAsync(node.Url + "/");
-                                    task.Wait();
-                                    var result = task.Result;
-                                    if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                                        node.Status = NodeStatus.Online;
-                                    else
-                                        node.Status = NodeStatus.Offline;
-                                }
-                                catch
-                                {
-                                    node.Status = NodeStatus.Offline;
-                                }
-                                db.SaveChanges();
-                            }
-                        }
-                    }
-                }
-            }, null, 0, 1000 * 5);
 
-            this.SyncTimer = new Timer(async (t) =>
-            {
-                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                using (var db = serviceScope.ServiceProvider.GetService<ManoContext>())
-                using (var client = new HttpClient())
-                {
-                    var time = DateTime.Now.AddDays(-1);
-                    var projects = db.Projects
-                        .Include(x => x.Node)
-                        .Where(x => x.Type != CommunityType.None && time > x.LastPullTime)
-                        .ToList();
-                    foreach (var x in projects)
-                    {
-                        if (!x.NodeId.HasValue || x.Node.Status == NodeStatus.Offline)
-                        {
-                            var node = db.Nodes.Where(y => y.Status == NodeStatus.Online).OrderByDescending(a => a.MaxSize - (db.Projects.Where(y => y.NodeId == a.Id).Count() > 0 ? db.Projects.Where(y => y.NodeId == a.Id).Sum(z => z.Size) : 0)).FirstOrDefault();
-                            if (node == null)
-                            {
-                                Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] No node is able to use for project {x.Title}.");
-                                continue;
-                            }
-                            x.NodeId = node.Id;
-                            db.SaveChanges();
-                        }
-                        var result = await client.PostAsync(x.Node.Url + "/Execute/" + x.Id, new FormUrlEncodedContent(new Dictionary<string, string>
-                        {
-                            { "source", x.ThirdPartyUrl}
-                        }));
-                        if (result.StatusCode == System.Net.HttpStatusCode.OK)
-                        {
-                            x.LastPullTime = DateTime.Now;
-                            db.SaveChanges();
-                        }
-                        else
-                        {
-                            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}] There is an error occurred with project {x.Title}.");
-                        }
-                    }
-                }
-            }, null, 1000 * 15, 1000 * 60 * 10);
-
-            this.ProjectTimer = new Timer((t) =>
-            {
-                using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                using (var db = serviceScope.ServiceProvider.GetService<ManoContext>())
-                {
-                    var time = DateTime.Now.AddDays(-1);
-                    var users = db.Users
-                        .Where(x => time > x.LastPullTime)
-                        .ToList();
-                    foreach (var x in users)
-                    {
-                        x.LastPullTime = DateTime.Now;
-                        Controllers.AccountController.Sync(app.ApplicationServices, x);
-                    }
-                    db.SaveChanges();
-                }
-            }, null, 1000 * 5, 1000 * 60 * 60);
-            #endregion
+            app.UseTimedJob();
         }
 
         public static void Main(string[] args)
