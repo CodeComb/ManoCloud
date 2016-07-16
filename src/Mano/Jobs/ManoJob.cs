@@ -10,7 +10,7 @@ using Mano.Models;
 
 namespace Mano.Jobs
 {
-    public class ManoBeatJob : Job
+    public class ManoJob : Job
     {
         [Invoke(Interval = 5000, SkipWhileExecuting = true)]
         public void HeartBeat(ManoContext DB)
