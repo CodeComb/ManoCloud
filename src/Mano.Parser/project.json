@@ -2,13 +2,10 @@
   "version": "1.0.0-*",
   "description": "Mano.Parser Class Library",
   "authors": [ "Yuuko" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
 
   "dependencies": {
-    "CodeComb.Package": "2.0.0-rc1-final",
-    "Newtonsoft.Json": "7.0.1"
+    "Pomelo.Extensions": "1.0.0",
+    "Newtonsoft.Json": "9.0.1"
   },
 
   "frameworks": {
@@ -17,15 +14,11 @@
         "System.ComponentModel.DataAnnotations": "4.0.0.0"
       }
     },
-    "dotnet5.4": {
+    "netstandard1.6": {
       "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Linq": "4.0.1-beta-23516",
-        "System.Runtime": "4.0.21-beta-23516",
-        "System.Threading": "4.0.11-beta-23516",
-        "System.ComponentModel": "4.0.1-beta-23516",
-        "System.ComponentModel.Annotations": "4.0.11-beta-23516"
+        "NETStandard.Library": "1.6.0",
+        "System.ComponentModel": "4.0.1",
+        "System.ComponentModel.Annotations": "4.1.0"
       }
     }
   }

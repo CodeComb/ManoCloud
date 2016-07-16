@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CodeComb.AspNet.Upload.Models;
+using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 
 namespace Mano.Models
 {
@@ -18,7 +18,7 @@ namespace Mano.Models
         [ForeignKey("Cert")]
         public Guid? CertId { get; set; }
 
-        public File Cert { get; set; }
+        public Blob Cert { get; set; }
 
         public DateTime AchieveTime { get; set; }
 

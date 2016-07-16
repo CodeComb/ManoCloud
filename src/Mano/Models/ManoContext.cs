@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.Data.Entity;
-using CodeComb.AspNet.Upload.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 using Mano.Parser.Models;
 
 namespace Mano.Models
 {
-    public class ManoContext : IdentityDbContext<User, IdentityRole<long>, long>, IFileUploadDbContext
+    public class ManoContext : IdentityDbContext<User, IdentityRole<long>, long>, IBlobStorageDbContext
     {
-        public DbSet<File> Files { get; set; }
+        public DbSet<Blob> Blobs { get; set; }
 
         public DbSet<Domain> Domains { get; set; }
 
@@ -37,7 +37,7 @@ namespace Mano.Models
         {
             base.OnModelCreating(builder);
 
-            builder.SetupFiles();
+            builder.SetupBlobStorage();
 
             builder.Entity<Domain>(e =>
             {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNet.Identity.EntityFramework;
-using CodeComb.AspNet.Upload.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 
 namespace Mano.Models
 {
@@ -63,7 +63,7 @@ namespace Mano.Models
         [ForeignKey("Avatar")]
         public Guid? AvatarId { get; set; }
 
-        public File Avatar { get; set; }
+        public Blob Avatar { get; set; }
 
         public string LinkedIn { get; set; }
 

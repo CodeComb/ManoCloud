@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CodeComb.AspNet.Upload.Models;
+using Pomelo.AspNetCore.Extensions.BlobStorage.Models;
 
 namespace Mano.Models
 {

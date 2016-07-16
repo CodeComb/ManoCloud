@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNet.Mvc;
-using CodeComb.Net.EmailSender;
-using CodeComb.Security.Aes;
+﻿using Microsoft.AspNetCore.Mvc;
+using Pomelo.Net.Smtp;
+using Pomelo.Security.Aes;
 using Mano.Models;
 
 namespace Mano.Controllers
 {
     public class BaseController : BaseController<ManoContext, User, long>
     {
-        [FromServices]
+        [Inject]
         public IEmailSender Mail { get; set; }
 
-        [FromServices]
+        [Inject]
         public AesCrypto Aes { get; set; }
     }
 }

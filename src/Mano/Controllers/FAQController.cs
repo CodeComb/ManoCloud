@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +14,7 @@ namespace Mano.Controllers
         {
             base.Prepare();
             Cookies["ASPNET_TEMPLATE"] = "Default";
-            var Config = Resolver.GetRequiredService<IConfiguration>();
+            var Config = HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             if (Request.Cookies["ASPNET_TEMPLATE"] != "Default")
             {
                 Response.Cookies.Append("ASPNET_TEMPLATE", "Default");

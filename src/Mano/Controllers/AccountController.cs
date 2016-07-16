@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mano.Models;
@@ -22,7 +22,7 @@ namespace Mano.Controllers
         {
             base.Prepare();
             Cookies["ASPNET_TEMPLATE"] = "Default";
-            var Config = Resolver.GetRequiredService<IConfiguration>();
+            var Config = HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             if (Request.Cookies["ASPNET_TEMPLATE"] != "Default")
             {
                 Response.Cookies.Append("ASPNET_TEMPLATE", "Default");
@@ -49,7 +49,7 @@ namespace Mano.Controllers
 
         public Task Sync(User user)
         {
-            return Sync(Resolver, user);
+            return Sync(HttpContext.RequestServices, user);
         }
 
         public static Task Sync(IServiceProvider services, User user)
@@ -390,7 +390,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Profile(long id)
         {
             var user = DB.Users
@@ -414,7 +414,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public async Task<IActionResult> Profile(long id, string position, string phonenumber, string city, string province, string address, Sex sex, string prcid, string qq, string wechat, string name, DateTime? birthday, IFormFile avatar)
         {
             var user = DB.Users
@@ -443,8 +443,8 @@ namespace Mano.Controllers
             if (avatar != null)
             {
                 if (user.AvatarId.HasValue)
-                    DB.Files.Remove(user.Avatar);
-                var file = new CodeComb.AspNet.Upload.Models.File
+                    DB.Blobs.Remove(user.Avatar);
+                var file = new Pomelo.AspNetCore.Extensions.BlobStorage.Models.File
                 {
                     Bytes = avatar.ReadAllBytes(),
                     ContentLength = avatar.Length,
@@ -452,7 +452,7 @@ namespace Mano.Controllers
                     ContentType = avatar.ContentType,
                     FileName = avatar.GetFileName()
                 };
-                DB.Files.Add(file);
+                DB.Blobs.Add(file);
                 user.AvatarId = file.Id;
             }
             DB.SaveChanges();
@@ -466,7 +466,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Password(long id)
         {
             var user = DB.Users
@@ -490,7 +490,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public async Task<IActionResult> Password(long id, string oldpwd, string password, string confirm)
         {
             var user = DB.Users
@@ -522,7 +522,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Email(long id)
         {
             var user = DB.Users
@@ -546,7 +546,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EmailDelete(long id, Guid eid)
         {
             var user = DB.Users
@@ -577,7 +577,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EmailPrimary(long id, Guid eid)
         {
             var user = DB.Users
@@ -616,7 +616,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public async Task<IActionResult> EmailAdd(long id, string email, [FromServices] IConfiguration Config)
         {
             var reg = new Regex("[a-zA-Z0-9_.-]{0,}@[a-zA-Z0-9_.-]{0,}");
@@ -691,7 +691,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public async Task<IActionResult> EmailSend(long id, Guid eid, [FromServices] IConfiguration Config, [FromHeader]string Referer)
         {
             var user = DB.Users
@@ -719,7 +719,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Third(long id)
         {
             var user = DB.Users
@@ -743,7 +743,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Third(long id, string github, string gitosc, string gitcsdn, string codeplex, string codingnet)
         {
             var user = DB.Users
@@ -764,7 +764,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Introduction(long id)
         {
             var user = DB.Users
@@ -788,7 +788,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Introduction(long id, string Introduction)
         {
             var user = DB.Users
@@ -804,7 +804,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Project(long id)
         {
             var user = DB.Users
@@ -829,7 +829,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Project/{id}/Add")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ProjectAdd(long id, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
             if (update == "自动更新")
@@ -897,7 +897,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ProjectDelete(long id, Guid pid)
         {
             var project = DB.Projects.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
@@ -910,7 +910,7 @@ namespace Mano.Controllers
 
         [HttpGet]
         [Route("[controller]/Project/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ProjectEdit(long id, Guid pid)
         {
             var user = DB.Users
@@ -934,7 +934,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Project/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ProjectEdit(long id, Guid pid, string title, string position, string thirdpartyurl, string projecturl, DateTime? begin, DateTime? end, string update, string hint)
         {
             if (update == "自动更新")
@@ -979,7 +979,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Experience(long id)
         {
             var user = DB.Users
@@ -1004,7 +1004,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Experience/{id}/Add")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceAdd(long id, Experience model)
         {
             model.UserId = id;
@@ -1023,7 +1023,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceDelete(long id, Guid pid)
         {
             var exp = DB.Experiences
@@ -1034,7 +1034,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Education(long id)
         {
             var user = DB.Users
@@ -1060,7 +1060,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Education/{id}/Add")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EducationAdd(long id, Education model)
         {
             model.UserId = id;
@@ -1079,7 +1079,7 @@ namespace Mano.Controllers
         //edit Get --begin
         [HttpGet]
         [Route("[controller]/Experience/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceEdit(long id, Guid pid)
         {
             var user = DB.Users
@@ -1102,7 +1102,7 @@ namespace Mano.Controllers
         
         [HttpGet]
         [Route("[controller]/Education/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EducationEdit(long id, Guid pid)
         {
             var user = DB.Users
@@ -1124,7 +1124,7 @@ namespace Mano.Controllers
         }
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EducationDelete(long id, Guid pid)
         {
             var education = DB.Educations.Where(x => x.Id == pid && x.UserId == id).SingleOrDefault();
@@ -1136,7 +1136,7 @@ namespace Mano.Controllers
         }
         [HttpGet]
         [Route("[controller]/Skill/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult SkillEdit(long id, Guid pid)
         {
             var user = DB.Users
@@ -1162,7 +1162,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Experience/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceEdit(long id, Guid pid, string company, string position,DateTime? begin, DateTime? end, string hint)
         {
             var experience = DB.Experiences.Where(x => x.Id == pid && x.UserId == id).Single();
@@ -1177,7 +1177,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Education/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EducationEdit(long id, Guid pid, string school, string profession,DateTime? begin, DateTime? end, string hint)
         {
             var education = DB.Educations.Where(x => x.Id == pid && x.UserId == id).Single();
@@ -1192,7 +1192,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Skill/{id}/Edit/{pid}")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult SkillEdit(long id, Guid pid, string title,TechnologyType type, long count,string unit,DateTime? begin)
         {
             var skill = DB.Skills.Where(x => x.Id == pid && x.UserId == id).Single();
@@ -1207,7 +1207,7 @@ namespace Mano.Controllers
         //edit post --end
         
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Certification(long id)
         {
             var user = DB.Users
@@ -1232,7 +1232,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Certification/{id}/Add")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult CertificationAdd(long id, Certification model, IFormFile Certification)
         {
             if (Certification == null)
@@ -1244,7 +1244,7 @@ namespace Mano.Controllers
                 //     x.Details = "您必须上传证书的扫描件或照片，请返回重试！";
                 // });
             }
-            var file = new CodeComb.AspNet.Upload.Models.File
+            var file = new Pomelo.AspNetCore.Extensions.BlobStorage.Models.Blob
             {
                 Bytes = Certification.ReadAllBytes(),
                 ContentLength = Certification.Length,
@@ -1252,7 +1252,7 @@ namespace Mano.Controllers
                 Time = DateTime.Now,
                 ContentType = Certification.ContentType
             };
-            DB.Files.Add(file);
+            DB.Blobs.Add(file);
             model.UserId = id;
             model.CertId = file.Id;
             DB.Certifications.Add(model);
@@ -1270,7 +1270,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult CertificationDelete(long id, Guid pid)
         {
             var cert = DB.Certifications
@@ -1282,7 +1282,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Skill(long id)
         {
             var user = DB.Users
@@ -1306,7 +1306,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult SkillDelete(long id, Guid pid)
         {
             var skill = DB.Skills
@@ -1319,7 +1319,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Skill/{id}/Add")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult SkillAdd(long id, Skill model)
         {
             model.UserId = id;
@@ -1338,7 +1338,7 @@ namespace Mano.Controllers
         }
 
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult Domain(long id, [FromServices] IConfiguration Config)
         {
             var user = DB.Users
@@ -1364,7 +1364,7 @@ namespace Mano.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("[controller]/Domain/{id}/Add")]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult DomainAdd(long id, string domain, [FromServices] IConfiguration Config)
         {
             var regex = new Regex(Config["Host"].Replace("*.", "([a-zA-Z0-9-_]{0,}.|)"));
@@ -1418,7 +1418,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         // [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult DomainDelete(long id, Guid pid)
         {
             var domain = DB.Domains.Single(x => x.Id == pid && x.UserId == id);
@@ -1429,7 +1429,7 @@ namespace Mano.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult DomainDefault(long id, Guid did)
         {
             var user = DB.Users

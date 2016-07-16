@@ -2,15 +2,15 @@
   "version": "1.0.0-*",
   "description": "Mano.Parser.Tests Console Application",
   "authors": [ "Yuuko" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
 
   "compilationOptions": {
     "emitEntryPoint": true
   },
 
+  "testRunner": "xunit",
   "dependencies": {
+    "xunit": "2.2.0-beta2-build3300",
+    "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "Mano.Parser": "1.0.0-*"
   },
 
@@ -19,14 +19,13 @@
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": {
+    "net451": {},
+    "netcoreapp1.0": {
       "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Console": "4.0.0-beta-23516",
-        "System.Linq": "4.0.1-beta-23516",
-        "System.Threading": "4.0.11-beta-23516"
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        }
       }
     }
   }

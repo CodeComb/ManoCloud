@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using Microsoft.AspNet.Authorization;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
-using Microsoft.Data.Entity;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mano.Models;
@@ -19,7 +19,7 @@ namespace Mano.Controllers
     {
         //返回添加教育经历
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult EducationTbody(long id){
              var user = DB.Users
               .Include(x => x.Domains)
@@ -37,7 +37,7 @@ namespace Mano.Controllers
             return View(user);
         }
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult CertificationTbody(long id)
         {
             var user = DB.Users
@@ -56,7 +56,7 @@ namespace Mano.Controllers
             return View(user);
         }
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult DomainTbody(long id, [FromServices] IConfiguration Config)
         {
             var user = DB.Users
@@ -76,7 +76,7 @@ namespace Mano.Controllers
             return View(user);
         }
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ExperienceTbody(long id)
         {
             var user = DB.Users
@@ -95,7 +95,7 @@ namespace Mano.Controllers
             return View(user);
         }
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult ProjectTbody(long id)
         {
             var user = DB.Users
@@ -114,7 +114,7 @@ namespace Mano.Controllers
             return View(user);
         }
         [HttpGet]
-        [ClaimOrRolesAuthorize("Root, Master", "编辑个人资料")]
+        [AnyRolesOrClaims("Root, Master", "编辑个人资料")]
         public IActionResult SkillTbody(long id)
         {
             var user = DB.Users

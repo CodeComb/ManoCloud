@@ -5,8 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -31,7 +31,6 @@ namespace Mano.Node
 
         public void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
-            logger.MinimumLevel = LogLevel.Warning;
             logger.AddConsole();
 
             app.UseMvcWithDefaultRoute();
@@ -86,6 +85,16 @@ namespace Mano.Node
             }, null, 0, 5000);
         }
 
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseUrls("http://*:5050")
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
+        }
     }
 }
